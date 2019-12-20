@@ -1,0 +1,174 @@
+<template id="repository-nav-component">
+    <section>
+        <v-btn text block v-on:click="openCreate"><v-icon dark>mdi-plus</v-icon>Add New Repository</v-btn>
+        <v-list class="grow">
+            <v-list-item :to="'/repositories/'+repo.name" v-for="repo in repositories" :key="repo.name">
+                <v-list-item-content>   
+                    <v-list-item-title class="pl-4">{{repo.name}}</v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
+                    <v-menu>
+                        <template v-slot:activator="{ on }">
+                            <v-btn text icon v-on:click.stop.prevent="on.click($event)" 
+                                             v-on:keydown.stop.prevent="on.keydown($event)">
+                                <v-icon>mdi-dots-vertical</v-icon>
+                            </v-btn>
+                        </template>
+                        <v-list>
+                            <v-list-item v-on:click="openEdit(repo.name)">
+                                <v-list-item-title>Properties</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item v-on:click="handleDelete(repo.name)">
+                                <v-list-item-title>Delete</v-list-item-title>
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
+                </v-list-item-action>
+            </v-list-item>
+        </v-list>
+        <v-dialog v-model="openNewDialog" max-width="600px" persistent>
+            <v-card>
+                <v-card-title class="headline">{{ !repositoryId ? "New Repository" : "Update Repository" }}</v-card-title>
+                <v-card-text>
+                    <v-container fluid>
+                        <v-form ref="form" v-model="isValid" lazy-validation>
+                            <v-text-field
+                                label="Repository Name"
+                                v-model="name"
+                                :rules="nameRules"
+                                required>
+                            </v-text-field>
+                            <v-text-field
+                                label="Directory Path"
+                                v-model="path"
+                                :rules="pathRules"
+                                :readonly="readonlyPath"
+                                :disabled="readonlyPath"
+                                required>
+                            </v-text-field>
+                            <v-text-field
+                                label="Origin Url (option)"
+                                v-model="origin"
+                                :readonly="readonlyOrigin"
+                                :disabled="readonlyOrigin"
+                                required>
+                            </v-text-field>
+                        </v-form>
+                    </v-container>
+                </v-card-text>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        color="grey darken-1"
+                        text
+                        v-on:click="openNewDialog = false">
+                        Cancel
+                    </v-btn>
+                    <v-btn
+                        color="blue darken-1"
+                        text
+                        :disabled="!isValid"
+                        v-on:click="handleCreateOrUpdate">
+                        {{ !repositoryId ? "Create" : "Update" }}
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+    </section>
+</template>
+<script>
+    Vue.component('RepositoryNav', {
+        template: '#repository-nav-component',
+        data() {
+            return {
+                openNewDialog: false,
+                name: null,
+                path: null,
+                origin: null,
+                readonlyOrigin: false,
+                readonlyPath: false,
+                isCreate: false,
+                isValid: true,
+                repositoryId: null,
+                nameRules:[
+                    v => !!v || 'Repository Name is required',
+                    v => /^[a-zA-Z0-9_]*$/.test(v) || 'Valid characters are A-Z a-z 0-9 _'
+                ],
+                pathRules: [
+                    v => !!v || 'Repository Name is required'
+                ]
+            }
+        },
+        computed: {
+            ...Vuex.mapState('repositories', ['repositories'])
+        },
+        methods: {
+            ...Vuex.mapActions('repositories', ['loadRepositories', 'createRepository', 'updateRepository']),   
+            async handleDelete(repositoryName) {
+                if (confirm("Realy?")) {
+                    await this.deleteRepository(repositoryName);
+                }
+            },
+            async handleCreateOrUpdate() {
+                const payload = {
+                    id: this.repositoryId,
+                    name: this.name,
+                    path: this.path,
+                    origin: this.origin,
+                    connectionId: this.$signalr.connectionId
+                };
+                await this.createOrUpdate(payload);
+                this.openNewDialog = false;
+            },
+            async createOrUpdate(payload) {
+                if (this.isCreate) {
+                    await this.createRepository(payload)
+                }
+                else {
+                    if (await this.updateRepository(payload)) {
+                        this.navigateIfChangeId();
+                    }
+                }
+            },
+            navigateIfChangeId() {
+                if (this.$route.params.id == this.repositoryId && this.repositoryId != this.name) {
+                    this.$router.replace('/repositories/' + this.scriptName);
+                }
+            },
+            clearDialogModel() {
+                this.repositoryId = null;
+                this.name = null;
+                this.path = null;
+                this.origin = null;
+                this.readonlyPath = false;
+                this.readonlyOrigin = false;
+            },
+            loadDialogModel(repositoryName) {
+                const data = this.$store.getters['repositories/find'](repositoryName);
+                if (data) {
+                    this.repositoryId = data.name;
+                    this.name = data.name;
+                    this.path = data.path;
+                    this.origin = data.origin;
+                    this.readonlyPath = true;
+                    this.readonlyOrigin = !!this.origin;
+                }
+            },
+            openCreate() {
+                this.clearDialogModel(); 
+                this.isCreate = true;
+                this.openNewDialog = true;
+            },
+            openEdit(repositoryName) {
+                this.clearDialogModel();
+                this.loadDialogModel(repositoryName); 
+                this.isCreate = false;
+                this.openNewDialog = true;
+            },
+        },
+        async mounted() {
+            await this.loadRepositories();
+        }
+    })
+</script>

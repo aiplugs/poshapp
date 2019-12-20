@@ -1,0 +1,134 @@
+<template id="parameters-form">
+    <v-form>
+        <v-row>
+            <v-col class="pb-0" v-for="p in parameters" :key="p.name" :md="colSize(p)">
+                <datetime-field
+                    v-model="p.value" 
+                    :label="p.name"
+                    :rules="rules(p)"
+                    :disabled="disabledAll"
+                    v-if="p.type == 'System.DateTimeOffset' || p.type == 'System.DateTime'">
+                </datetime-field>
+                <v-text-field 
+                    v-model="p.value" 
+                    :label="p.name" 
+                    :type="inputType(p)" 
+                    :rules="rules(p)" 
+                    :disabled="disabledAll"
+                    filled rounded dense v-else></v-text-field>
+            </v-col>
+            <v-col class="pb-0" v-if="loadingParams">
+                <v-text-field filled rounded dense disabled></v-text-field>
+            </v-col>
+            <v-col class="pb-0" v-if="!loadingParams&&(parameters.length==0||parameters.every(p => isNumberType(p.type)))">
+            </v-col>
+            <v-col class="pb-0" md="1">
+                <v-btn block text x-large :disabled="disabledAll" v-on:click="emitRun">Run</v-btn>
+            </v-col>
+        </v-row>
+    </v-form>
+</template>
+<script type="module">
+    import { createCliXml } from '/js/clixml.js'
+    Vue.component('ParametersForm', {
+        template: '#parameters-form',
+        props: {
+            script: String,
+            page: Number,
+            pageSize: Number,
+            disabled: Boolean
+        },
+        data() {
+            return {
+                loadingParams: true, 
+                parameters: [],
+                valid: true,
+            }
+        },
+        computed: {
+            disabledAll() {
+                return this.disable || !this.valid
+            }
+        },
+        watch: {
+            page(value) {
+                this.setPage(value);
+                this.emitRun();
+            },
+            pageSize(value) {
+                this.setPageSize(value);
+                this.emitRun();
+            },
+            script() {
+                this.getParameters();
+            }
+        },
+        methods: {
+            setPage(value) {
+                const p = this.parameters.find(p => p.name == 'Page');
+                if (p) {
+                    this.$set(p, 'value', value - 1);
+                }
+            },
+            setPageSize(value) {
+                const p = this.parameters.find(p => p.name == 'PageSize');
+                if (p) {
+                    this.$set(p, 'value', value);
+                }
+            },
+            isNumberType(type) {
+                const numberTypes = ['System.Int32','System.Int64','System.Single','System.Double','System.Decimal'];
+                return numberTypes.includes(type);
+            },
+            inputType(parameter) {
+                const numberTypes = ['System.Int32','System.Int64','System.Single','System.Double','System.Decimal'];
+                if (numberTypes.includes(parameter.type)) {
+                    return 'number';
+                }
+                return 'text';
+            },
+            rules(parameter) {
+                const rules = [];
+                if (parameter.mandatory) {
+                    rules.push(v => !!v || `${parameter.name} is required.`);
+                }
+                return rules;
+            },
+            colSize(parameter) {
+                return this.isNumberType(parameter.type) ? 2 : null;
+            },
+            getClixmls() {
+                return this.parameters.reduce((o, p) => {
+                    if (p.value !== undefined) {
+                        o[p.name] = createCliXml(p.type, p.value);
+                    }
+                    return o;
+                }, {});
+            },
+            getPageSize() {
+                const p = this.parameters.find(p => p.name == 'PageSize');
+                return p ? p.value : null;
+            },
+            emitRun() {
+                this.$emit('run', this.getClixmls());
+            },
+            getParameters(){
+                this.$signalr.invoke('GetParameters', this.script);
+            }
+        },
+        mounted() {
+            this.$signalr.on("GetParameters", parameters => {
+                this.parameters.splice(0, this.parameters.length, ...parameters);
+                this.setPage(this.page);
+                this.setPageSize(this.pageSize);
+                this.loadingParams = false;
+            })
+            this.$signalr.onconnected(() => {
+                this.getParameters();
+            }) 
+        },
+        beforeDestroy() {
+            this.$signalr.off('DetailResult')
+        }
+    })
+</script>
