@@ -12,12 +12,12 @@ function decodeUTF16(text) {
     return text.replace(/_x([0-9A-F]{4})__x([0-9A-F]{4})_/g, function (_, a, b) {
         var binary = new Uint8Array([
             parseInt(a.slice(2), 16),
-            parseInt(a.slice(0,2), 16),
+            parseInt(a.slice(0, 2), 16),
             parseInt(b.slice(2), 16),
-            parseInt(b.slice(0,2), 16)   
-        ])
-        return utf16decoder.decode(binary)
-    })
+            parseInt(b.slice(0, 2), 16)
+        ]);
+        return utf16decoder.decode(binary);
+    });
 }
 
 function extract(element) {
@@ -32,7 +32,7 @@ function extract(element) {
         const tnref= element.querySelector(':scope > TNRef');
         if (types.length === 0 && tnref) {
             const refId = tnref.getAttribute('RefId');
-            types = element.parentElement.querySelectorAll(`TN[RefId="${refId}"] > T`)   
+            types = element.parentElement.querySelectorAll(`TN[RefId="${refId}"] > T`);
         }
 
         if (types.length === 0 && element.children.length > 0) {
@@ -46,9 +46,9 @@ function extract(element) {
                 const dt = element.querySelector('DT[N="LocalDateTime"]');
                 return new Date(dt.textContent).toLocaleString();
             }
-            if (typeName == 'System.ValueType') {
+            if (typeName === 'System.ValueType') {
                 const el = element.querySelector('ToString');
-                return el != null ? decodeUTF16(el.textContent) : null;
+                return el !== null ? decodeUTF16(el.textContent) : null;
             }
             if (typeName === 'System.Array') {
                 const lst = element.querySelector('LST');
@@ -57,28 +57,28 @@ function extract(element) {
             if (typeName === 'System.Collections.Hashtable'||
                 typeName === 'System.Collections.Specialized.OrderedDictionary'||
                 typeName === 'Deserialized.System.Collections.Specialized.OrderedDictionary') {
-                const dct = element.querySelector('DCT')
+                const dct = element.querySelector('DCT');
                 return Array.from(dct.children)
                             .map(el => {
-                                const key = extract(el.querySelector('[N="Key"]'))
-                                const value = extract(el.querySelector('[N="Value"]'))
-                                return { key, value }
+                                const key = extract(el.querySelector('[N="Key"]'));
+                                const value = extract(el.querySelector('[N="Value"]'));
+                                return { key, value };
                             })
                             .reduce((o, kv) => { o[kv.key] = kv.value; return o; }, {});
             }
             if (typeName === 'System.Management.Automation.PSCustomObject') {
                 const ms = element.querySelector('MS');
                 return Array.from(ms.children)
-                            .reduce((o, p) => {
-                                const key = p.getAttribute('N');
-                                const value = extract(p);
-                                o[key] = value;
-                                return o;
-                            }, {})
+                    .reduce((o, p) => {
+                        const key = p.getAttribute('N');
+                        const value = extract(p);
+                        o[key] = value;
+                        return o;
+                    }, {});
             }
             if (typeName === 'System.Enum' || typeName === 'Deserialized.System.Enum') {
                 const tostring = element.querySelector('ToString');
-                return tostring != null ? decodeUTF16(tostring.textContent) : null;
+                return tostring !== null ? decodeUTF16(tostring.textContent) : null;
             }
             if (typeName === 'System.Object') {
                 const props = element.querySelector('Props');
@@ -89,7 +89,7 @@ function extract(element) {
                 }
                 
                 const tostring = element.querySelector('ToString');
-                return tostring != null ? decodeUTF16(tostring.textContent) : null;
+                return tostring !== null ? decodeUTF16(tostring.textContent) : null;
             }
         }
     }
@@ -136,7 +136,7 @@ export function parsePSDataCollection(data) {
         return { value, clixml };
     });
 }
-//'By', 'I16', 'I32', 'I64', 'U16', 'U32', 'U64
+
 const typeMap = {
     'System.String': 'S',
     'System.Byte': 'By',
@@ -146,14 +146,14 @@ const typeMap = {
     'System.UInt16': 'U16',
     'System.UInt32': 'U32',
     'System.UInt64': 'U64',
-    'System.Char'   : 'C',
+    'System.Char': 'C',
     'System.Boolean': 'B',
     'System.Single': 'Sg',
     'System.Double': 'Db',
     'System.Decimal': 'D',
     'System.DateTime': 'DT',
     'System.DateTimeOffset': 'DT'
-}
+};
 
 export function createCliXml(type, value) {
     const tag = typeMap[type];
