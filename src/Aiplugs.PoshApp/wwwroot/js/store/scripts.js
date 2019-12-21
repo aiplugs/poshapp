@@ -12,19 +12,19 @@
 function selectData(script) {
     const { id, type, displayName } = script;
     let data = null;
-    if (type == 'List') {
+    if (type === 'List') {
         const { group, detail, actions } = script;
         data = { id, type, displayName, group, detail, actions };
     }
-    else if (type == 'Detail') {
+    else if (type === 'Detail') {
         const { actions } = script;
-        data = { id, type, actions }
+        data = { id, type, actions };
     }
-    else if (type == 'Singleton') {
+    else if (type === 'Singleton') {
         const { group, actions } = script;
         data = { id, type, displayName, group, actions };
     }
-    else if (type == 'Action') {
+    else if (type === 'Action') {
         data = { id, type, displayName };
     }
     return data;
@@ -40,24 +40,23 @@ export default {
             return Object.keys(state.metadata).reduce((o, key) => {
                 const tree = [];
                 const groups = {};
-                const navScripts = state.metadata[key].filter(d => d.type == 'List' || d.type == 'Singleton');
+                const navScripts = state.metadata[key].filter(d => d.type === 'List' || d.type === 'Singleton');
                 for (let script of navScripts) {
-                    // const group = script.group || 'Default';
                     if (script.group) {
                         if (!groups[script.group])
                             groups[script.group] = [];
-                        groups[script.group].push({ type:"item", name: script.id });
+                        groups[script.group].push({ type: "item", name: script.id });
                     }
                     else {
-                        tree.push({ type:"item", name: script.id, displayName: script.displayName });
+                        tree.push({ type: "item", name: script.id, displayName: script.displayName });
                     }
                 }
                 for (let key of Object.keys(groups)) {
-                    tree.push({ type:'group', name: key, children: groups[key] })
+                    tree.push({ type: 'group', name: key, children: groups[key] });
                 }
                 o[key] = tree;
                 return o;
-            }, {})
+            }, {});
         },
         repositories(state) {
             return Object.keys(state.metadata);
@@ -66,28 +65,28 @@ export default {
             return Object.keys(state.metadata).map(key => state.metadata[key]).flat();
         },
         actionScripts(state) {
-            return Object.keys(state.metadata).map(key => state.metadata[key].filter(script => script.type==='Action')).flat();
+            return Object.keys(state.metadata).map(key => state.metadata[key].filter(script => script.type === 'Action')).flat();
         },
         detailScripts(state) {
-            return Object.keys(state.metadata).map(key => state.metadata[key].filter(script => script.type==='Detail')).flat();
+            return Object.keys(state.metadata).map(key => state.metadata[key].filter(script => script.type === 'Detail')).flat();
         },
         find(state) {
-            return (repository, id) => (state.metadata[repository]||[]).find(d => d.repository == repository && d.id == id);
+            return (repository, id) => (state.metadata[repository] || []).find(d => d.repository === repository && d.id === id);
         },
         findActions(state) {
             return (repositoryName, scriptId) => {
-                const script = (state.metadata[repositoryName]||[]).find(d => d.id == scriptId);
+                const script = (state.metadata[repositoryName] || []).find(d => d.id === scriptId);
                 if (!script)
                     return [];
 
                 return script.actions.map(id => {
                     const [repositoryName, scriptId] = id.split(':');
-                    const action = (state.metadata[repositoryName]||[]).find(script => script.repository == repositoryName && script.id == scriptId);
-                    if (!action) 
+                    const action = (state.metadata[repositoryName] || []).find(script => script.repository === repositoryName && script.id === scriptId);
+                    if (!action)
                         return null;
-                    return { id:`${action.repository}:${action.id}`, displayName: action.displayName };
-                })
-            }
+                    return { id: `${action.repository}:${action.id}`, displayName: action.displayName };
+                });
+            };
         }
     },
     mutations: {
@@ -112,12 +111,12 @@ export default {
             state.metadata[data.repository].splice(index, 1, data);
         },
         replaceAllScripts(state, scripts) {
-            for(let key of Object.keys(scripts)) {
+            for (let key of Object.keys(scripts)) {
                 for (let script of scripts[key]) {
                     script.repository = key;
                 }
             }
-            Vue.set(state, 'metadata', scripts)
+            Vue.set(state, 'metadata', scripts);
         }
     },
     actions: {
@@ -162,4 +161,4 @@ export default {
             return false;
         }
     }
-}
+};
