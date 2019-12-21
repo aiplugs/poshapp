@@ -1,35 +1,32 @@
 <template id="list-page-component">
     <div class="flex-grow-1">
-        <section  style="width:calc(100vw - 56px - 256px); height: 95vh; overflow:auto;">
-            <header>
-                <v-row class="pl-4 pr-4">
-                    <v-col cols="12">
-                        <parameters-form ref="form" :script="scriptId" :page="page" :page-size="pageSize" v-on:run="run"></parameters-form>
-                    </v-col>
-                </v-row>
-                <v-row class="pl-4 pr-4">
-                    <v-btn text v-for="action in actions" :key="action.name" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
-                </v-row>
-            </header>
-            <hr>
-            <v-data-table
-                v-model="selected"
-                :headers="headers"
-                :items="list"
-                :page.sync="page"
-                :items-per-page="pageSize"
-                item-key="$clixml"
-                hide-default-footer
-                show-select
-                v-if="list.length > 0">
-                <template v-slot:item.$poshapp_action="{ item }">
-                    <v-btn icon text v-on:click="openDetail(item)">
-                        <v-icon>mdi-fullscreen</v-icon>
-                    </v-btn>
-                </template>
-            </v-data-table>
-            <v-pagination v-model="page" :length="total" v-if="list.length > 0"></v-pagination>
-        </section>
+        <header class="separator-horizontal">
+            <v-row class="pl-4 pr-4">
+                <v-col cols="12">
+                    <parameters-form ref="form" :script="scriptId" :page="page" :page-size="pageSize" v-on:run="run"></parameters-form>
+                </v-col>
+            </v-row>
+            <v-row class="pl-4 pr-4">
+                <v-btn text v-for="action in actions" :key="action.name" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
+            </v-row>
+        </header>
+        <v-data-table
+            v-model="selected"
+            :headers="headers"
+            :items="list"
+            :page.sync="page"
+            :items-per-page="pageSize"
+            item-key="$clixml"
+            hide-default-footer
+            show-select
+            v-if="list.length > 0">
+            <template v-slot:item.$poshapp_action="{ item }">
+                <v-btn icon text v-on:click="openDetail(item)">
+                    <v-icon>mdi-fullscreen</v-icon>
+                </v-btn>
+            </template>
+        </v-data-table>
+        <v-pagination v-model="page" :length="total" v-if="list.length > 0"></v-pagination>
         <transition name="slide-x-reverse-transition">
             <detail-page :script="detailScriptId" :input="detailInput" v-if="detailScriptId" v-on:close="detailScriptId=null"></detail-page>
         </transition>

@@ -1,21 +1,18 @@
 <template id="singleton-page-component">
     <div class="flex-grow-1">
-        <section style="width:calc(100vw - 56px - 256px); height: 95vh; overflow:auto;">
-            <header>
-                <v-row class="pl-4 pr-4">
-                    <v-col cols="12">
-                        <parameters-form ref="form" :script="scriptId" v-on:run="run"></parameters-form>
-                    </v-col>
-                </v-row>
-                <v-row class="pl-4 pr-4">
-                    <v-btn text v-for="action in actions" :key="action.name" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
-                </v-row>
-            </header>
-            <hr>
-            <v-container>
-                <data-viewer :data="data"></data-viewer>
-            </v-container>
-        </section>
+        <header class="separator-horizontal">
+            <v-row class="pl-4 pr-4">
+                <v-col cols="12">
+                    <parameters-form ref="form" :script="scriptId" v-on:run="run"></parameters-form>
+                </v-col>
+            </v-row>
+            <v-row class="pl-4 pr-4">
+                <v-btn text v-for="action in actions" :key="action.name" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
+            </v-row>
+        </header>
+        <v-container>
+            <data-viewer :data="data"></data-viewer>
+        </v-container>
     </div>
 </template>
 <script type="module">

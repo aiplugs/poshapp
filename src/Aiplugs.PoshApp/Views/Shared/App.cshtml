@@ -1,42 +1,42 @@
 <template id="app-component">
     <v-app>
-        <v-navigation-drawer app mini-variant mini-variant-width="56" permanent>
-            <v-list dense nav>
-                <v-list-item to="/" active>
-                    <v-list-item-icon>
-                        <v-icon>mdi-hexagon-outline</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content></v-list-item-content>
-                </v-list-item>
-                <v-list-item to="/scripts/">
-                    <v-list-item-icon>
-                        <v-icon>mdi-xml</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content></v-list-item-content>
-                </v-list-item>
-                <v-list-item to="/repositories/">
-                    <v-list-item-icon>
-                        <v-icon>mdi-source-branch</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content></v-list-item-content>
-                </v-list-item>
-            </v-list>
-        </v-navigation-drawer>
+        <div class="app-layout">
+            <section class="app-global-nav separator-vertical">
+                <v-list dense nav>
+                    <v-list-item to="/" active>
+                        <v-list-item-icon>
+                            <v-icon>mdi-hexagon-outline</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content></v-list-item-content>
+                    </v-list-item>
+                    <v-list-item to="/scripts/">
+                        <v-list-item-icon>
+                            <v-icon>mdi-xml</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content></v-list-item-content>
+                    </v-list-item>
+                    <v-list-item to="/repositories/">
+                        <v-list-item-icon>
+                            <v-icon>mdi-source-branch</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content></v-list-item-content>
+                    </v-list-item>
+                </v-list>
+            </section>
+            <section class="app-local-nav separator-vertical">
+                <router-view name="nav"></router-view>
+            </section>
 
-        <v-content>
-            <v-row class="fill-height flex-row">
-                <v-navigation-drawer permanent>
-                    <router-view name="nav"></router-view>
-                </v-navigation-drawer>
+            <main class="app-main">
                 <router-view></router-view>
-            </v-row>
-        </v-content>
+            </main>
 
-        <v-footer app height="24px" class="pa-0 pl-2 pr-2">
-            <PowershellUI></PowershellUI>
-        </v-footer>
+            <v-footer class="app-footer pa-0 pl-2 pr-2" height="24px">
+                <PowershellUI></PowershellUI>
+            </v-footer>
 
-        <Toast></Toast>
+            <Toast></Toast>
+        </div>
     </v-app>
 </template>
 <script>

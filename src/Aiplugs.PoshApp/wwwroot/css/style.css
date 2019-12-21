@@ -1,3 +1,49 @@
 ﻿::-webkit-scrollbar {
   display: none;
 }
+
+.app-layout {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 56px 256px 1fr;
+    grid-template-rows: 1fr 24px;
+}
+
+.app-global-nav {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    background: white;
+}
+
+.app-local-nav {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    background: white;
+}
+
+.app-main {
+    grid-column-start: 3;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 2;
+}
+
+.app-footer {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    grid-row-start: 2;
+    grid-row-end: 3;
+}
+
+.separator-vertical {
+    border-right: 0.5px solid #E0E0E0;
+}
+
+.separator-horizontal {
+    border-bottom: 0.5px solid #E0E0E0;
+}
