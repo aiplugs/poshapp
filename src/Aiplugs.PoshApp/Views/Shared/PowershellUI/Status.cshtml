@@ -1,28 +1,52 @@
 ﻿<template id="powershell-ui-status-component">
-    <span>{{text}}</span>
+    <div>
+        <span :title="text">
+            <v-icon small>{{icon}}</v-icon>
+        </span>
+        <v-dialog v-model="dialog" width="600">
+            <v-card>
+                <v-card-title>Connectioin Error</v-card-title>
+                <v-card-text>
+                    Cannot connect poshapp backend service.
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text v-on:click="dialog=false">OK</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+    </div>
 </template>
 <script>
     Vue.component('powershelluistatus', {
         template: '#powershell-ui-status-component',
         data() {
             return {
-                text: null
+                text: null,
+                icon: 'md mdi-circle-off-outline',
+                dialog: false
             }
         },
         mounted() {
             this.$signalr.onclose(err => {
-                this.text = "close";
+                this.text = "Close";
+                this.icon = "md mdi-circle-off-outline";
             })
             this.$signalr.onreconnecting(err => {
-                this.text = "reconnecting...";
+                this.text = "Reconnecting...";
+                this.icon = "mdi-dots-horizontal";
             })
             this.$signalr.onreconnected(connectedId => {
-                this.text = "connected";
+                this.text = "Connected";
+                this.icon = "mdi-circle-outline";
             })
             this.$signalr.start().then(() => {
-                this.text = "connected";
+                this.text = "Connected";
+                this.icon = "mdi-circle-outline";
             }).catch(() => {
-                alert("Cannot connect Powershell SignbalR.");
+                this.text = "Faild";
+                this.icon = "md mdi-circle-off-outline";
+                this.dialog = true;
             })
         }
     })
