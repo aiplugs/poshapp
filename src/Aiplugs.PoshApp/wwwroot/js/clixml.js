@@ -80,7 +80,8 @@ function extract(element) {
                 const tostring = element.querySelector('ToString');
                 return tostring !== null ? decodeUTF16(tostring.textContent) : null;
             }
-            if (typeName === 'System.Object') {
+            if (typeName === 'System.Object' ||
+                typeName === 'Deserialized.System.Object') {
                 const props = element.querySelector('Props');
                 if (props) {
                     return Array.from(props.children)
