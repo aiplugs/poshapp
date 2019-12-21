@@ -28,15 +28,7 @@ namespace Aiplugs.PoshApp.Services
                 var json = await File.ReadAllTextAsync(StorageHelper.GetConfigPath(), Encoding.UTF8);
 
                 if (string.IsNullOrEmpty(json))
-                    return new RootConfig() 
-                    { 
-                        Repositories = new [] {
-                            new Repository {
-                                Name = "Default",
-                                Path = StorageHelper.GetScriptDirPath()
-                            }
-                        }
-                    };
+                    return new RootConfig();
 
                 return JsonConvert.DeserializeObject<RootConfig>(json);
             });
