@@ -5,7 +5,9 @@
             :close-on-content-click="false"
             transition="slide-y-reverse-transition">
         <template v-slot:activator="{on}">
-            <button v-on="on" style="outline:none;">Log</button>
+            <v-btn x-small text icon v-on="on" title="Write-Host Log">
+                <v-icon>mdi-timeline-text-outline</v-icon>
+            </v-btn>
         </template>
         <div class="black d-flex flex-column" style="width: 600px; height: 600px;">
             <div style="flex: 1;"></div>
