@@ -25,7 +25,7 @@ namespace Aiplugs.PoshApp
         {
             services.AddMemoryCache();
             services.AddAutoMapper(typeof(MappingProfile));
-            services.AddSingleton<RepositoryAccessor>();
+            services.AddSingleton<ConfigAccessor>();
             services.AddSingleton<ScriptsService>();
             services.AddSingleton<PowershellContext>();
             services.AddSingleton<GitContext>();

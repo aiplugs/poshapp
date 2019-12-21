@@ -17,8 +17,8 @@ namespace Aiplugs.PoshApp
             [ScriptType.Singleton] = "",
             [ScriptType.Action] = "param(\n\t[Parameter(ValueFromPipeline=$true)]\n\t[PSObject[]]\n\t$InputObject\n)\nprocess {\n\n}"
         };
-        private readonly RepositoryAccessor _configAccessor;
-        public ScriptsService(RepositoryAccessor configAccessor)
+        private readonly ConfigAccessor _configAccessor;
+        public ScriptsService(ConfigAccessor configAccessor)
         {
             _configAccessor = configAccessor;
         }

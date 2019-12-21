@@ -10,13 +10,12 @@ using Newtonsoft.Json.Linq;
 
 namespace Aiplugs.PoshApp.Services
 {
-    public class RepositoryAccessor
+    public class ConfigAccessor
     {
         private readonly JsonConverter[] _converters = new[] { new ScriptConverter() };
         private static object _lock = new object();
         private readonly IMemoryCache _cache;
-        private readonly static string CACHE_KEY = typeof(RepositoryAccessor).FullName;
-        public RepositoryAccessor(IMemoryCache cache)
+        public ConfigAccessor(IMemoryCache cache)
         {
             _cache = cache;
         }
