@@ -1,0 +1,47 @@
+﻿<template id="powershell-ui-log-error-component">
+    <v-dialog v-model="dialog" max-width="600px">
+        <v-card>
+            <v-card-title class="headline red--text">
+                Error
+            </v-card-title>
+            <v-card-text style="white-space: pre-wrap">{{message}}</v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn text v-on:click="dialog = false">
+                    CLOSE
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+</template>
+<script>
+    Vue.component('powershelluilogforerror', {
+        template: '#powershell-ui-log-error-component',
+        data() {
+            return {
+                dialog: false,
+                message: null
+            }
+        },
+        methods: {
+            format(text) {
+                return text.replace(/\r\n/g, '\n').split('\n').filter(line => !line.match(/^\s*$/)).join('\n');
+            }
+        },
+        mounted() {
+            this.$signalr.on("WriteErrorLine", value => {
+                if (this.dialog) {
+                    this.message += '\n\n' + this.format(value);
+                }
+                else {
+                    this.message = this.format(value);
+                    this.dialog = true;
+                }
+            })
+            this.$signalr.on("ParseError", value => {
+                this.message = value;
+                this.dialog = true;
+            })
+        }
+    })
+</script>

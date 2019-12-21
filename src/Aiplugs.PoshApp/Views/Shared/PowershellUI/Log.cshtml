@@ -1,0 +1,59 @@
+﻿<template id="powershell-ui-log-component">
+    <v-menu v-model="dialog" ref="main"
+            :nudge-top="600"
+            :close-on-click="false"
+            :close-on-content-click="false"
+            transition="slide-y-reverse-transition">
+        <template v-slot:activator="{on}">
+            <button v-on="on" style="outline:none;">Log</button>
+        </template>
+        <div class="black d-flex flex-column" style="width: 600px; height: 600px;">
+            <div style="flex: 1;"></div>
+            <pre v-for="(message, index) in messages" :key="index"
+                 v-text="message.text"
+                 :class="resolveColor(message)" class="pl-4 pr-4"></pre>
+            <div class="black text-right" ref="bottom" style="position:sticky;bottom:0;width:100%;">
+                <v-btn dark text icon v-on:click="dialog=false">
+                    <v-icon>mdi-chevron-down</v-icon>
+                </v-btn>
+            </div>
+        </div>
+    </v-menu>
+</template>
+<script>
+    Vue.component('powershelluilog', {
+        template: '#powershell-ui-log-component',
+        props: {
+            max: {
+                type: Number,
+                default: 30
+            }
+        },
+        data() {
+            return {
+                dialog: false,
+                messages: []
+            }
+        },
+        methods: {
+            resolveColor(message) {
+                const { color, bgColor } = message.color == 0 && message.bgColor == 0 ? { color: 15, bgColor: 0 } : message;
+                const foregroundColors = ['black--text', 'blue--text text--darken-4', 'green--text text--darken-4', 'cyan--text text--darken-4', 'red--text text--darken-4', 'pink--text text--darken-4', 'yellow--text text--darken-4', 'grey--text', 'grey--text text--darken-4', 'blue--text', 'green--text', 'cyan--text', 'red--text', 'pink--text', 'yellow--text', 'white--text']
+                const backgroudColors = ['black', 'blue darken-4', 'green darken-4', 'cyan darken-4', 'red darken-4', 'pink darken-4', 'yellow darken-4', 'grey', 'grey darken-4', 'blue', 'green', 'cyan', 'red', 'pink', 'yellow', 'white']
+                return [...foregroundColors[color].split(' '), ...backgroudColors[bgColor].split(' ')]
+            }
+        },
+        mounted() {
+            this.$signalr.on("WriteWithColor", (color, bgColor, text) => {
+                if (this.messages.length > this.max) {
+                    this.messages.shift()
+                }
+                this.messages.push({color, bgColor, text})
+                this.dialog = true;
+                requestIdleCallback(() => {
+                    this.$refs.bottom.parentElement.parentElement.scrollTo(0, this.$refs.bottom.offsetTop)
+                })
+            })
+        }
+    })
+</script>

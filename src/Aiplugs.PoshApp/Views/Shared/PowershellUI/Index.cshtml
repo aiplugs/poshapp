@@ -1,0 +1,17 @@
+﻿<template id="powershell-ui-component">
+    <div class="d-flex" style="width:100%">
+        <PowershellUIStatus></PowershellUIStatus>
+        <span class="flex-grow-1"></span>
+        <PowershellUIPromptForCredential></PowershellUIPromptForCredential>
+        <PowershellUIPromptForChoice></PowershellUIPromptForChoice>
+        <PowershellUIPrompt></PowershellUIPrompt>
+        <PowershellUIProgress></PowershellUIProgress>
+        <PowershellUILogForError></PowershellUILogForError>
+        <PowershellUIlog></PowershellUIlog>
+    </div>
+</template>
+<script>
+    Vue.component('powershellui', {
+        template: '#powershell-ui-component',
+    })
+</script>

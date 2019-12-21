@@ -1,0 +1,59 @@
+﻿<template id="powershell-ui-prompt-for-choice-component">
+    <v-dialog v-model="dialog" max-width="600px" persistent>
+        <v-card>
+            <v-card-title class="headline" primary-title>
+                {{caption}}
+            </v-card-title>
+            <v-card-text>
+                <p style="white-space: pre-wrap">{{message}}</p>
+                <table>
+                    <tr v-for="(choice, index) in choices" :key="index">
+                        <td>{{format(choice.label)}}</td>
+                        <td>{{choice.helpMessage}}</td>
+                    </tr>
+                </table>
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn v-for="(choice, index) in choices"
+                       :key="index"
+                       :color="index==defaultChoice?'primary':null"
+                       v-on:click="select(index)">
+                    {{format(choice.label)}}
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+</template>
+<script>
+    Vue.component('powershelluipromptforchoice', {
+        template: '#powershell-ui-prompt-for-choice-component',
+        data() {
+            return {
+                dialog: false,
+                caption: null,
+                message: null,
+                choices: [],
+                defaultChoice: 0
+            }
+        },
+        methods: {
+            format(label) {
+                return (label||'').replace(/&/, '');
+            },
+            select(index) {
+                this.$signalr.invoke('PromptForChoice', index);
+                this.dialog = false;
+            }
+        },
+        mounted() {
+            this.$signalr.on('PromptForChoice', (caption, message, choices, defaultChoice) => {
+                this.caption = caption;
+                this.message = message;
+                this.choices.splice(0, this.choices.length, ...choices);
+                this.defaultChoice = defaultChoice;
+                this.dialog = true;
+            })
+        }
+    })
+</script>

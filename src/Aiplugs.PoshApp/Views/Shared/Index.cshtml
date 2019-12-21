@@ -14,27 +14,33 @@
         <div id="app">
             <app></app>
         </div>
-        
+
         <script src="/lib/signalr/signalr.min.js"></script>
         <script src="/lib/vuetify/vuetify-v2.1.12.min.js"></script>
         <script src="/lib/vue-router/vue-router.min.js"></script>
         <script src="/lib/vuex/vuex.min.js"></script>
         <script src="/lib/vue-async-computed/vue-async-computed.js"></script>
-        <partial name="DateTime" />
-        <partial name="Toast" />
-        <partial name="PowershellUI" />
-        <partial name="ScriptsNav" />
-        <partial name="Scripts" />
-        <partial name="RepositoryNav" />
-        <partial name="Repository" />
-        <partial name="PageNav" />
-        <partial name="ParametersForm" />
-        <partial name="DataViewer" />
-        <partial name="DetailPage" />
-        <partial name="ListPage" />
-        <partial name="SingletonPage" />
-        <partial name="Top" />
+        <partial name="Components/DateTime" />
+        <partial name="Components/Toast" />
+        <partial name="PowershellUI/Prompt" />
+        <partial name="PowershellUI/PromptForChoice" />
+        <partial name="PowershellUI/PromptForCredential" />
+        <partial name="PowershellUI/LogForError" />
+        <partial name="PowershellUI/Log" />
+        <partial name="PowershellUI/Progress" />
+        <partial name="PowershellUI/Status" />
+        <partial name="PowershellUI/Index" />
+        <partial name="Scripts/Nav" />
+        <partial name="Scripts/Index" />
+        <partial name="Repositories/Nav" />
+        <partial name="Repositories/Index" />
+        <partial name="Pages/Parts/ParametersForm" />
+        <partial name="Pages/Parts/DataViewer" />
+        <partial name="Pages/Nav" />
+        <partial name="Pages/Detail" />
+        <partial name="Pages/List" />
+        <partial name="Pages/Singleton" />
         <partial name="App" />
         <script src="/js/main.js" type="module"></script>
-   </body>
+    </body>
 </html>

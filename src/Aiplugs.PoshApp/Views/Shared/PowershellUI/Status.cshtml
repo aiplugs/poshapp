@@ -1,0 +1,29 @@
+﻿<template id="powershell-ui-status-component">
+    <span>{{text}}</span>
+</template>
+<script>
+    Vue.component('powershelluistatus', {
+        template: '#powershell-ui-status-component',
+        data() {
+            return {
+                text: null
+            }
+        },
+        mounted() {
+            this.$signalr.onclose(err => {
+                this.text = "close";
+            })
+            this.$signalr.onreconnecting(err => {
+                this.text = "reconnecting...";
+            })
+            this.$signalr.onreconnected(connectedId => {
+                this.text = "connected";
+            })
+            this.$signalr.start().then(() => {
+                this.text = "connected";
+            }).catch(() => {
+                alert("Cannot connect Powershell SignbalR.");
+            })
+        }
+    })
+</script>

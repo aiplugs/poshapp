@@ -1,0 +1,132 @@
+﻿<template id="powershell-ui-prompt-component">
+    <v-dialog v-model="dialog" max-width="600px" persistent>
+        <v-card>
+            <v-card-title class="headline" primary-title>
+                {{caption}}
+            </v-card-title>
+            <v-card-text>
+                <p style="white-space: pre-wrap">{{message}}</p>
+                <v-form ref="form" v-model="valid">
+                    <div v-for="(desc, index) in descriptions" :key="index">
+                        <v-text-field ref="fields"
+                                      :label="desc.label||desc.name"
+                                      :data-name="desc.name"
+                                      :hint="desc.helpMessage"
+                                      :rules="rules(desc)"
+                                      :required="desc.isMandatory"
+                                      v-model="value[desc.name]"
+                                      v-if="textfieldTypes.includes(desc.parameterTypeFullName)"></v-text-field>
+                        <v-menu v-model="menu[desc.name+'date']"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="290px"
+                                v-if="desc.parameterTypeFullName == 'System.DateTime'">
+                            <template v-slot:activator="{ on }">
+                                <v-text-field :label="(desc.label||desc.name) + ' Date'"
+                                              :hint="desc.helpMessage"
+                                              :rules="rules(desc)"
+                                              :required="desc.isMandatory"
+                                              v-model="value[desc.name+'date']"
+                                              readonly
+                                              v-on="on"></v-text-field>
+                            </template>
+                            <v-date-picker v-model="value[desc.name+'date']" v-on:input="menu[desc.name+'date'] = false"></v-date-picker>
+                        </v-menu>
+                        <v-menu v-model="menu[desc.name+'time']"
+                                :close-on-content-click="false"
+                                :nudge-right="40"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="290px"
+                                v-if="desc.parameterTypeFullName == 'System.DateTime'">
+                            <template v-slot:activator="{ on }">
+                                <v-text-field :label="(desc.label||desc.name) + ' Time'"
+                                              :hint="desc.helpMessage"
+                                              :rules="rules(desc)"
+                                              :required="desc.isMandatory"
+                                              v-model="value[desc.name+'time']"
+                                              readonly
+                                              v-on="on"></v-text-field>
+                            </template>
+                            <v-time-picker v-model="value[desc.name+'time']" v-on:input="menu[desc.name+'time'] = false"></v-date-picker>
+                        </v-menu>
+                    </div>
+                </v-form>
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn :disabled="!valid" v-on:click="handlePrompt">OK</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+</template>
+<script type="module">
+    import {createCliXml} from '/js/clixml.js'
+
+    Vue.component('powershelluiprompt', {
+        template: '#powershell-ui-prompt-component',
+        data() {
+            return {
+                dialog: false,
+                caption: null,
+                message: null,
+                descriptions: [],
+                valid: false,
+                value: {},
+                menu: {},
+                textfieldTypes: ['System.String','System.Int32','System.Int64','System.Float','System.Double','System.Decimal']
+            }
+        },
+        methods: {
+            rules(desc) {
+                const result = [];
+                const label = desc.label||desc.name;
+
+                if (desc.isMandatory)
+                    result.push(v => !!v || `${label} is required`);
+
+                if (desc.parameterTypeFullName == 'System.Int32'
+                 || desc.parameterTypeFullName == 'System.Int64')
+                    result.push(v => parseInt(v) !== NaN || `${label} need integer value`)
+
+                if (desc.parameterTypeFullName == 'System.Float'
+                 || desc.parameterTypeFullName == 'System.Double'
+                 || desc.parameterTypeFullName == 'System.Decimal')
+                    result.push(v => parseInt(v) !== NaN || `${label} need number value`)
+
+                return result;
+            },
+            handlePrompt() {
+                const model = {};
+                for (let desc of this.descriptions) {
+                    let value = null;
+                    if (desc.parameterTypeFullName == 'System.DateTime') {
+                        const date = this.value[desc.name+'date'];
+                        const time = this.value[desc.name+'time'];
+                        value = new Date(`${date} ${time}`).toJSON();
+                    }
+                    else {
+                       value = this.value[desc.name];
+                    }
+                    model[desc.name] = createCliXml(desc.parameterTypeFullName, value);
+                }
+                this.$signalr.invoke('Prompt', model);
+                this.dialog = false;
+            }
+        },
+        mounted() {
+            this.$signalr.on('Prompt', (caption, message, descriptions) => {
+                this.caption = caption;
+                this.message = message;
+                this.descriptions.splice(0, this.descriptions.length, ...descriptions);
+                for (let desc of this.descriptions) {
+                    this.$set(this.value, desc.name, desc.defaultValue);
+                }
+                this.dialog = true;
+                this.$refs.form.reset();
+            })
+        }
+    })
+</script>

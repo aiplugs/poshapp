@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
-  <ItemGroup></ItemGroup>
   <ItemGroup>
     <PackageReference Include="ElectronNET.API" Version="7.30.2" />
     <PackageReference Include="AutoMapper" Version="9.0.0" />
