@@ -1,6 +1,6 @@
 ﻿<template id="powershell-ui-status-component">
-    <div>
-        <span :title="text">
+    <div class="d-flex">
+        <span :title="text" class="d-flex align-center">
             <v-icon small>{{icon}}</v-icon>
         </span>
         <v-dialog v-model="dialog" width="600">
