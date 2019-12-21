@@ -15,10 +15,10 @@
                             </v-btn>
                         </template>
                         <v-list>
-                            <v-list-item v-on:click="openEdit(repo.name)">
+                            <v-list-item v-on:click="openEdit(repo)">
                                 <v-list-item-title>Properties</v-list-item-title>
                             </v-list-item>
-                            <v-list-item v-on:click="handleDelete(repo.name)">
+                            <v-list-item v-on:click="handleDelete(repo)">
                                 <v-list-item-title>Delete</v-list-item-title>
                             </v-list-item>
                         </v-list>
@@ -104,10 +104,10 @@
             ...Vuex.mapState('repositories', ['repositories'])
         },
         methods: {
-            ...Vuex.mapActions('repositories', ['loadRepositories', 'createRepository', 'updateRepository']),   
-            async handleDelete(repositoryName) {
+            ...Vuex.mapActions('repositories', ['loadRepositories', 'createRepository', 'updateRepository', 'deleteRepository']),   
+            async handleDelete(repository) {
                 if (confirm("Realy?")) {
-                    await this.deleteRepository(repositoryName);
+                    await this.deleteRepository(repository);
                 }
             },
             async handleCreateOrUpdate() {
@@ -160,9 +160,9 @@
                 this.isCreate = true;
                 this.openNewDialog = true;
             },
-            openEdit(repositoryName) {
+            openEdit(repository) {
                 this.clearDialogModel();
-                this.loadDialogModel(repositoryName); 
+                this.loadDialogModel(repository.name); 
                 this.isCreate = false;
                 this.openNewDialog = true;
             },

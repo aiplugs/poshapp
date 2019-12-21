@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
@@ -11,26 +12,21 @@ namespace Aiplugs.PoshApp.Services
     public abstract class GitCommand 
     {
         public string ConnectionId { get; set; }
+        public string Name { get; set; }
+        public string Path { get; set; }
     }
     public class CloneCommand : GitCommand
     {
         public string Origin { get; set; }
-        public string Path { get; set; }
     }
     public class FetchCommand : GitCommand
     {
-        public string Name { get; set; }
-        public string Path { get; set; }
     }
     public class ResetCommand : GitCommand
     {
-        public string Name { get; set; }
-        public string Path { get; set; }
     }
     public class LogCommand : GitCommand
     {
-        public string Name { get; set; }
-        public string Path { get; set; }
     }
 
     public class GitContext
@@ -63,17 +59,24 @@ namespace Aiplugs.PoshApp.Services
             {
                 if (_context.TryDequeueCommand(out var command))
                 {
-                    if (command is CloneCommand cloneCmd)
-                        Clone(cloneCmd);
+                    try
+                    {
+                        if (command is CloneCommand cloneCmd)
+                            Clone(cloneCmd);
 
-                    else if (command is FetchCommand fechCmd)
-                        Fetch(fechCmd);
+                        else if (command is FetchCommand fechCmd)
+                            Fetch(fechCmd);
 
-                    else if (command is LogCommand logCmd)
-                        Log(logCmd);
+                        else if (command is LogCommand logCmd)
+                            Log(logCmd);
 
-                    else if (command is ResetCommand resetCmd)
-                        Reset(resetCmd);
+                        else if (command is ResetCommand resetCmd)
+                            Reset(resetCmd);
+                    }
+                    catch (Exception exception)
+                    {
+                        await _hub.Clients.Client(command.ConnectionId).SendAsync("WriteErrorLine", exception.Message);
+                    }
                 }
                 await Task.Delay(100);
             }
@@ -84,10 +87,11 @@ namespace Aiplugs.PoshApp.Services
             {
                 RecurseSubmodules = true,
                 OnProgress = (progress) => {
-                    _hub.Clients.Client(cmd.ConnectionId).SendAsync("GitProgress", progress).Wait();
+                    _hub.Clients.Client(cmd.ConnectionId).SendAsync("GitProgress", cmd.Name, progress).Wait();
                     return true;
                 }
             });
+            _hub.Clients.Client(cmd.ConnectionId).SendAsync("GitClone", cmd.Name).Wait();
         }
 
         public void Fetch(FetchCommand cmd)

@@ -37,7 +37,7 @@ namespace Aiplugs.PoshApp.Controllers
                 return Conflict();
 
             if (!string.IsNullOrEmpty(model.Origin))
-                _gitContext.Invoke(new CloneCommand { ConnectionId = model.ConnectionId, Origin = model.Origin });
+                _gitContext.Invoke(_mapper.Map<CloneCommand>(model));
 
             await _service.AddRepository(_mapper.Map<Repository>(model));
 

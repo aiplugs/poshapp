@@ -1,0 +1,38 @@
+﻿<template id="powershell-ui-progress-for-git-component">
+    <span class="d-flex align-center" v-if="progress.length > 0">
+        {{name}}:{{text}}
+    </span>
+</template>
+<script>
+    Vue.component('powershelluiprogressforgit', {
+        template: '#powershell-ui-progress-for-git-component',
+        data() {
+            return {
+                name: null,
+                text: null,
+                progress: []
+            }
+        },
+        methods: {
+            shift() {
+                if (this.progress.length > 0) {
+                    this.text = this.progress.shift();
+                }
+            },
+            update() {
+                this.shift(); setTimeout(() => this.update(), 10);
+            }
+        },
+        mounted() {
+            this.$signalr.on('GitProgress', (name, progress) => {
+                this.name = name;
+                this.progress.push(progress);
+                if (this.text == null)
+                    this.update();
+            })
+            this.$signalr.on('GitClone', name => {
+                this.progress.push(null);
+            })
+        }
+    })
+</script>

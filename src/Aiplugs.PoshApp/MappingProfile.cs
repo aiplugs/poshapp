@@ -1,4 +1,5 @@
 using Aiplugs.PoshApp.Models;
+using Aiplugs.PoshApp.Services;
 using Aiplugs.PoshApp.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
@@ -20,6 +21,7 @@ namespace Aiplugs.PoshApp
             CreateMap<ActionScript, ActionScriptViewModel>();
             CreateMap<RepositoryViewModel, Repository>();
             CreateMap<Repository, RepositoryViewModel>();
+            CreateMap<RepositoryViewModel, CloneCommand>();
         }
     }
 }
