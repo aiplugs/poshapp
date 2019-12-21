@@ -1,0 +1,138 @@
+<template id="repository-component">
+    <div class="flex-grow-1">
+        <v-btn text color="primary" :disabled="!updatable" v-on:click="handleUpdate">Update</v-btn>
+        <v-dialog v-model="resetDialog" width="600" v-if="modified">
+            <template v-slot:activator="{on}">
+                <v-btn text color="primary" v-on="on">
+                    Remove Modified <v-chip x-small color="primary">{{status.length}}</v-chip>
+                </v-btn>
+            </template>
+            <v-card>
+                <v-card-title>
+                    Remove modified
+                </v-card-title>
+                <v-card-text>
+                    <table>
+                        <tbody>
+                            <tr v-for="(item, index) in status" :key="index">
+                                <td>{{item.state}}</td>
+                                <td>{{item.script}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text v-on:click="resetDialog=false">Cancel</v-btn>
+                    <v-btn text color="error" v-on:click="handleReset">Remove Modified</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <span v-if="message">{{message}}</span>
+        <v-data-table :headers="headers" :items="items" item-key="commit" single-expand show-expand hide-default-footer>
+            <template v-slot:item.tag="{item}">
+                <v-chip v-if="item.commit == origin" color="primary">ORIGIN</v-chip>
+                <v-chip v-if="item.commit == local">LOCAL</v-chip>
+            </template>
+            <template v-slot:item.commit="{item}">
+                {{item.commit.substring(0,7)}}
+            </template>
+            <template v-slot:item.author="{item}">
+                {{item.name}} <{{item.email}}>
+            </template>
+            <template v-slot:item.when="{item}">
+                {{new Date(item.when).toLocaleString()}}
+            </template>
+            <template v-slot:expanded-item="{ headers, item }">
+                <td :colspan="headers.length">
+                    <pre>{{item.message}}</pre>
+                </td>
+            </template>
+        </v-data-table>
+    </div>
+</template>
+<script>
+    Vue.component('Repository', {
+        template: '#repository-component',
+        data() {
+            return {
+                expanded: [],
+                headers: [
+                    { text: '',       value:'tag', sortable: false },
+                    { text: 'Commit', value:'commit', sortable: false },
+                    { text: 'Message', value:'messageShort', sortable: false },
+                    { text: '', value: 'data-table-expand' },
+                    { text: 'Author', value:'author', sortable: false },
+                    { text: 'Time', value:'when', sortable: false },
+                ],
+                items: [],
+                origin: null,
+                local: null,
+                message: null,
+                status: [],
+                resetDialog: false,
+            }
+        },
+        computed: {
+            updatable() {
+                return this.origin && this.origin != this.local
+            },
+            modified() {
+                return this.status.length > 0;
+            }
+        },
+        methods: {
+            init() {
+                this.$signalr.on('GitLog', (name, logs, origin, local) => {
+                    if (this.$route.params.id == name) {
+                        this.items.splice(0, this.items.length, ...logs);
+                        this.origin = origin;
+                        this.local = local;
+                        this.message = !origin ? 'This repository does not have remote origin/master branch.' : null;
+                    }
+                })
+                this.$signalr.on('GitLogNotFound', name => {
+                    if (this.$route.params.id == name) {
+                        this.items.splice(0);
+                        this.message = 'This repository have not initialized git.'
+                    }
+                })
+                this.$signalr.on('GitFetchProgress', (name, progress) => {
+                    if (this.$route.params.id == name) {
+                        this.message = progress
+                    }
+                })
+                this.$signalr.on('GitStatus', (name, status) => {
+                    if (this.$route.params.id == name) {
+                        this.status.splice(0, this.status.length, ...status);
+                    }
+                })
+            },
+            getLog() {
+                this.$signalr.invoke('GitLog', this.$route.params.id);
+            },
+            handleUpdate() {
+                this.$signalr.invoke('GitForcePull', this.$route.params.id);
+            },
+            handleReset() {
+                this.$signalr.invoke('GitReset', this.$route.params.id);
+            }
+        },
+        mounted() {
+            this.init();
+            this.$signalr.onconnected(() => {
+                this.getLog()
+            }) 
+        },
+        beforeRouteUpdate (to, from, next) {
+            this.getLog()
+        },
+        beforeRouteLeave (to, from , next) {
+            this.$signalr.off('GitLog');
+            this.$signalr.off('GitLogNotFound');
+            this.$signalr.off('GitFetchProgress');
+            this.$signalr.off('GitStatus');
+            next();
+        }
+    })
+</script>

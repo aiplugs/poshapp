@@ -1,0 +1,36 @@
+<template id="page-component">
+    <div>
+        <v-form>
+            <v-text-field label="ID" v-model="id" required></v-text-field>
+            <v-text-field label="Path" v-model="path" required></v-text-field>
+            <v-text-field label="Group" v-model="group" required/></v-text-field>
+            <v-btn v-on:click="submit">Create</v-btn>
+        </v-form>
+    </div>
+</template>
+
+<script>
+    Vue.component('Page', {
+        template: '#page-component',
+        data() {
+            return {
+                id: null,
+                path: null,
+                group: null,
+            }
+        },
+        methods: {
+            async submit() {
+                const { id, path, group } = this;
+                const body = JSON.stringify({ id, path, group });
+                const response = await fetch('/api/settings/scripts/as/list', { method: 'post', headers:{ 'Content-Type': 'application/json' }, body});
+                if (response.ok) {
+                    this.$router.push('/');
+                }
+                else {
+                    alert('err');
+                }
+            }
+        }
+    })
+</script>

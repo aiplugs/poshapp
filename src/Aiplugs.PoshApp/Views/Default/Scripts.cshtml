@@ -1,0 +1,96 @@
+<template id="scripts-component">
+    <section class="flex-grow-1">
+        <div ref="editor" style="width:100%;height:100%;"></div>
+    </section>
+</template>
+<script src="/lib/vs/loader.js"></script>
+<script>
+    const loadingMonaco = new Promise(function(resolve){
+        require.config({ paths: { 'vs': '/lib/vs' }});
+        require(['vs/editor/editor.main'], function() {
+            resolve()
+        });
+    });
+    Vue.component('Scripts', {
+        template: '#scripts-component',
+        data() {
+            return {
+                editor: null,
+                content: null
+            }
+        },
+        methods: {
+            ...Vuex.mapActions('toast', ['toast']),
+            async loadScriptContent(repo, id) {
+                var response = await fetch(`/api/repositories/${repo}/scripts/${id}/content`);
+                if (response.ok) {
+                    return await response.text();
+                }
+                return '';
+            },
+            async saveScriptContent(repo, id, content) {
+                var response = await fetch(`/api/repositories/${repo}/scripts/${id}/content`, { method: 'put', headers: { 'Content-Type': 'text/plain' }, body: content });
+                if (response.ok) {
+                }
+            },
+            async createEditor() {
+                const [_, content] = await Promise.all([
+                    loadingMonaco,
+                    this.loadScriptContent(this.$route.params.repo, this.$route.params.id),
+                ]);
+                this.content = content;
+                this.editor = monaco.editor.create(this.$refs.editor, {
+                    value: content,
+                    language: 'powershell',
+                    fontSize: 16
+                });
+                this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
+                    const value = this.editor.getModel().getValue();
+                    this.saveScriptContent(this.$route.params.repo, this.$route.params.id, value).then(_ => {
+                        this.content = value;
+                        this.toast({
+                            text: "Saved",
+                            color: "success",
+                            top: true,
+                            right: true
+                        });
+                    })
+                })
+            }, 
+            async changeContent(repository, id) {
+                if (this.editor) {
+                    const content = await this.loadScriptContent(repository, id);
+                    this.editor.getModel().setValue(content);
+                    this.content = content;
+                }
+            },
+            confirmLeave() {
+                if (this.editor == null)
+                    return true;
+                
+                const value = this.editor.getModel().getValue();
+
+                if (this.content == value)
+                    return true;
+
+                return confirm("Really?");
+            }
+        },
+        mounted() {
+            this.createEditor();
+        },
+        async beforeRouteUpdate (to, from, next) {
+            if (this.content != null) {
+                if (this.confirmLeave())
+                    next();
+            } else {
+                next();
+            }
+            await this.changeContent(to.params.repo, to.params.id);
+        },
+        beforeRouteLeave (to, from , next) {
+            if (this.confirmLeave())
+                next();
+        }
+    })
+</script>

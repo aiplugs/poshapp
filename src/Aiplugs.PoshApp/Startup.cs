@@ -49,7 +49,7 @@ namespace Aiplugs.PoshApp
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error");
             }
 
             if (HybridSupport.IsElectronActive)
@@ -65,7 +65,7 @@ namespace Aiplugs.PoshApp
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Default}/{action=Index}/{id?}");
                 endpoints.MapHub<PowershellHub>("/powershell");
             });
         }
