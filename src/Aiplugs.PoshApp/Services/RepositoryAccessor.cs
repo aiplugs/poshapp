@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -5,7 +6,7 @@ using System.Threading.Tasks;
 using Aiplugs.PoshApp.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
-using static Aiplugs.PoshApp.ConfigAccessor;
+using Newtonsoft.Json.Linq;
 
 namespace Aiplugs.PoshApp.Services
 {
@@ -79,5 +80,22 @@ namespace Aiplugs.PoshApp.Services
         }
 
         private string GetConfigPath(Repository repository) => Path.Combine(repository.Path, "config.json");
+
+        public class ScriptConverter : JsonConverter
+        {
+            private readonly static Type _scriptType = typeof(Script);
+            public override bool CanConvert(Type objectType)
+                => _scriptType == objectType;
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                return Script.From(serializer.Deserialize<JObject>(reader));
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }
