@@ -71,7 +71,6 @@ namespace Aiplugs.PoshApp.Services
                     Client.SendAsync("WriteErrorLine", record.ToString()).Wait();
                 };
                 try {
-                    var guid = Guid.NewGuid().ToString();
                     ps.Runspace = runspace;
                     if (invokeCommand is DefaultCommand defaultCommand) 
                     {

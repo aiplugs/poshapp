@@ -8,7 +8,7 @@
                         <v-list-item-title class="pl-4" v-text="repository"></v-list-item-title>
                     </v-list-item-content>
                 </template>
-                <v-list-item :to="`/scripts/${script.repository}/${script.id}`" v-for="script in scripts" :key="`${repository}:${script.id}`">
+                <v-list-item :to="`/scripts/${repository}/${script.id}`" v-for="script in repositoryScripts(repository)" :key="`${repository}:${script.id}`">
                     <v-list-item-content>   
                         <v-list-item-title class="pl-4">{{script.id}}</v-list-item-title>
                     </v-list-item-content>
@@ -68,12 +68,12 @@
                                 <v-select
                                     label="Detail"
                                     v-model="detail"
-                                    :items="detailNames">
+                                    :items="detailNames(repository)">
                                 </v-select>
                                 <v-select
                                     label="Actions"
                                     v-model="actions"
-                                    :items="actionNames"
+                                    :items="actionNames(repository)"
                                     multiple>
                                 </v-select>
                             </div>
@@ -81,7 +81,7 @@
                                 <v-select
                                     label="Actions"
                                     v-model="actions"
-                                    :items="actionNames"
+                                    :items="actionNames(repository)"
                                     multiple>
                                 </v-select>
                             </div>
@@ -98,7 +98,7 @@
                                 <v-select
                                     label="Actions"
                                     v-model="actions"
-                                    :items="actionNames"
+                                    :items="actionNames(repository)"
                                     multiple>
                                 </v-select>
                             </div>
@@ -152,13 +152,10 @@
             }
         },
         computed: {
-            ...Vuex.mapGetters('scripts', ['repositories', 'scripts', 'detailScripts', 'actionScripts']),
-            detailNames() {
-                return this.detailScripts.map(script => `${script.repository}:${script.id}`)
-            },
-            actionNames() {
-                return this.actionScripts.map(script => `${script.repository}:${script.id}`)
-            },
+            ...Vuex.mapGetters('scripts', ['repositories', 'scripts', 'detailNames', 'actionNames']),
+            repositoryScripts() {
+                return repositoryName => this.scripts.filter(script => script.repository === repositoryName);
+            }
         },
         methods: {
             ...Vuex.mapActions('scripts', ['loadScripts','createScript','updateScript', 'deleteScript']),   

@@ -91,7 +91,12 @@ namespace Aiplugs.PoshApp
         public async Task<string> GetScriptContent(string scriptId)
         {
             var splited = scriptId.Split(':');
+            
+            if (splited.Length != 2)
+                throw new ArgumentException(nameof(scriptId));
+            
             var repositoryName = splited[0];
+            
             var scriptName = splited[1];
 
             var repository = await GetRepository(repositoryName);

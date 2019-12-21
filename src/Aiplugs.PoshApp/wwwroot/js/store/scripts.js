@@ -70,6 +70,12 @@ export default {
         detailScripts(state) {
             return Object.keys(state.metadata).map(key => state.metadata[key].filter(script => script.type === 'Detail')).flat();
         },
+        actionNames(state, getters) {
+            return repositoryName => getters.actionScripts.map(script => script.repository === repositoryName ? script.id : `${script.repository}:${script.id}`);
+        },
+        detailNames(state, getters) {
+            return repositoryName => getters.detailScripts.map(script => script.repository === repositoryName ? script.id : `${script.repository}:${script.id}`);
+        },
         find(state) {
             return (repository, id) => (state.metadata[repository] || []).find(d => d.repository === repository && d.id === id);
         },
@@ -80,8 +86,8 @@ export default {
                     return [];
 
                 return script.actions.map(id => {
-                    const [repositoryName, scriptId] = id.split(':');
-                    const action = (state.metadata[repositoryName] || []).find(script => script.repository === repositoryName && script.id === scriptId);
+                    const [_repositoryName, _scriptId] = id.indexOf(":") >= 0 ? id.split(':') : [repositoryName, id];
+                    const action = (state.metadata[_repositoryName] || []).find(script => script.repository === _repositoryName && script.id === _scriptId);
                     if (!action)
                         return null;
                     return { id: `${action.repository}:${action.id}`, displayName: action.displayName };
