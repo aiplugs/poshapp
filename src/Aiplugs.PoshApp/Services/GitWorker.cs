@@ -48,10 +48,10 @@ namespace Aiplugs.PoshApp.Services
     }
     public class GitWorker : BackgroundService
     {
-        private readonly IHubContext<PowershellHub> _hub;
+        private readonly IHubContext<PoshAppHub> _hub;
         private readonly GitContext _context;
         private readonly ScriptsService _scriptsService;
-        public GitWorker(IHubContext<PowershellHub> hub, GitContext context, ScriptsService scriptsService)
+        public GitWorker(IHubContext<PoshAppHub> hub, GitContext context, ScriptsService scriptsService)
         {
             _hub = hub;
             _context = context;

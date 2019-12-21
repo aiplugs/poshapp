@@ -1,7 +1,7 @@
-import store from './store/index.js'
-import router from './router.js'
+import store from './store/index.js';
+import router from './router.js';
 
-Vue.prototype.$signalr = new signalR.HubConnectionBuilder().withUrl("/powershell").withAutomaticReconnect().build();
+Vue.prototype.$signalr = new signalR.HubConnectionBuilder().withUrl("/poshapp").withAutomaticReconnect().build();
 Vue.prototype.$signalr.onconnected = function (callback) {
     const f = () => { 
         if (this.state === 'Connected') { callback(); }

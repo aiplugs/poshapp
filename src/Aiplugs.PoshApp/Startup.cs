@@ -66,7 +66,7 @@ namespace Aiplugs.PoshApp
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Default}/{action=Index}/{id?}");
-                endpoints.MapHub<PowershellHub>("/powershell");
+                endpoints.MapHub<PoshAppHub>("/poshapp");
             });
         }
         public async void ElectronBootstrap()

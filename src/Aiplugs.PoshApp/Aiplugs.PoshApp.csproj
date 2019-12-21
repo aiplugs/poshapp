@@ -3,6 +3,11 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="wwwroot\lib\mdi\css\materialdesignicons.css.map" />
+    <None Include="wwwroot\lib\mdi\css\materialdesignicons.min.css.map" />
+    <None Include="wwwroot\lib\mdi\fonts\materialdesignicons-webfont.woff2" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="ElectronNET.API" Version="7.30.2" />
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />

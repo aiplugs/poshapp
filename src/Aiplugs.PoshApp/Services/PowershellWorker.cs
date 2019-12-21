@@ -20,9 +20,9 @@ namespace Aiplugs.PoshApp.Services
     public class PowershellWorker : BackgroundService, IInternalPowershellUI
     {
         private readonly ScriptsService _service;
-        private readonly IHubContext<PowershellHub> _hub;
+        private readonly IHubContext<PoshAppHub> _hub;
         private readonly PowershellContext _context;
-        public PowershellWorker(ScriptsService service, IHubContext<PowershellHub> hub, PowershellContext context)
+        public PowershellWorker(ScriptsService service, IHubContext<PoshAppHub> hub, PowershellContext context)
         {
             _service = service;
             _hub = hub;
