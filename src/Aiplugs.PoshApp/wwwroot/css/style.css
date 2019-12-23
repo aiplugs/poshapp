@@ -41,9 +41,11 @@
     grid-row-end: 3;
 }
 
-.separator-vertical {
+.separator-vertical,
+.separator-vertical .v-list {
     border-right: 0.5px solid #E0E0E0;
 }
+
 
 .separator-horizontal {
     border-bottom: 0.5px solid #E0E0E0;

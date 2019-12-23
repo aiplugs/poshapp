@@ -108,8 +108,8 @@
                     }
                 })
             },
-            getLog() {
-                this.$signalr.invoke('GitLog', this.$route.params.id);
+            getLog(repositoryName) {
+                this.$signalr.invoke('GitLog', repositoryName);
             },
             handleUpdate() {
                 this.$signalr.invoke('GitForcePull', this.$route.params.id);
@@ -121,11 +121,12 @@
         mounted() {
             this.init();
             this.$signalr.onconnected(() => {
-                this.getLog()
+                this.getLog(this.$route.params.id)
             }) 
         },
         beforeRouteUpdate (to, from, next) {
-            this.getLog()
+            this.getLog(to.params.id)
+            next();
         },
         beforeRouteLeave (to, from , next) {
             this.$signalr.off('GitLog');

@@ -73,6 +73,10 @@ namespace Aiplugs.PoshApp.Services
                         else if (command is ResetCommand resetCmd)
                             Reset(resetCmd);
                     }
+                    catch (LibGit2Sharp.RepositoryNotFoundException)
+                    {
+                        await _hub.Clients.Client(command.ConnectionId).SendAsync("GitLogNotFound", command.Name);
+                    }
                     catch (Exception exception)
                     {
                         await _hub.Clients.Client(command.ConnectionId).SendAsync("WriteErrorLine", exception.Message);
@@ -95,7 +99,7 @@ namespace Aiplugs.PoshApp.Services
         }
 
         public void Fetch(FetchCommand cmd)
-        {
+        {   
             using var repository = new LibGit2Sharp.Repository(cmd.Path);
             var remote = repository.Network.Remotes["origin"];
             if (remote != null) {
@@ -131,16 +135,9 @@ namespace Aiplugs.PoshApp.Services
         {
             using var repository = new LibGit2Sharp.Repository(cmd.Path);
 
-            var origin = repository.Branches["origin/master"];
+            var filter = new LibGit2Sharp.CommitFilter { IncludeReachableFrom = repository.Refs };
 
-            var commits = origin?.Commits ?? repository?.Commits;
-
-            if (commits == null) {
-                _hub.Clients.Client(cmd.ConnectionId).SendAsync("GitLogNotFound", cmd.Name);
-                return;
-            }
-            
-            var top100 = commits.Take(100).Select(o => new {
+            var top = repository.Commits.QueryBy(filter).Take(100).Select(o => new {
                 Commit = o.Id.Sha,
                 Message = o.Message,
                 MessageShort = o.MessageShort,
@@ -149,10 +146,10 @@ namespace Aiplugs.PoshApp.Services
                 When = o.Author.When
             });
 
-            var remote = origin?.Tip.Id.Sha;
+            var remote = repository.Branches["origin/master"]?.Tip.Id.Sha;
             var local = repository.Head.Tip.Id.Sha;
 
-            _hub.Clients.Client(cmd.ConnectionId).SendAsync("GitLog", cmd.Name, top100, remote, local);
+            _hub.Clients.Client(cmd.ConnectionId).SendAsync("GitLog", cmd.Name, top, remote, local);
 
             var scripts = _scriptsService.GetScriptList().Result;
             var status = repository.RetrieveStatus(new LibGit2Sharp.StatusOptions()).Select(item => new {
