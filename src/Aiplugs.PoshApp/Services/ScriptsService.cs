@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Aiplugs.PoshApp.Models;
 using Aiplugs.PoshApp.Services;
@@ -18,6 +19,7 @@ namespace Aiplugs.PoshApp
             [ScriptType.Action] = "param(\n\t[Parameter(ValueFromPipeline=$true)]\n\t[PSObject[]]\n\t$InputObject\n)\nprocess {\n\n}"
         };
         private readonly ConfigAccessor _configAccessor;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         public ScriptsService(ConfigAccessor configAccessor)
         {
             _configAccessor = configAccessor;
@@ -50,22 +52,38 @@ namespace Aiplugs.PoshApp
         }
         public async Task AddRepository(Repository repository)
         {
-            var config = await _configAccessor.LoadRootConfigAsync();
+            await _semaphore.WaitAsync();
+            try
+            {
+                var config = await _configAccessor.LoadRootConfigAsync();
 
-            config.Repositories = config.Repositories.Append(repository ?? throw new ArgumentNullException(nameof(repository)));
-            
-            await _configAccessor.SaveRootConfigAsync(config);
+                config.Repositories = config.Repositories.Append(repository ?? throw new ArgumentNullException(nameof(repository)));
+
+                await _configAccessor.SaveRootConfigAsync(config);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
         public async Task RemoveRepository(string repositoryName)
         {
-            var config = await _configAccessor.LoadRootConfigAsync();
-            var repositories = config.Repositories.ToList();
-            var repository = repositories.First(repo => repo.Name == repositoryName);
+            await _semaphore.WaitAsync();
+            try
+            {
+                var config = await _configAccessor.LoadRootConfigAsync();
+                var repositories = config.Repositories.ToList();
+                var repository = repositories.First(repo => repo.Name == repositoryName);
 
-            repositories.Remove(repository);
-            config.Repositories = repositories;
+                repositories.Remove(repository);
+                config.Repositories = repositories;
 
-            await _configAccessor.SaveRootConfigAsync(config);
+                await _configAccessor.SaveRootConfigAsync(config);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
         public async Task<Script> GetScript(string scriptId)
         {
@@ -131,66 +149,90 @@ namespace Aiplugs.PoshApp
         private string GetScriptFileName(Script script) => $"{script.Id}.ps1";
         public async Task AddScript(Repository repository, Script script)
         {
-            script.Path = GetScriptFileName(script);
+            await _semaphore.WaitAsync();
+            try
+            {
+                script.Path = GetScriptFileName(script);
 
-            var config = await _configAccessor.LoadConfigAsync(repository);
+                var config = await _configAccessor.LoadConfigAsync(repository);
 
-            config.Scripts = config.Scripts.Append(script ?? throw new ArgumentNullException(nameof(script)));
+                config.Scripts = config.Scripts.Append(script ?? throw new ArgumentNullException(nameof(script)));
 
-            await _configAccessor.SaveConfigAsync(repository, config);
+                await _configAccessor.SaveConfigAsync(repository, config);
 
-            await File.WriteAllTextAsync(GetScriptPath(repository, script.Path), initialScriptTexts[script.Type]);
+                await File.WriteAllTextAsync(GetScriptPath(repository, script.Path), initialScriptTexts[script.Type]);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
         public async Task UpdateScript(Repository repository, string id, Script script)
         {
-            var config = await _configAccessor.LoadConfigAsync(repository);
-            var scripts = config.Scripts.ToArray();
-            var index = Array.FindIndex(scripts, 0, scripts.Length, s => s.Id == id);
-
-            script.Path = scripts[index].Path;
-            scripts[index] = script;
-
-            if (id != script.Id)
+            await _semaphore.WaitAsync();
+            try
             {
-                var src = script.Path;
-                var dst = GetScriptFileName(script);
-                File.Move(GetScriptPath(repository, src), GetScriptPath(repository, dst));
-                script.Path = dst;
+                var config = await _configAccessor.LoadConfigAsync(repository);
+                var scripts = config.Scripts.ToArray();
+                var index = Array.FindIndex(scripts, 0, scripts.Length, s => s.Id == id);
+
+                script.Path = scripts[index].Path;
+                scripts[index] = script;
+
+                if (id != script.Id)
+                {
+                    var src = script.Path;
+                    var dst = GetScriptFileName(script);
+                    File.Move(GetScriptPath(repository, src), GetScriptPath(repository, dst));
+                    script.Path = dst;
+                }
+
+                config.Scripts = scripts;
+
+                await _configAccessor.SaveConfigAsync(repository, config);
             }
-
-            config.Scripts = scripts;
-
-            await _configAccessor.SaveConfigAsync(repository, config);
+            finally
+            {
+                _semaphore.Release();
+            }
         }
         public async Task RemoveScript(Repository repository, string id)
         {
-            var config = await _configAccessor.LoadConfigAsync(repository);
-            var scripts = config.Scripts.ToList();
-            var script = scripts.First(s => s.Id == id);
-
-            if (script.Type == ScriptType.Detail)
+            await _semaphore.WaitAsync();
+            try
             {
-                foreach(var hasDetail in scripts.Where(s => s.Type == ScriptType.List).Cast<ListScript>().Where(s => s.Detail == id)) 
+                var config = await _configAccessor.LoadConfigAsync(repository);
+                var scripts = config.Scripts.ToList();
+                var script = scripts.First(s => s.Id == id);
+
+                if (script.Type == ScriptType.Detail)
                 {
-                    hasDetail.Detail = null;
+                    foreach (var hasDetail in scripts.Where(s => s.Type == ScriptType.List).Cast<ListScript>().Where(s => s.Detail == id))
+                    {
+                        hasDetail.Detail = null;
+                    }
+                }
+                else if (script.Type == ScriptType.Action)
+                {
+                    foreach (var hasAction in scripts.Where(s => s.Type != ScriptType.Action).Cast<IActionTarget>().Where(s => s.Actions.Contains(id)))
+                    {
+                        hasAction.Actions = hasAction.Actions.Where(actionId => actionId != id).ToArray();
+                    }
+                }
+
+                scripts.Remove(script);
+                config.Scripts = scripts;
+
+                await _configAccessor.SaveConfigAsync(repository, config);
+
+                if (File.Exists(script.Path))
+                {
+                    File.Delete(script.Path);
                 }
             }
-            else if (script.Type == ScriptType.Action)
+            finally
             {
-                foreach(var hasAction in scripts.Where(s => s.Type != ScriptType.Action).Cast<IActionTarget>().Where(s => s.Actions.Contains(id)))
-                {
-                    hasAction.Actions = hasAction.Actions.Where(actionId => actionId != id).ToArray();
-                }
-            }
-
-            scripts.Remove(script);
-            config.Scripts = scripts;
-
-            await _configAccessor.SaveConfigAsync(repository, config);
-
-            if (File.Exists(script.Path))
-            {
-                File.Delete(script.Path);
+                _semaphore.Release();
             }
         }
     }
