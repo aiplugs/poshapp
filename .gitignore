@@ -4,3 +4,4 @@ bin
 obj
 *.user
 node_modules
+src/monaco-editor/dist
