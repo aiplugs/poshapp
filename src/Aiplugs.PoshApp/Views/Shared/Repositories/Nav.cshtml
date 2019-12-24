@@ -32,26 +32,30 @@
                 <v-card-text>
                     <v-container fluid>
                         <v-form ref="form" v-model="isValid" lazy-validation>
-                            <v-text-field
-                                label="Repository Name"
-                                v-model="name"
-                                :rules="nameRules"
-                                required>
+                            <v-radio-group row v-model="repositoryType">
+                                <v-radio label="Local" value="local"></v-radio>
+                                <v-radio label="Remote" value="remote"></v-radio>
+                            </v-radio-group>
+                            <div v-if="repositoryType=='remote'">
+                                <v-text-field label="Origin Url"
+                                              v-model="origin"
+                                              :readonly="readonlyOrigin"
+                                              :disabled="readonlyOrigin"
+                                              required>
+                                </v-text-field>
+                            </div>
+                            <v-text-field label="Repository Name"
+                                          v-model="name"
+                                          :rules="nameRules"
+                                          required>
                             </v-text-field>
-                            <v-text-field
-                                label="Directory Path"
-                                v-model="path"
-                                :rules="pathRules"
-                                :readonly="readonlyPath"
-                                :disabled="readonlyPath"
-                                required>
-                            </v-text-field>
-                            <v-text-field
-                                label="Origin Url (option)"
-                                v-model="origin"
-                                :readonly="readonlyOrigin"
-                                :disabled="readonlyOrigin"
-                                required>
+                            <v-text-field label="Directory Path"
+                                          v-model="path"
+                                          :rules="pathRules"
+                                          :readonly="readonlyPath"
+                                          :disabled="readonlyPath"
+                                          v-on:click="openFileManager"
+                                          required>
                             </v-text-field>
                         </v-form>
                     </v-container>
@@ -78,97 +82,111 @@
     </section>
 </template>
 <script>
-    Vue.component('RepositoryNav', {
-        template: '#repository-nav-component',
-        data() {
-            return {
-                openNewDialog: false,
-                name: null,
-                path: null,
-                origin: null,
-                readonlyOrigin: false,
-                readonlyPath: false,
-                isCreate: false,
-                isValid: true,
-                repositoryId: null,
-                nameRules:[
-                    v => !!v || 'Repository Name is required',
-                    v => /^[a-zA-Z0-9_]*$/.test(v) || 'Valid characters are A-Z a-z 0-9 _'
-                ],
-                pathRules: [
-                    v => !!v || 'Repository Name is required'
-                ]
-            }
-        },
-        computed: {
-            ...Vuex.mapState('repositories', ['repositories'])
-        },
-        methods: {
-            ...Vuex.mapActions('repositories', ['loadRepositories', 'createRepository', 'updateRepository', 'deleteRepository']),   
-            async handleDelete(repository) {
-                if (confirm("Realy?")) {
-                    await this.deleteRepository(repository);
+    (function(){
+        const { ipcRenderer } = require("electron");
+        Vue.component('RepositoryNav', {
+            template: '#repository-nav-component',
+            data() {
+                return {
+                    openNewDialog: false,
+                    name: null,
+                    path: null,
+                    origin: null,
+                    readonlyOrigin: false,
+                    readonlyPath: false,
+                    isCreate: false,
+                    isValid: true,
+                    repositoryId: null,
+                    repositoryType: 'local',
+                    nameRules:[
+                        v => !!v || 'Repository Name is required',
+                        v => /^[a-zA-Z0-9_]*$/.test(v) || 'Valid characters are A-Z a-z 0-9 _'
+                    ],
+                    pathRules: [
+                        v => !!v || 'Repository Name is required'
+                    ]
                 }
             },
-            async handleCreateOrUpdate() {
-                const payload = {
-                    id: this.repositoryId,
-                    name: this.name,
-                    path: this.path,
-                    origin: this.origin,
-                    connectionId: this.$signalr.connectionId
-                };
-                await this.createOrUpdate(payload);
-                this.openNewDialog = false;
+            computed: {
+                ...Vuex.mapState('repositories', ['repositories'])
             },
-            async createOrUpdate(payload) {
-                if (this.isCreate) {
-                    await this.createRepository(payload)
-                }
-                else {
-                    if (await this.updateRepository(payload)) {
-                        this.navigateIfChangeId();
+            methods: {
+                ...Vuex.mapActions('repositories', ['loadRepositories', 'createRepository', 'updateRepository', 'deleteRepository']),   
+                async handleDelete(repository) {
+                    if (confirm("Realy?")) {
+                        await this.deleteRepository(repository);
                     }
+                },
+                async handleCreateOrUpdate() {
+                    const payload = {
+                        id: this.repositoryId,
+                        name: this.name,
+                        path: this.path,
+                        origin: this.origin,
+                        connectionId: this.$signalr.connectionId
+                    };
+                    await this.createOrUpdate(payload);
+                    this.openNewDialog = false;
+                },
+                async createOrUpdate(payload) {
+                    if (this.isCreate) {
+                        await this.createRepository(payload)
+                    }
+                    else {
+                        if (await this.updateRepository(payload)) {
+                            this.navigateIfChangeId();
+                        }
+                    }
+                },
+                navigateIfChangeId() {
+                    if (this.$route.params.id == this.repositoryId && this.repositoryId != this.name) {
+                        this.$router.replace('/repositories/' + this.scriptName);
+                    }
+                },
+                clearDialogModel() {
+                    this.repositoryId = null;
+                    this.name = null;
+                    this.path = null;
+                    this.origin = null;
+                    this.readonlyPath = false;
+                    this.readonlyOrigin = false;
+                },
+                loadDialogModel(repositoryName) {
+                    const data = this.$store.getters['repositories/find'](repositoryName);
+                    if (data) {
+                        this.repositoryId = data.name;
+                        this.name = data.name;
+                        this.path = data.path;
+                        this.origin = data.origin;
+                        this.readonlyPath = true;
+                        this.readonlyOrigin = !!this.origin;
+                    }
+                },
+                openCreate() {
+                    this.clearDialogModel(); 
+                    this.isCreate = true;
+                    this.openNewDialog = true;
+                },
+                openEdit(repository) {
+                    this.clearDialogModel();
+                    this.loadDialogModel(repository.name); 
+                    this.isCreate = false;
+                    this.openNewDialog = true;
+                },
+                openFileManager() {
+                    ipcRenderer.send('select-directory');
                 }
             },
-            navigateIfChangeId() {
-                if (this.$route.params.id == this.repositoryId && this.repositoryId != this.name) {
-                    this.$router.replace('/repositories/' + this.scriptName);
-                }
+            async mounted() {
+                await this.loadRepositories();
+                ipcRenderer.on('select-directory-reply', (sender, path) => {
+                    this.path = path;
+                });
             },
-            clearDialogModel() {
-                this.repositoryId = null;
-                this.name = null;
-                this.path = null;
-                this.origin = null;
-                this.readonlyPath = false;
-                this.readonlyOrigin = false;
-            },
-            loadDialogModel(repositoryName) {
-                const data = this.$store.getters['repositories/find'](repositoryName);
-                if (data) {
-                    this.repositoryId = data.name;
-                    this.name = data.name;
-                    this.path = data.path;
-                    this.origin = data.origin;
-                    this.readonlyPath = true;
-                    this.readonlyOrigin = !!this.origin;
-                }
-            },
-            openCreate() {
-                this.clearDialogModel(); 
-                this.isCreate = true;
-                this.openNewDialog = true;
-            },
-            openEdit(repository) {
-                this.clearDialogModel();
-                this.loadDialogModel(repository.name); 
-                this.isCreate = false;
-                this.openNewDialog = true;
-            },
-        },
-        async mounted() {
-            await this.loadRepositories();
-        }
-    })
+            beforeRouteLeave (to, from , next) {
+                ipcRenderer.removeAllListeners('select-directory-reply');
+                next();
+            }
+        })
+    }())
 </script>

@@ -67,6 +67,7 @@ namespace Aiplugs.PoshApp
             if (HybridSupport.IsElectronActive)
             {
                 ElectronBootstrap();
+                ElectronIpc.Setup();
             }
         }
         public async void ElectronBootstrap()
