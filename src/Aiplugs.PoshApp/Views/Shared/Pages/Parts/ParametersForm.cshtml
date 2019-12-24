@@ -107,7 +107,7 @@
             },
             getPageSize() {
                 const p = this.parameters.find(p => p.name == 'PageSize');
-                return p ? p.value : null;
+                return p ? parseInt(p.value) : null;
             },
             emitRun() {
                 this.$emit('run', this.getClixmls());
