@@ -31,7 +31,7 @@
                 <v-card-title class="headline">{{ !repositoryId ? "New Repository" : "Update Repository" }}</v-card-title>
                 <v-card-text>
                     <v-container fluid>
-                        <v-form ref="form" v-model="isValid" lazy-validation>
+                        <v-form ref="form" v-model="isValid">
                             <v-radio-group row v-model="repositoryType">
                                 <v-radio label="Local" value="local"></v-radio>
                                 <v-radio label="Remote" value="remote"></v-radio>
@@ -39,6 +39,7 @@
                             <div v-if="repositoryType=='remote'">
                                 <v-text-field label="Origin Url"
                                               v-model="origin"
+                                              :rules="originRules"
                                               :readonly="readonlyOrigin"
                                               :disabled="readonlyOrigin"
                                               required>
@@ -49,14 +50,19 @@
                                           :rules="nameRules"
                                           required>
                             </v-text-field>
-                            <v-text-field label="Directory Path"
-                                          v-model="path"
-                                          :rules="pathRules"
-                                          :readonly="readonlyPath"
-                                          :disabled="readonlyPath"
-                                          v-on:click="openFileManager"
-                                          required>
-                            </v-text-field>
+                            <div class="d-flex align-center">
+                                <v-text-field label="Directory Path"
+                                              v-model="path"
+                                              :rules="pathRules"
+                                              :disabled="readonlyPath"
+                                              readonly
+                                              required>
+                                </v-text-field>
+                                <v-btn :disabled="readonlyPath"
+                                       v-on:click="openFileManager" text>
+                                    <v-icon>mdi-folder-search-outline</v-icon>
+                                </v-btn>
+                            </div>
                         </v-form>
                     </v-container>
                 </v-card-text>
@@ -95,7 +101,7 @@
                     readonlyOrigin: false,
                     readonlyPath: false,
                     isCreate: false,
-                    isValid: true,
+                    isValid: false,
                     repositoryId: null,
                     repositoryType: 'local',
                     nameRules:[
@@ -104,6 +110,9 @@
                     ],
                     pathRules: [
                         v => !!v || 'Repository Name is required'
+                    ],
+                    originRules: [
+                        v => this.repositoryType == 'local' || !!v || 'Origin Url is required'
                     ]
                 }
             },
