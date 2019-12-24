@@ -3,14 +3,7 @@
         <div ref="editor" class="fill-height"></div>
     </div>
 </template>
-<script src="/lib/vs/loader.js"></script>
 <script>
-    const loadingMonaco = new Promise(function(resolve){
-        require.config({ paths: { 'vs': '/lib/vs' }});
-        require(['vs/editor/editor.main'], function() {
-            resolve()
-        });
-    });
     Vue.component('Scripts', {
         template: '#scripts-component',
         data() {
@@ -34,13 +27,9 @@
                 }
             },
             async createEditor() {
-                const [_, content] = await Promise.all([
-                    loadingMonaco,
-                    this.loadScriptContent(this.$route.params.repo, this.$route.params.id),
-                ]);
-                this.content = content;
+                this.content = await this.loadScriptContent(this.$route.params.repo, this.$route.params.id);
                 this.editor = monaco.editor.create(this.$refs.editor, {
-                    value: content,
+                    value: this.content,
                     language: 'powershell',
                     fontSize: 16,
                 });

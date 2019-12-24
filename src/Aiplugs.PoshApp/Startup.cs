@@ -51,11 +51,6 @@ namespace Aiplugs.PoshApp
             {
                 app.UseExceptionHandler("/Error");
             }
-
-            if (HybridSupport.IsElectronActive)
-            {
-                ElectronBootstrap();
-            }
             
             app.UseStaticFiles();
 
@@ -68,6 +63,11 @@ namespace Aiplugs.PoshApp
                     pattern: "{controller=Default}/{action=Index}/{id?}");
                 endpoints.MapHub<PoshAppHub>("/poshapp");
             });
+
+            if (HybridSupport.IsElectronActive)
+            {
+                ElectronBootstrap();
+            }
         }
         public async void ElectronBootstrap()
         {
@@ -75,15 +75,10 @@ namespace Aiplugs.PoshApp
             {
                 Width = 1152,
                 Height = 864,
-                Show = false,
-                WebPreferences = new WebPreferences
-                {
-                    NodeIntegration = false
-                }
+                Show = true,
             });
 
-            browserWindow.OnReadyToShow += () => browserWindow.Show();
-            browserWindow.SetTitle("Electron.NET API Demos");
+            browserWindow.SetTitle("POSH App");
         }
     }
 }
