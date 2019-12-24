@@ -56,8 +56,7 @@
             },
             detailId() {
                 const { repo, id } = this.$route.params;
-                const script = this.$store.getters['scripts/find'](repo, id);
-                return script.detail;
+                return this.$store.getters['scripts/findDetail'](repo, id);
             },
             actions() {
                 const { repo, id } = this.$route.params;

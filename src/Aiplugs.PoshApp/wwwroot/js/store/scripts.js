@@ -93,6 +93,19 @@ export default {
                     return { id: `${action.repository}:${action.id}`, displayName: action.displayName };
                 });
             };
+        },
+        findDetail(state) {
+            return (repositoryName, scriptId) => {
+                const script = (state.metadata[repositoryName] || []).find(d => d.id === scriptId);
+                if (!script || !script.detail)
+                    return null;
+
+                let repo = repositoryName, id = script.detail;
+                if (script.detail.indexOf(':') >= 0) {
+                    [repo, id] = script.detail.split(':');
+                }
+                return `${repo}:${id}`;
+            };
         }
     },
     mutations: {
