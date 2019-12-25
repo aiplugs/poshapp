@@ -4,6 +4,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Security;
 using System.Threading.Tasks;
+using System.Xml;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Aiplugs.PoshApp.Services
@@ -20,13 +21,19 @@ namespace Aiplugs.PoshApp.Services
             _scriptsService = scriptsService;
         }
 
-        public void Prompt(IDictionary<string, string> fields)
+        public async Task Prompt(IDictionary<string, string> fields)
         {
 
             if (_powershellContext.IO.TryGetValue(Context.ConnectionId, out var io))
             {
-
-                io.PromptQueue.Enqueue(fields.ToDictionary(o => o.Key, o => o.Value != null ? new PSObject(PSSerializer.Deserialize(o.Value)) : null));
+                try
+                {
+                    io.PromptQueue.Enqueue(fields.ToDictionary(o => o.Key, o => o.Value != null ? new PSObject(PSSerializer.Deserialize(o.Value)) : null));
+                }
+                catch (XmlException ex)
+                {
+                    await Clients.Caller.SendAsync("WriteErrorLine", ex.Message);
+                }
             }
         }
 
