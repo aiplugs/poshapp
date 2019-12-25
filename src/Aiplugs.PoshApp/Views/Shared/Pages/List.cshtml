@@ -10,23 +10,24 @@
                 <v-btn text v-for="action in actions" :key="action.name" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
             </v-row>
         </header>
-        <v-data-table
-            v-model="selected"
-            :headers="headers"
-            :items="list"
-            :page.sync="page"
-            :items-per-page="pageSize"
-            item-key="$clixml"
-            hide-default-footer
-            show-select
-            v-if="list.length > 0">
+        <v-data-table v-model="selected"
+                        :headers="headers"
+                        :items="list"
+                        :page.sync="page"
+                        :items-per-page="pageSize"
+                        item-key="$clixml"
+                        hide-default-footer
+                        show-select
+                        v-if="list.length > 0">
             <template v-slot:item.$poshapp_action="{ item }">
                 <v-btn icon text v-on:click="openDetail(item)">
                     <v-icon>mdi-fullscreen</v-icon>
                 </v-btn>
             </template>
         </v-data-table>
-        <v-pagination v-model="page" :length="total" v-if="list.length > 0"></v-pagination>
+        <div class="ma-auto" style="width: 80%;">
+            <v-pagination v-model="page" :length="total" v-if="list.length > 0"></v-pagination>
+        </div>
         <transition name="slide-x-reverse-transition">
             <detail-page :script="detailScriptId" :input="detailInput" v-if="detailScriptId" v-on:close="detailScriptId=null"></detail-page>
         </transition>
