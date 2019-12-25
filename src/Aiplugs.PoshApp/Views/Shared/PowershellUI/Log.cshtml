@@ -9,7 +9,7 @@
                 <v-icon>mdi-timeline-text-outline</v-icon>
             </v-btn>
         </template>
-        <div class="black d-flex flex-column" style="width: 600px; height: 600px;">
+        <div class="black d-flex flex-column overflow-y-auto no-scrollbar" style="width: 600px; height: 600px; scroll-behavior: smooth;">
             <div style="flex: 1;"></div>
             <pre v-for="(message, index) in messages" :key="index"
                  v-text="message.text"

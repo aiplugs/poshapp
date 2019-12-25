@@ -65,3 +65,11 @@
     overflow-x: hidden;
     scroll-behavior: smooth;
 }
+
+.main-content::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
