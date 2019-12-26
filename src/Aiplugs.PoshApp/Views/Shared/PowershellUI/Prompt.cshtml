@@ -55,9 +55,10 @@
                     </div>
                 </v-form>
             </v-card-text>
+            <v-divider></v-divider>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn :disabled="!valid" v-on:click="handlePrompt">OK</v-btn>
+                <v-btn text :disabled="!valid" v-on:click="handlePrompt">OK</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>

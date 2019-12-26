@@ -1,6 +1,6 @@
 <template id="list-page-component">
     <div class="main-content">
-        <header class="separator-horizontal">
+        <header>
             <v-row class="pl-4 pr-4" style="width: 100%;">
                 <v-col cols="12" class="pt-0 pb-0">
                     <parameters-form ref="form" :script="scriptId" :page="page" :page-size="pageSize" v-on:run="run"></parameters-form>
@@ -10,15 +10,16 @@
                 <v-btn text v-for="action in actions" :key="action.name" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
             </v-row>
         </header>
+        <v-divider></v-divider>
         <v-data-table v-model="selected"
-                        :headers="headers"
-                        :items="list"
-                        :page.sync="page"
-                        :items-per-page="pageSize"
-                        item-key="$clixml"
-                        hide-default-footer
-                        show-select
-                        v-if="list.length > 0">
+                      :headers="headers"
+                      :items="list"
+                      :page.sync="page"
+                      :items-per-page="pageSize"
+                      item-key="$clixml"
+                      hide-default-footer
+                      show-select
+                      v-if="list.length > 0">
             <template v-slot:item.$poshapp_action="{ item }">
                 <v-btn icon text v-on:click="openDetail(item)">
                     <v-icon>mdi-fullscreen</v-icon>

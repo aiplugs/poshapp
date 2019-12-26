@@ -1,6 +1,6 @@
 <template id="singleton-page-component">
     <div class="main-content">
-        <header class="separator-horizontal">
+        <header>
             <v-row class="pl-4 pr-4" style="width: 100%;">
                 <v-col cols="12" class="pt-0 pb-0">
                     <parameters-form ref="form" :script="scriptId" v-on:run="run"></parameters-form>
@@ -10,6 +10,7 @@
                 <v-btn text v-for="action in actions" :key="action.name" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
             </v-row>
         </header>
+        <v-divider></v-divider>
         <data-viewer :data="data"></data-viewer>
     </div>
 </template>

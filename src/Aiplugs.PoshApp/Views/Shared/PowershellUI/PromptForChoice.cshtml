@@ -13,9 +13,10 @@
                     </tr>
                 </table>
             </v-card-text>
+            <v-divider></v-divider>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn v-for="(choice, index) in choices"
+                <v-btn text v-for="(choice, index) in choices"
                        :key="index"
                        :color="index==defaultChoice?'primary':null"
                        v-on:click="select(index)">
