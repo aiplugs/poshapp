@@ -33,7 +33,6 @@ namespace Aiplugs.PoshApp.Services
 
     public class PowershellIO
     {
-        public readonly ConcurrentQueue<InvokeCommand> InvokeQueue = new ConcurrentQueue<InvokeCommand>();
         public readonly ConcurrentQueue<Dictionary<string, PSObject>> PromptQueue = new ConcurrentQueue<Dictionary<string, PSObject>>();
         public readonly ConcurrentQueue<int> ChoiceQueue = new ConcurrentQueue<int>();
         public readonly ConcurrentQueue<PSCredential> CredentialQueue = new ConcurrentQueue<PSCredential>();

@@ -9,6 +9,7 @@ using System.Management.Automation.Runspaces;
 using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
+using Aiplugs.PoshApp.Exceptions;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -110,8 +111,10 @@ namespace Aiplugs.PoshApp.Services
                 }
             }
         }
-        public string CurrentConnectionId;
-        public IClientProxy Client => _hub.Clients.Client(CurrentConnectionId);
+
+        private string CurrentConnectionId;
+        private IClientProxy Client => _hub.Clients.Client(CurrentConnectionId);
+
         private async Task<bool> WaitAndCheckCancel(int milliseconds)
         {
             await Task.Delay(milliseconds);
@@ -124,129 +127,118 @@ namespace Aiplugs.PoshApp.Services
 
             return false;
         }
-        public Dictionary<string, PSObject> Prompt(string caption, string message, Collection<FieldDescription> descriptions)
+
+        private TResult IOWork<TResult>(Func<PowershellIO,TResult> action)
         {
             if (_context.IO.TryGetValue(CurrentConnectionId, out var io))
             {
-                Dictionary<string, PSObject> result;
-                Client.SendAsync("Prompt", caption, message, descriptions).Wait();
-                while (!io.PromptQueue.TryDequeue(out result))
-                {
-                    if (WaitAndCheckCancel(100).Result)
-                        break;
-                    
-                    if (io.InvokeQueue.Count > 0)
-                        throw new InvalidOperationException();
-                }
-                return result;
+                return action(io);
             }
 
-            throw new OperationCanceledException();
+            throw new InvalidOperationException($"Cannot found connectionId ({CurrentConnectionId})");
+        }
+
+        public Dictionary<string, PSObject> Prompt(string caption, string message, Collection<FieldDescription> descriptions)
+        {
+            return IOWork(io =>
+            {
+                Client.SendAsync("Prompt", caption, message, descriptions).Wait();
+                while (true)
+                {
+                    if (io.PromptQueue.TryDequeue(out var result))
+                        return result;
+
+                    if (WaitAndCheckCancel(100).Result)
+                        throw new PoshAppCanceledException("Prompt is canceled");
+                }
+            });
         }
 
         public int PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice)
         {
-            if (_context.IO.TryGetValue(CurrentConnectionId, out var io))
+            return IOWork(io =>
             {
-                int result;
                 Client.SendAsync("PromptForChoice", caption, message, choices, defaultChoice).Wait();
-                while (!io.ChoiceQueue.TryDequeue(out result)) 
+                while (true)
                 {
-                    if (WaitAndCheckCancel(100).Result)
-                        break;
-                    
-                    if (io.InvokeQueue.Count > 0)
-                        throw new InvalidOperationException();
-                }
-                return result;
-            }
+                    if (io.ChoiceQueue.TryDequeue(out var result))
+                        return result;
 
-            throw new OperationCanceledException();
+                    if (WaitAndCheckCancel(100).Result)
+                        throw new PoshAppCanceledException("Prompt for choice is canceled");
+                }
+            });
         }
 
         public PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
         {
-            if (_context.IO.TryGetValue(CurrentConnectionId, out var io))
+            return IOWork(io =>
             {
-                PSCredential result;
                 Client.SendAsync("PromptForCredential", caption, message, userName, targetName).Wait();
-                while (!io.CredentialQueue.TryDequeue(out result))
+                while (true)
                 {
+                    if (io.CredentialQueue.TryDequeue(out var result))
+                        return result;
+
                     if (WaitAndCheckCancel(100).Result)
-                        break;
-
-                    if (io.InvokeQueue.Count > 0)
-                        throw new InvalidOperationException();
+                        throw new PoshAppCanceledException("Prompt for credential is canceled");
                 }
-                return result;
-            }
-
-            throw new OperationCanceledException();
+            });
         }
 
         public PSCredential PromptForCredential(string caption, string message, string userName, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
         {
-            if (_context.IO.TryGetValue(CurrentConnectionId, out var io))
+            return IOWork(io =>
             {
-                PSCredential result;
                 Client.SendAsync("PromptForCredentialWithType", caption, message, userName, targetName, allowedCredentialTypes).Wait();
-                while (!io.CredentialQueue.TryDequeue(out result))
+                while (true)
                 {
+                    if (io.CredentialQueue.TryDequeue(out var result))
+                        return result;
+
                     if (WaitAndCheckCancel(100).Result)
-                        break;
-
-                    if (io.InvokeQueue.Count > 0)
-                        throw new InvalidOperationException();
+                        throw new PoshAppCanceledException("Prompt for credential is canceled");
                 }
-                return result;
-            }
-
-            throw new OperationCanceledException();
+            });
         }
 
         public string ReadLine()
         {
-            if (_context.IO.TryGetValue(CurrentConnectionId, out var io))
+            return IOWork(io =>
             {
-                string result;
                 Client.SendAsync("ReadLine").Wait();
-                while (!io.LineQueue.TryDequeue(out result))
+                while (true)
                 {
-                    if (WaitAndCheckCancel(100).Result)
-                        break;
-                    
-                    if (io.InvokeQueue.Count > 0)
-                        throw new InvalidOperationException();
-                }
-                return result;
-            }
+                    if (io.LineQueue.TryDequeue(out var result))
+                        return result;
 
-            throw new OperationCanceledException();
+                    if (WaitAndCheckCancel(100).Result)
+                        throw new PoshAppCanceledException("Read line is canceled");
+                }
+            });
         }
 
         public SecureString ReadLineAsSecureString()
         {
-            if (_context.IO.TryGetValue(CurrentConnectionId, out var io))
+            return IOWork(io =>
             {
-                var result = new SecureString();
-                string line;
                 Client.SendAsync("ReadLine").Wait();
-                while (!io.LineQueue.TryDequeue(out line))
+                while (true)
                 {
-                    if (WaitAndCheckCancel(100).Result)
-                        break;
-                    
-                    if (io.InvokeQueue.Count > 0)
-                        throw new InvalidOperationException();
-                }
-                foreach (var c in line.ToCharArray())
-                {
-                    result.AppendChar(c);
-                }
-                return result;
-            }
+                    if (io.LineQueue.TryDequeue(out var line))
+                    {
+                        var result = new SecureString();
+                        foreach (var c in line.ToCharArray())
+                        {
+                            result.AppendChar(c);
+                        }
+                        return result;
+                    }
 
-            throw new OperationCanceledException();
+                    if (WaitAndCheckCancel(100).Result)
+                        throw new PoshAppCanceledException("Read line as secure string is canceled");
+                } 
+            });
         }
 
         public void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
