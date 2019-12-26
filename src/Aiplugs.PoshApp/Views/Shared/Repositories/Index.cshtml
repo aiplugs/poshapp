@@ -75,7 +75,9 @@
         },
         computed: {
             updatable() {
-                return this.origin && this.origin != this.local
+                return this.origin
+                    && this.origin != this.local
+                    && this.items.findIndex(item => item.commit == this.origin) < this.items.findIndex(item => item.commit == this.local)
             },
             modified() {
                 return this.status.length > 0;

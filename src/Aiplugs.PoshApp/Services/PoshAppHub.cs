@@ -59,6 +59,14 @@ namespace Aiplugs.PoshApp.Services
             }
         }
 
+        public void PromptForGitCredential(string username, string password)
+        {
+            if (_gitContext.IO.TryGetValue(Context.ConnectionId, out var io))
+            {
+                io.CredentialQueue.Enqueue((username, password));
+            }
+        }
+
         public void WriteLine(string message)
         {
             if (_powershellContext.IO.TryGetValue(Context.ConnectionId, out var io))
@@ -185,11 +193,13 @@ namespace Aiplugs.PoshApp.Services
         public override Task OnConnectedAsync()
         {
             _powershellContext.Start(Context.ConnectionId);
+            _gitContext.Start(Context.ConnectionId);
             return Task.FromResult(0);
         }
         public override Task OnDisconnectedAsync(Exception exception)
         {
             _powershellContext.Cancel(Context.ConnectionId);
+            _gitContext.Cancel(Context.ConnectionId);
             return Task.FromResult(0);
         }
     }

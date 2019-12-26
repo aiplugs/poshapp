@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.2.3" />
     <PackageReference Include="Microsoft.WSMan.Management" Version="6.2.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3-beta2" />
+    <PackageReference Include="AdysTech.CredentialManager" Version="1.9.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(RuntimeIdentifier)'=='win-x64'">
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="4.0.0" />

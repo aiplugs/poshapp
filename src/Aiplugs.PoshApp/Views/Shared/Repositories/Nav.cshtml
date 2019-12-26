@@ -191,9 +191,13 @@
                 ipcRenderer.on('select-directory-reply', (sender, path) => {
                     this.path = path;
                 });
+                this.$signalr.on('GitCloneFaild', name => {
+                    this.deleteRepository({ name });
+                });
             },
             beforeRouteLeave (to, from , next) {
                 ipcRenderer.removeAllListeners('select-directory-reply');
+                this.$signalr.off('GitCloneFaild');
                 next();
             }
         })
