@@ -33,7 +33,7 @@ namespace Aiplugs.PoshApp.Services
         }
         public static IEnumerable<PSParameterInfo> GetParameters(this PowerShell ps, string script)
         {
-            var query = $"{{{script}}}.Ast.ParamBlock";
+            var query = $"{{\n{script}\n}}.Ast.ParamBlock";
             
             ps.AddScript(query);
             var results = ps.Invoke();
