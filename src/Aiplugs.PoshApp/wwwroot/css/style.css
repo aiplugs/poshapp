@@ -46,7 +46,7 @@
 }
 
 .separator-vertical {
-    border-right: 0.5px solid #E0E0E0;
+    border-right: 0.05rem solid #E0E0E0;
 }
 
 .separator-vertical .v-list {
