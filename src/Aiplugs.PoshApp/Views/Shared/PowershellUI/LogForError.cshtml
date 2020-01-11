@@ -4,7 +4,7 @@
             <v-card-title class="headline red--text">
                 Error
             </v-card-title>
-            <v-card-text style="white-space: pre-wrap">{{message}}</v-card-text>
+            <v-card-text class="overflow-y-auto" style="white-space: pre-wrap; max-height:70vh;">{{message}}</v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn text v-on:click="dialog = false">
