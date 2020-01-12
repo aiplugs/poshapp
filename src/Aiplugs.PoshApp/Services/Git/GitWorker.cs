@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
 using Aiplugs.PoshApp.Exceptions;
@@ -58,14 +61,13 @@ namespace Aiplugs.PoshApp.Services.Git
                 await Task.Delay(100);
             }
         }
+        private readonly IDictionary<string, NetworkCredential> _credentials = new Dictionary<string, NetworkCredential>();
         public LibGit2Sharp.Credentials GetCredential(string url, string usernameFromUrl, LibGit2Sharp.SupportedCredentialTypes types)
         {
-            var credential = AdysTech.CredentialManager.CredentialManager.GetCredentials(url);
-            if (credential == null)
-            {
+            if (!_credentials.TryGetValue(url, out var credential)) {
                 var (username, password) = PromptForGitCredential(url, usernameFromUrl);
-                credential = new System.Net.NetworkCredential(username, password);
-                AdysTech.CredentialManager.CredentialManager.SaveCredentials(url, credential);
+                credential = new NetworkCredential(username, password);
+                _credentials.Add(url, credential);
             }
             return new LibGit2Sharp.SecureUsernamePasswordCredentials
             {
@@ -90,7 +92,9 @@ namespace Aiplugs.PoshApp.Services.Git
             }
             catch(Exception)
             {
-                AdysTech.CredentialManager.CredentialManager.RemoveCredentials(cmd.Origin);
+                if (_credentials.ContainsKey(cmd.Origin)) {
+                    _credentials.Remove(cmd.Origin);
+                }
                 Client.SendAsync("GitCloneFaild", cmd.Name).Wait();
                 throw;
             }
@@ -105,15 +109,25 @@ namespace Aiplugs.PoshApp.Services.Git
             if (remote != null) {
                 var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
                 var logMessage = "";
-                LibGit2Sharp.Commands.Fetch(repository, remote.Name, refSpecs, new LibGit2Sharp.FetchOptions
+                try
                 {
-                    OnProgress = progress =>
+                    LibGit2Sharp.Commands.Fetch(repository, remote.Name, refSpecs, new LibGit2Sharp.FetchOptions
                     {
-                        Client.SendAsync("GitFetchProgress", cmd.Name, progress).Wait();
-                        return true;
-                    },
-                    CredentialsProvider = new LibGit2Sharp.Handlers.CredentialsHandler(GetCredential)
-                }, logMessage);
+                        OnProgress = progress =>
+                        {
+                            Client.SendAsync("GitFetchProgress", cmd.Name, progress).Wait();
+                            return true;
+                        },
+                        CredentialsProvider = new LibGit2Sharp.Handlers.CredentialsHandler(GetCredential)
+                    }, logMessage);
+                }
+                catch (Exception)
+                {
+                    if (_credentials.ContainsKey(remote.Url))
+                    {
+                        _credentials.Remove(remote.Url);
+                    }
+                }
             }
         }
 
