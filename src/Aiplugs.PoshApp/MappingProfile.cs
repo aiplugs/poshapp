@@ -1,5 +1,6 @@
 using Aiplugs.PoshApp.Models;
 using Aiplugs.PoshApp.Services;
+using Aiplugs.PoshApp.Services.Git.Commands;
 using Aiplugs.PoshApp.ViewModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
