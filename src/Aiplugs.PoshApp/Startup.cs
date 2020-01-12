@@ -1,5 +1,7 @@
 using Aiplugs.PoshApp.Formatters;
 using Aiplugs.PoshApp.Services;
+using Aiplugs.PoshApp.Services.Git;
+using Aiplugs.PoshApp.Services.Powersehll;
 using AutoMapper;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
