@@ -5,6 +5,10 @@ using System.Management.Automation;
 using System.Security;
 using System.Threading.Tasks;
 using System.Xml;
+using Aiplugs.PoshApp.Services.Git;
+using Aiplugs.PoshApp.Services.Git.Commands;
+using Aiplugs.PoshApp.Services.Powersehll;
+using Aiplugs.PoshApp.Services.Powersehll.Commands;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Aiplugs.PoshApp.Services
