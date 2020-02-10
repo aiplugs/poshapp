@@ -23,6 +23,9 @@
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Modules/**/*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="electron.manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

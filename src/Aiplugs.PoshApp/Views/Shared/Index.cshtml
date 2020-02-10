@@ -21,6 +21,9 @@
     <script src="/lib/vue-router/vue-router.min.js"></script>
     <script src="/lib/vuex/vuex.min.js"></script>
     <script src="/lib/vue-async-computed/vue-async-computed.js"></script>
+    <script>
+        const { ipcRenderer } = require("electron");
+    </script>
     <partial name="Components/DateTime" />
     <partial name="Components/Toast" />
     <partial name="PowershellUI/Prompt" />
@@ -32,6 +35,8 @@
     <partial name="PowershellUI/Progress" />
     <partial name="PowershellUI/Status" />
     <partial name="PowershellUI/Index" />
+    <partial name="Settings/Nav" />
+    <partial name="Settings/Activation" />
     <partial name="Scripts/Nav" />
     <partial name="Scripts/Index" />
     <partial name="Repositories/Nav" />

@@ -20,11 +20,11 @@
             <v-col class="pb-0" v-if="loadingParams">
                 <v-text-field filled rounded dense disabled></v-text-field>
             </v-col>
-            <v-col class="pb-0" v-if="!loadingParams&&(parameters.length==0||parameters.every(p => isNumberType(p.type)))">
+            <v-col class="pb-0" style="height:92px;" v-if="!loadingParams&&(parameters.length==0||parameters.every(p => isNumberType(p.type)))">
             </v-col>
-            <v-col class="pb-0" md="1">
-                <v-btn block text x-large :disabled="disabledAll" v-on:click="emitRun">Run</v-btn>
-            </v-col>
+            <div class="pa-3 pb-0">
+                <v-btn text x-large :disabled="disabledAll" v-on:click="emitRun">Run</v-btn>
+            </div>
         </v-row>
     </v-form>
 </template>

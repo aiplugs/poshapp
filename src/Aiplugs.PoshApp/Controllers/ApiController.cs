@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Aiplugs.PoshApp.Models;
 using Aiplugs.PoshApp.Services;
@@ -14,29 +15,69 @@ namespace Aiplugs.PoshApp.Controllers
         private readonly IMapper _mapper;
         private readonly ScriptsService _service;
         private readonly GitContext _gitContext;
-        public ApiController(IMapper mapper, ScriptsService service, GitContext gitContext)
+        private readonly LicenseService _license;
+        public ApiController(IMapper mapper, ScriptsService service, GitContext gitContext, LicenseService licenseService)
         {
             _mapper = mapper;
             _service = service;
             _gitContext = gitContext;
+            _license = licenseService;
+        }
+
+        [HttpGet("/api/activation")]
+        public async Task<IActionResult> GetActivation()
+        {
+            var status = (await _license.GetActivationStatus()).ToString();
+            var requestCode = _license.GetActivationRequestCode();
+
+            return Json(new { status, requestCode });
+        }
+
+        [HttpPost("/api/activation")]
+        public async Task<IActionResult> PostActivation([FromBody]ActivationViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            var status = (await _license.RegisterActivationCode(model.ActivationCode)).ToString();
+            var requestCode = _license.GetActivationRequestCode();
+
+            return Json(new { status, requestCode });
+        }
+
+        [HttpPost("/api/reflesh")]
+        public async Task<IActionResult> RefleshActivation()
+        {
+            await _license.Reflesh();
+            var status = (await _license.GetActivationStatus()).ToString();
+            var requestCode = _license.GetActivationRequestCode();
+
+            return Json(new { status, requestCode });
         }
 
         [HttpGet("/api/repositories")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetRepositories()
         {
             var repositories = await _service.GetRepositories();
-
             return Json(repositories);
         }
 
         [HttpPost("/api/repositories")]
-        public async Task<IActionResult> Post([FromBody]RepositoryViewModel model)
+        public async Task<IActionResult> PostRepository([FromBody]RepositoryViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(model);
 
             if (await _service.ExistRepository(model.Name))
                 return Conflict();
+
+            var status = await _license.GetActivationStatus();
+            if (status == ActivationStatus.None)
+            {
+                var repositories = await _service.GetRepositories();
+                if (repositories.Count() > RootConfig.FREE_PLAN_MAX_REPOSITORIES)
+                    return new StatusCodeResult(402);
+            }
 
             if (!string.IsNullOrEmpty(model.Origin))
                 _gitContext.Invoke(_mapper.Map<CloneCommand>(model));
@@ -47,7 +88,7 @@ namespace Aiplugs.PoshApp.Controllers
         }
 
         [HttpPost("/api/repositories/{name}")]
-        public async Task<IActionResult> Put([FromRoute]string name, [FromBody]RepositoryViewModel model)
+        public async Task<IActionResult> PutRepository([FromRoute]string name, [FromBody]RepositoryViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(model);
@@ -61,7 +102,7 @@ namespace Aiplugs.PoshApp.Controllers
         }
 
         [HttpDelete("/api/repositories/{name}")]
-        public async Task<IActionResult> Delete([FromRoute]string name)
+        public async Task<IActionResult> DeleteRepository([FromRoute]string name)
         {
             if (!await _service.ExistRepository(name))
                 return NotFound();
@@ -144,6 +185,14 @@ namespace Aiplugs.PoshApp.Controllers
             if (await _service.ExistScript(repository, model.Id))
                 return Conflict();
 
+            var status = await _license.GetActivationStatus();
+            if (status == ActivationStatus.None)
+            {
+                var scripts = await _service.GetScriptList();
+                if (scripts[repository.Name].Count() > RootConfig.FREE_PLAN_MAX_SCRIPTS)
+                    return new StatusCodeResult(402);
+            }
+
             await _service.AddScript(repository, _mapper.Map<ListScript>(model));
 
             return NoContent();
@@ -184,6 +233,14 @@ namespace Aiplugs.PoshApp.Controllers
 
             if (await _service.ExistScript(repository, model.Id))
                 return Conflict();
+
+            var status = await _license.GetActivationStatus();
+            if (status == ActivationStatus.None)
+            {
+                var scripts = await _service.GetScriptList();
+                if (scripts[repository.Name].Count() > RootConfig.FREE_PLAN_MAX_SCRIPTS)
+                    return new StatusCodeResult(402);
+            }
 
             await _service.AddScript(repository, _mapper.Map<DetailScript>(model));
 
@@ -226,6 +283,14 @@ namespace Aiplugs.PoshApp.Controllers
             if (await _service.ExistScript(repository, model.Id))
                 return Conflict();
 
+            var status = await _license.GetActivationStatus();
+            if (status == ActivationStatus.None)
+            {
+                var scripts = await _service.GetScriptList();
+                if (scripts[repository.Name].Count() > RootConfig.FREE_PLAN_MAX_SCRIPTS)
+                    return new StatusCodeResult(402);
+            }
+
             await _service.AddScript(repository, _mapper.Map<SingletonScript>(model));
 
             return NoContent();
@@ -266,6 +331,14 @@ namespace Aiplugs.PoshApp.Controllers
 
             if (await _service.ExistScript(repository, model.Id))
                 return Conflict();
+
+            var status = await _license.GetActivationStatus();
+            if (status == ActivationStatus.None)
+            {
+                var scripts = await _service.GetScriptList();
+                if (scripts[repository.Name].Count() > RootConfig.FREE_PLAN_MAX_SCRIPTS)
+                    return new StatusCodeResult(402);
+            }
 
             await _service.AddScript(repository, _mapper.Map<ActionScript>(model));
 

@@ -7,5 +7,7 @@ export default new VueRouter({
         { path: '/scripts/:repo/:id', components: { default: Vue.component('Scripts'), nav: Vue.component('ScriptsNav') } },
         { path: '/repositories/', components: { nav: Vue.component('RepositoryNav') } },
         { path: '/repositories/:id', components: { default: Vue.component('Repository'), nav: Vue.component('RepositoryNav') } },
+        { path: '/settings/', components: { nav: Vue.component('SettingsNav') } },
+        { path: '/settings/activation', components: { default: Vue.component('Activation'), nav: Vue.component('SettingsNav') } },
     ]
 })

@@ -7,9 +7,4 @@ namespace Aiplugs.PoshApp.Models
     {
         public IEnumerable<Script> Scripts { get; set; } = Enumerable.Empty<Script>();
     }
-
-    public class RootConfig
-    {
-        public IEnumerable<Repository> Repositories { get; set; } = Enumerable.Empty<Repository>();
-    }
 }

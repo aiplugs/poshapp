@@ -28,6 +28,7 @@ namespace Aiplugs.PoshApp
             services.AddMemoryCache();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddSingleton<ConfigAccessor>();
+            services.AddSingleton<LicenseService>();
             services.AddSingleton<ScriptsService>();
             services.AddSingleton<PowershellContext>();
             services.AddSingleton<GitContext>();
@@ -38,6 +39,7 @@ namespace Aiplugs.PoshApp
             .AddRazorRuntimeCompilation()
             .AddNewtonsoftJson();
             services.AddSignalR();
+            services.AddHttpClient();
             services.AddHostedService<PowershellWorker>();
             services.AddHostedService<GitWorker>();
         }

@@ -1,5 +1,5 @@
 <template id="list-page-component">
-    <div class="main-content">
+    <div class="main-content d-flex flex-column">
         <header>
             <v-row class="pl-4 pr-4" style="width: 100%;">
                 <v-col cols="12" class="pt-0 pb-0">
@@ -11,21 +11,23 @@
             </v-row>
         </header>
         <v-divider></v-divider>
-        <v-data-table v-model="selected"
-                      :headers="headers"
-                      :items="list"
-                      :page.sync="page"
-                      :items-per-page="pageSize"
-                      item-key="$clixml"
-                      hide-default-footer
-                      show-select
-                      v-if="list.length > 0">
-            <template v-slot:item.$poshapp_action="{ item }">
-                <v-btn icon text v-on:click="openDetail(item)">
-                    <v-icon>mdi-fullscreen</v-icon>
-                </v-btn>
-            </template>
-        </v-data-table>
+        <div class="flex scroll-content">
+            <v-data-table v-model="selected"
+                          :headers="headers"
+                          :items="list"
+                          :page.sync="page"
+                          :items-per-page="pageSize"
+                          item-key="$clixml"
+                          hide-default-footer
+                          show-select
+                          v-if="list.length > 0">
+                <template v-slot:item.$poshapp_action="{ item }">
+                    <v-btn icon text v-on:click="openDetail(item)">
+                        <v-icon>mdi-fullscreen</v-icon>
+                    </v-btn>
+                </template>
+            </v-data-table>
+        </div>
         <div class="ma-auto" style="width: 80%;">
             <v-pagination v-model="page" :length="total" v-if="list.length > 0"></v-pagination>
         </div>

@@ -61,9 +61,8 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
-    scroll-behavior: smooth;
 }
 
 .main-content::-webkit-scrollbar {
@@ -71,5 +70,15 @@
 }
 
 .no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.scroll-content {
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.scroll-content::-webkit-scrollbar {
     display: none;
 }

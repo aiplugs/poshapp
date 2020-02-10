@@ -37,6 +37,7 @@ namespace Aiplugs.PoshApp.Services.Powersehll
             {
                 var host = new PowershellHost(new PowershellUI(this, new PowershellRawUI()));
                 var iss = InitialSessionState.CreateDefault();
+                iss.ExecutionPolicy = ExecutionPolicy.Unrestricted;
                 using var runspace = RunspaceFactory.CreateRunspace(host, iss);
                 
                 runspace.Open();
@@ -66,13 +67,13 @@ namespace Aiplugs.PoshApp.Services.Powersehll
                 if (content == null)
                     return;
 
-                using var ps = PowerShell.Create();
+                using var ps = PowerShell.Create(runspace);
                 ps.Streams.Error.DataAdding += (sender, args) => {
                     var record = (ErrorRecord)args.ItemAdded;
                     Client.SendAsync("WriteErrorLine", record.ToString()).Wait();
                 };
-                try {
-                    ps.Runspace = runspace;
+                try
+                {
                     if (invokeCommand is DefaultCommand defaultCommand) 
                     {
                         var result = ps.InvokeWithParameters(content, defaultCommand.Parameters);

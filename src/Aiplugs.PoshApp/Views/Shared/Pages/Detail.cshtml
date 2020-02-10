@@ -6,7 +6,9 @@
             </v-btn>
             <v-btn text v-for="action in actions" :key="action.id" v-on:click="invokeAction(action.id)">{{action.displayName || action.id}}</v-btn>
         </header>
-        <data-viewer :data="data"></data-viewer>
+        <div class="flex scroll-content">
+            <data-viewer :data="data"></data-viewer>
+        </div>
     </section>
 </template>
 

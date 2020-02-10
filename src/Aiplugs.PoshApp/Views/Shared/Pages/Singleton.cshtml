@@ -11,7 +11,9 @@
             </v-row>
         </header>
         <v-divider></v-divider>
-        <data-viewer :data="data"></data-viewer>
+        <div class="flex scroll-content">
+            <data-viewer :data="data"></data-viewer>
+        </div>
     </div>
 </template>
 <script type="module">

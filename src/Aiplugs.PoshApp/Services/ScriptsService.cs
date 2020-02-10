@@ -19,24 +19,39 @@ namespace Aiplugs.PoshApp
             [ScriptType.Action] = "param(\n\t[Parameter(ValueFromPipeline=$true)]\n\t[PSObject[]]\n\t$InputObject\n)\nprocess {\n\n}"
         };
         private readonly ConfigAccessor _configAccessor;
+        private readonly LicenseService _license;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-        public ScriptsService(ConfigAccessor configAccessor)
+        public ScriptsService(ConfigAccessor configAccessor, LicenseService licenseService)
         {
             _configAccessor = configAccessor;
+            _license = licenseService;
         }
         public async Task<IEnumerable<Repository>> GetRepositories()
         {
+            var status = await _license.GetActivationStatus();
             var rootConfig = await _configAccessor.LoadRootConfigAsync();
-            return rootConfig.Repositories;
+            var repositories = status == ActivationStatus.Valid
+                                        ? rootConfig.Repositories
+                                        : rootConfig.Repositories.Take(RootConfig.FREE_PLAN_MAX_REPOSITORIES);
+
+            return repositories;
         }
         public async Task<IReadOnlyDictionary<string, IEnumerable<Script>>> GetScriptList()
         {
+            var result = new Dictionary<string, IEnumerable<Script>>();
+            var status = await _license.GetActivationStatus();
             var rootConfig = await _configAccessor.LoadRootConfigAsync();
-            var result = new Dictionary<string, IEnumerable<Script>>(rootConfig.Repositories.Count());
-            foreach (var repo in rootConfig.Repositories)
+            var respositories = status == ActivationStatus.Valid
+                                        ? rootConfig.Repositories
+                                        : rootConfig.Repositories.Take(RootConfig.FREE_PLAN_MAX_REPOSITORIES);
+            foreach (var repo in respositories)
             {
                 var config = await _configAccessor.LoadConfigAsync(repo);
-                result.Add(repo.Name, config.Scripts);
+                var scripts = status == ActivationStatus.Valid 
+                                        ? config.Scripts 
+                                        : config.Scripts.Take(RootConfig.FREE_PLAN_MAX_SCRIPTS);
+                
+                result.Add(repo.Name, scripts);
             }
             return result;
         }

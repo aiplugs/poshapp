@@ -20,6 +20,16 @@ namespace Aiplugs.PoshApp
                 string[] dirs = await Electron.Dialog.ShowOpenDialogAsync(mainWindow, options);
                 Electron.IpcMain.Send(mainWindow, "select-directory-reply", dirs);
             });
+
+            Electron.IpcMain.On("open-activation", async (args) =>
+            {
+                await Electron.Shell.OpenExternalAsync("https://poshapp.aiplugs.com/licenses");
+            });
+
+            Electron.IpcMain.On("copy-to", (text) =>
+            {
+                Electron.Clipboard.WriteText(text.ToString());
+            });
         }
     }
 }
