@@ -75,7 +75,7 @@ namespace Aiplugs.PoshApp.Controllers
             if (status == ActivationStatus.None)
             {
                 var repositories = await _service.GetRepositories();
-                if (repositories.Count() > RootConfig.FREE_PLAN_MAX_REPOSITORIES)
+                if (repositories.Count() > Limitation.FREE_PLAN_MAX_REPOSITORIES)
                     return new StatusCodeResult(402);
             }
 
@@ -189,7 +189,7 @@ namespace Aiplugs.PoshApp.Controllers
             if (status == ActivationStatus.None)
             {
                 var scripts = await _service.GetScriptList();
-                if (scripts[repository.Name].Count() > RootConfig.FREE_PLAN_MAX_SCRIPTS)
+                if (scripts[repository.Name].Count() > Limitation.FREE_PLAN_MAX_SCRIPTS)
                     return new StatusCodeResult(402);
             }
 
@@ -238,7 +238,7 @@ namespace Aiplugs.PoshApp.Controllers
             if (status == ActivationStatus.None)
             {
                 var scripts = await _service.GetScriptList();
-                if (scripts[repository.Name].Count() > RootConfig.FREE_PLAN_MAX_SCRIPTS)
+                if (scripts[repository.Name].Count() > Limitation.FREE_PLAN_MAX_SCRIPTS)
                     return new StatusCodeResult(402);
             }
 
@@ -287,7 +287,7 @@ namespace Aiplugs.PoshApp.Controllers
             if (status == ActivationStatus.None)
             {
                 var scripts = await _service.GetScriptList();
-                if (scripts[repository.Name].Count() > RootConfig.FREE_PLAN_MAX_SCRIPTS)
+                if (scripts[repository.Name].Count() > Limitation.FREE_PLAN_MAX_SCRIPTS)
                     return new StatusCodeResult(402);
             }
 
@@ -336,7 +336,7 @@ namespace Aiplugs.PoshApp.Controllers
             if (status == ActivationStatus.None)
             {
                 var scripts = await _service.GetScriptList();
-                if (scripts[repository.Name].Count() > RootConfig.FREE_PLAN_MAX_SCRIPTS)
+                if (scripts[repository.Name].Count() > Limitation.FREE_PLAN_MAX_SCRIPTS)
                     return new StatusCodeResult(402);
             }
 

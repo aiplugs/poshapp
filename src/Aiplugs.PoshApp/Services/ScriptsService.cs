@@ -32,7 +32,7 @@ namespace Aiplugs.PoshApp
             var rootConfig = await _configAccessor.LoadRootConfigAsync();
             var repositories = status == ActivationStatus.Valid
                                         ? rootConfig.Repositories
-                                        : rootConfig.Repositories.Take(RootConfig.FREE_PLAN_MAX_REPOSITORIES);
+                                        : rootConfig.Repositories.Take(Limitation.FREE_PLAN_MAX_REPOSITORIES);
 
             return repositories;
         }
@@ -43,13 +43,13 @@ namespace Aiplugs.PoshApp
             var rootConfig = await _configAccessor.LoadRootConfigAsync();
             var respositories = status == ActivationStatus.Valid
                                         ? rootConfig.Repositories
-                                        : rootConfig.Repositories.Take(RootConfig.FREE_PLAN_MAX_REPOSITORIES);
+                                        : rootConfig.Repositories.Take(Limitation.FREE_PLAN_MAX_REPOSITORIES);
             foreach (var repo in respositories)
             {
                 var config = await _configAccessor.LoadConfigAsync(repo);
                 var scripts = status == ActivationStatus.Valid 
                                         ? config.Scripts 
-                                        : config.Scripts.Take(RootConfig.FREE_PLAN_MAX_SCRIPTS);
+                                        : config.Scripts.Take(Limitation.FREE_PLAN_MAX_SCRIPTS);
                 
                 result.Add(repo.Name, scripts);
             }
