@@ -23,7 +23,7 @@
             <v-col class="pb-0" style="height:92px;" v-if="!loadingParams&&(parameters.length==0||parameters.every(p => isNumberType(p.type)))">
             </v-col>
             <div class="pa-3 pb-0">
-                <v-btn text x-large :disabled="disabledAll" v-on:click="emitRun">Run</v-btn>
+                <v-btn text x-large :disabled="disabledAll" :loading="loading" v-on:click="emitRun">Run</v-btn>
             </div>
         </v-row>
     </v-form>
@@ -36,7 +36,8 @@
             script: String,
             page: Number,
             pageSize: Number,
-            disabled: Boolean
+            disabled: Boolean,
+            loading: Boolean
         },
         data() {
             return {

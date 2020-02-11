@@ -3,7 +3,7 @@
         <header>
             <v-row class="pl-4 pr-4" style="width: 100%;">
                 <v-col cols="12" class="pt-0 pb-0">
-                    <parameters-form ref="form" :script="scriptId" :page="page" :page-size="pageSize" v-on:run="run"></parameters-form>
+                    <parameters-form ref="form" :script="scriptId" :page="page" :page-size="pageSize" :loading="loading" v-on:run="run"></parameters-form>
                 </v-col>
             </v-row>
             <v-row class="pl-4 pr-4">
@@ -43,8 +43,6 @@
         data() {
             return {
                 selected:[],
-                parameters: [],
-                paramValues: {},
                 detailScriptId: null,
                 detailInput: null,
                 page: 1,
@@ -52,6 +50,7 @@
                 total: 0,
                 list: [],
                 headers: [],
+                loading: false,
             }
         }, 
         computed: {
@@ -71,7 +70,13 @@
             ...Vuex.mapActions('toast', ['toast']),
             ...Vuex.mapMutations('list', ['updateList','replaceData','setDetail']),
             init() {
+                this.selected.splice(0);
+                this.list.splice(0);
+                this.headers.splice(0);
+                this.total = 0;
                 this.$signalr.on("DefaultResult", json => {
+                    this.loading = false;
+
                     const data = parsePSDataCollection(JSON.parse(json));
                     
                     if (data.length == 0)
@@ -117,6 +122,7 @@
                 })
             },
             run(value) {
+                this.loading = true;
                 this.$signalr.invoke('Invoke', this.scriptId, value);
             },
             invokeAction(name) {

@@ -3,11 +3,11 @@
         <header>
             <v-row class="pl-4 pr-4" style="width: 100%;">
                 <v-col cols="12" class="pt-0 pb-0">
-                    <parameters-form ref="form" :script="scriptId" v-on:run="run"></parameters-form>
+                    <parameters-form ref="form" :script="scriptId" :loading="loadings.run" :disabled="disabled" v-on:run="run"></parameters-form>
                 </v-col>
             </v-row>
             <v-row class="pl-4 pr-4">
-                <v-btn text v-for="action in actions" :key="action.name" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
+                <v-btn text v-for="action in actions" :key="action.name" :loading="actionLoading(action.id)" :disabled="disabled" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
             </v-row>
         </header>
         <v-divider></v-divider>
@@ -22,7 +22,8 @@
         template: '#singleton-page-component',
         data() {
             return {
-                data:null
+                data: null,
+                loadings: { run: false }
             }
         }, 
         computed: {
@@ -32,15 +33,24 @@
             actions() {
                 const { repo, id } = this.$route.params;
                 return this.$store.getters['scripts/findActions'](repo, id);
+            },
+            disabled() {
+                return Object.keys(this.loadings).reduce((b, key) => b || this.loadings[key], false);
+            },
+            actionLoading() {
+                return id => this.loadings[id] || false;
             }
         },
         methods: {
             ...Vuex.mapActions('toast', ['toast']),
-            init(){
+            init() {
+                this.data = null;
                 this.$signalr.on('DefaultResult', json => {
+                    this.loadings.run = false;
                     this.data = parsePSDataCollection(JSON.parse(json));
                 });
                 this.$signalr.on("ActionResult", (id, json) => {
+                    //this.loadings[id] = false;
                     const data = JSON.parse(json);
                     this.toast({
                         text: `${id} is succeeded` ,
@@ -51,10 +61,12 @@
                 })
             },
             run(value) {
+                this.loadings.run = true;
                 this.$signalr.invoke('Invoke', this.scriptId, value);
             },
-            invokeAction(name) {
-                this.$signalr.invoke('InvokeAction', name, null);
+            invokeAction(id) {
+                this.loadings[id] = true;
+                this.$signalr.invoke('InvokeAction', id, null);
             }
         },
         mounted() {
