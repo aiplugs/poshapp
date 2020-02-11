@@ -16,14 +16,14 @@
         <div v-else-if="status==='Expired'">
             <h1>Expired</h1>
             <p>Please reflesh or reactivate</p>
-            <v-btn color="primary" v-on:click="reflesh">Reflesh</v-btn>
+            <v-btn color="primary" v-on:click="handleReflesh" :loading="loading">Reflesh</v-btn>
             <v-btn text v-on:click="show=true">Reactivate</v-btn>
             <v-expand-transition>
                 <div v-if="show">
-                    <v-textarea label="Activation Request Code" v-model="requestCode" readonly auto-grow rows="3" v-on:click="copyRequestCode"></v-textarea>
+                    <v-textarea label="Activation Request Code" v-model="requestCode" readonly auto-grow rows="1" v-on:click="copyRequestCode"></v-textarea>
                     <v-form v-model="valid">
                         <v-text-field label="Activation Code" v-model="activationCode" :rules="[v => !!v || 'Activation Code is required']"></v-text-field>
-                        <v-btn color="primary" block v-on:click="activation" :disabled="!valid" :loading="loading">Register Activation Code</v-btn>
+                        <v-btn color="primary" block v-on:click="handleActivation" :disabled="!valid" :loading="loading">Register Activation Code</v-btn>
                     </v-form>
                 </div>
             </v-expand-transition>
@@ -31,10 +31,10 @@
         <div v-else-if="status==='Illigal'">
             <h1>Activation code is illigal</h1>
             <p>Please try reactivation machine.</p>
-            <v-textarea label="Activation Request Code" v-model="requestCode" readonly auto-grow rows="3" v-on:click="copyRequestCode"></v-textarea>
+            <v-textarea label="Activation Request Code" v-model="requestCode" readonly auto-grow rows="1" v-on:click="copyRequestCode"></v-textarea>
             <v-form v-model="valid">
                 <v-text-field label="Activation Code" v-model="activationCode" :rules="[v => !!v || 'Activation Code is required']"></v-text-field>
-                <v-btn color="primary" block v-on:click="activation" :disabled="!valid" :loading="loading">Register Activation Code</v-btn>
+                <v-btn color="primary" block v-on:click="handleActivation" :disabled="!valid" :loading="loading">Register Activation Code</v-btn>
             </v-form>
         </div>
         <div v-else-if="status==='None'">
@@ -76,7 +76,7 @@
                             <h5>Final</h5>
                             <v-form v-model="valid">
                                 <v-text-field label="Activation Code" v-model="activationCode" :rules="[v => !!v || 'Activation Code is required']"></v-text-field>
-                                <v-btn color="primary" block v-on:click="activation" :disabled="!valid" :loading="loading">Register Activation Code</v-btn>
+                                <v-btn color="primary" block v-on:click="handleActivation" :disabled="!valid" :loading="loading">Register Activation Code</v-btn>
                             </v-form>
                         </v-card-text>
                     </div>
@@ -93,94 +93,31 @@
                 show: false,
                 valid: false,
                 loading: false,
-                status: null,
-                requestCode: null,
                 activationCode: null,
             }
         },
+        computed: {
+            ...Vuex.mapState('activation', ['status', 'requestCode'])
+        },
         methods: {
-            ...Vuex.mapActions('toast', ['toast']),
-            async loadStatus() {
-                const response = await fetch('/api/activation');
-                if (response.ok) {
-                    var data = await response.json();
-                    //this.status = data.status;
-                    this.status = "Expired";
-                    this.requestCode = data.requestCode;
-                }
-            },
+            ...Vuex.mapActions('activation', ['activate', 'refleshActivationCode']),
             openEx() {
                 ipcRenderer.send("open-activation");
-            },
-            async reflesh() {
-                this.loading = true;
-                const response = await fetch('/api/reflesh', {
-                    method: 'post'
-                });
-                this.loading = false;
-                if (response.ok) {
-                    var data = await response.json();
-
-                    if (data.status !== 'Illigal') {
-                        this.status = data.status;
-                        this.requestCode = data.requestCode;
-                    }
-                    else {
-                        this.toast({
-                            text: "Invalid activation code",
-                            color: "error",
-                            bottom: true
-                        });
-                    }
-                }
-                else {
-                    this.toast({
-                        text: "Connection Error",
-                        color: "error",
-                        bottom: true
-                    });
-                }
-            },
-            async activation() {
-                this.loading = true;
-                const response = await fetch('/api/activation', {
-                    method: 'post',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ activationCode: this.activationCode })
-                });
-                this.loading = false;
-                if (response.ok) {
-                    var data = await response.json();
-
-                    if (data.status !== 'Illigal') {
-                        this.status = data.status;
-                        this.requestCode = data.requestCode;
-                    }
-                    else {
-                        this.toast({
-                            text: "Invalid activation code",
-                            color: "error",
-                            bottom: true
-                        });
-                    }
-                }
-                else {
-                    this.toast({
-                        text: "Activation Code is required",
-                        color: "error",
-                        bottom: true
-                    });
-                }
             },
             async copyRequestCode() {
                 await ipcRenderer.send("copy-to", this.requestCode);
                 alert("Copied!");
+            },
+            async handleReflesh() {
+                this.loading = true;
+                await this.refleshActivationCode();
+                this.loading = false;
+            },
+            async handleActivation() {
+                this.loading = true;
+                await this.activate(this.activationCode);
+                this.loading = false;
             }
-        },
-        mounted() {
-            this.loadStatus();
         }
     })
 </script>

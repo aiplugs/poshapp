@@ -25,12 +25,12 @@ export default {
             context.commit('replaceToast', {
                 ...payload,
                 display: true
-            })
+            });
             setTimeout(() => {
                 context.commit('replaceToast', {
                     ...payload,
                     display: false
-                })
+                });
             }, payload.timeout || 800);
         }
     }

@@ -124,10 +124,12 @@
             }
         },
         computed: {
-            ...Vuex.mapState('repositories', ['repositories'])
+            ...Vuex.mapState('repositories', ['repositories']),
+            ...Vuex.mapGetters('activation', ['exceededFreePlanForRepositories']),
         },
         methods: {
             ...Vuex.mapActions('repositories', ['loadRepositories', 'createRepository', 'updateRepository', 'deleteRepository']),   
+            ...Vuex.mapMutations('activation', ['showActivationNotice']),
             async handleDelete() {
                 if (this.deleteTarget) {
                     await this.deleteRepository(this.deleteTarget);
@@ -180,9 +182,14 @@
                 }
             },
             openCreate() {
-                this.clearDialogModel(); 
-                this.isCreate = true;
-                this.openNewDialog = true;
+                if (this.exceededFreePlanForRepositories(this.repositories.length)) {
+                    this.showActivationNotice();
+                }
+                else {
+                    this.clearDialogModel();
+                    this.isCreate = true;
+                    this.openNewDialog = true;
+                }
             },
             openEdit(repository) {
                 this.clearDialogModel();
