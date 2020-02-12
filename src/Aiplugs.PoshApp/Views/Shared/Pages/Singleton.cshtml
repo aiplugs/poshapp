@@ -35,10 +35,7 @@
                 return this.$store.getters['scripts/findActions'](repo, id);
             },
             disabled() {
-                return Object.keys(this.loadings).reduce((b, key) => b || this.loadings[key], false);
-            },
-            actionLoading() {
-                return id => this.loadings[id] || false;
+                return !!this.loading
             }
         },
         methods: {

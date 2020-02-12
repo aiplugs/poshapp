@@ -3,11 +3,11 @@
         <header>
             <v-row class="pl-4 pr-4" style="width: 100%;">
                 <v-col cols="12" class="pt-0 pb-0">
-                    <parameters-form ref="form" :script="scriptId" :page="page" :page-size="pageSize" :loading="loading=='$run'" v-on:run="run"></parameters-form>
+                    <parameters-form ref="form" :script="scriptId" :page="page" :page-size="pageSize" :loading="loading=='$run'" :disabled="disabled" v-on:run="run"></parameters-form>
                 </v-col>
             </v-row>
             <v-row class="pl-4 pr-4">
-                <v-btn text v-for="action in actions" :key="action.name" :loading="loading==action.id" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
+                <v-btn text v-for="action in actions" :key="action.name" :loading="loading==action.id" :disabled="disabled" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
             </v-row>
         </header>
         <v-divider></v-divider>
@@ -64,6 +64,9 @@
             actions() {
                 const { repo, id } = this.$route.params;
                 return this.$store.getters['scripts/findActions'](repo, id);
+            },
+            disabled() {
+                return !!this.loading
             }
         },
         methods: {
