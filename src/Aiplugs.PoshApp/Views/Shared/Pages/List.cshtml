@@ -3,11 +3,11 @@
         <header>
             <v-row class="pl-4 pr-4" style="width: 100%;">
                 <v-col cols="12" class="pt-0 pb-0">
-                    <parameters-form ref="form" :script="scriptId" :page="page" :page-size="pageSize" :loading="loading" v-on:run="run"></parameters-form>
+                    <parameters-form ref="form" :script="scriptId" :page="page" :page-size="pageSize" :loading="loading=='$run'" v-on:run="run"></parameters-form>
                 </v-col>
             </v-row>
             <v-row class="pl-4 pr-4">
-                <v-btn text v-for="action in actions" :key="action.name" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
+                <v-btn text v-for="action in actions" :key="action.name" :loading="loading==action.id" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
             </v-row>
         </header>
         <v-divider></v-divider>
@@ -50,7 +50,7 @@
                 total: 0,
                 list: [],
                 headers: [],
-                loading: false,
+                loading: null,
             }
         }, 
         computed: {
@@ -75,7 +75,7 @@
                 this.headers.splice(0);
                 this.total = 0;
                 this.$signalr.on("DefaultResult", json => {
-                    this.loading = false;
+                    this.loading = null;
 
                     const data = parsePSDataCollection(JSON.parse(json));
                     
@@ -112,6 +112,8 @@
                     }));
                 })
                 this.$signalr.on("ActionResult", (id, json) => {
+                    this.loading = null;
+                    this.loadings[id] = false;
                     const data = JSON.parse(json);
                     this.toast({
                         text: `${id} is succeeded` ,
@@ -122,11 +124,12 @@
                 })
             },
             run(value) {
-                this.loading = true;
+                this.loading = '$run';
                 this.$signalr.invoke('Invoke', this.scriptId, value);
             },
-            invokeAction(name) {
-                this.$signalr.invoke('InvokeAction', name, this.selected.map(item => item.$clixml));
+            invokeAction(id) {
+                this.loading = id;
+                this.$signalr.invoke('InvokeAction', id, this.selected.map(item => item.$clixml));
             },
             openDetail(item) {
                 const clixml = item.$clixml;

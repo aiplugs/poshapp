@@ -3,11 +3,11 @@
         <header>
             <v-row class="pl-4 pr-4" style="width: 100%;">
                 <v-col cols="12" class="pt-0 pb-0">
-                    <parameters-form ref="form" :script="scriptId" :loading="loadings.run" :disabled="disabled" v-on:run="run"></parameters-form>
+                    <parameters-form ref="form" :script="scriptId" :loading="loading=='$run'" :disabled="disabled" v-on:run="run"></parameters-form>
                 </v-col>
             </v-row>
             <v-row class="pl-4 pr-4">
-                <v-btn text v-for="action in actions" :key="action.name" :loading="actionLoading(action.id)" :disabled="disabled" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
+                <v-btn text v-for="action in actions" :key="action.name" :loading="loading==action.id" :disabled="disabled" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
             </v-row>
         </header>
         <v-divider></v-divider>
@@ -23,7 +23,7 @@
         data() {
             return {
                 data: null,
-                loadings: { run: false }
+                loading: null
             }
         }, 
         computed: {
@@ -46,11 +46,11 @@
             init() {
                 this.data = null;
                 this.$signalr.on('DefaultResult', json => {
-                    this.loadings.run = false;
+                    this.loading = null;
                     this.data = parsePSDataCollection(JSON.parse(json));
                 });
                 this.$signalr.on("ActionResult", (id, json) => {
-                    //this.loadings[id] = false;
+                    this.loading = null;
                     const data = JSON.parse(json);
                     this.toast({
                         text: `${id} is succeeded` ,
@@ -61,11 +61,11 @@
                 })
             },
             run(value) {
-                this.loadings.run = true;
+                this.loading = '$run';
                 this.$signalr.invoke('Invoke', this.scriptId, value);
             },
             invokeAction(id) {
-                this.loadings[id] = true;
+                this.loading = id;
                 this.$signalr.invoke('InvokeAction', id, null);
             }
         },
