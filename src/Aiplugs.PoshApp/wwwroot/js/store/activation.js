@@ -1,10 +1,8 @@
 ﻿const MAX_FREE_PLAN_REPOSITORIES = 2;
-const MAX_FREE_PLAN_SCRIPTS = 10;
+const MAX_FREE_PLAN_SCRIPTS = 20;
 export default {
     namespaced: true,
     state: {
-        maxRepositories: 2,
-        maxScripts: 10,
         display: false,
         status: 'None',
         requestCode: null

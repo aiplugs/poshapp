@@ -44,13 +44,14 @@ namespace Aiplugs.PoshApp
             var respositories = status == ActivationStatus.Valid
                                         ? rootConfig.Repositories
                                         : rootConfig.Repositories.Take(Limitation.FREE_PLAN_MAX_REPOSITORIES);
+            var remain = Limitation.FREE_PLAN_MAX_SCRIPTS;
             foreach (var repo in respositories)
             {
                 var config = await _configAccessor.LoadConfigAsync(repo);
                 var scripts = status == ActivationStatus.Valid 
                                         ? config.Scripts 
-                                        : config.Scripts.Take(Limitation.FREE_PLAN_MAX_SCRIPTS);
-                
+                                        : config.Scripts.Take(remain);
+                remain -= scripts.Count();
                 result.Add(repo.Name, scripts);
             }
             return result;
