@@ -12,10 +12,12 @@
                     :hint="hint"
                     :rules="rules"
                     :required="required"
+                    :filled="filled" 
+                    :rounded="rounded" 
+                    :dense="dense"
                     readonly
                     v-bind:value="date"
                     v-on="on"
-                    filled rounded dense
                     class="flex-grow-1"
                 ></v-text-field>
             </template>
@@ -29,7 +31,7 @@
                 min-width="290px">
             <template v-slot:activator="{ on }">
                 <v-text-field
-                    class="ml-4"
+                    class="ml-4 flex-grow-1"
                     :label="`${label} - Time`" 
                     :hint="hint"
                     :rules="rules"
@@ -37,8 +39,9 @@
                     readonly
                     v-bind:value="time"
                     v-on="on"
-                    filled rounded dense
-                    class="flex-grow-1"
+                    :filled="filled" 
+                    :rounded="rounded" 
+                    :dense="dense"
                 ></v-text-field>
             </template>
             <v-time-picker v-model="time" v-on:input="handleInput"></v-date-picker>
@@ -54,6 +57,9 @@
             hint: String,
             rules: Array,
             required: Boolean,
+            filled: Boolean,
+            rounded: Boolean,
+            dense: Boolean,
         },
         data() {
             const d = Date.parse(this.value) || null;
