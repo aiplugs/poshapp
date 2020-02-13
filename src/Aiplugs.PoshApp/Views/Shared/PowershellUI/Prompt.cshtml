@@ -15,43 +15,19 @@
                                       :rules="rules(desc)"
                                       :required="desc.isMandatory"
                                       v-model="value[desc.name]"
-                                      v-if="textfieldTypes.includes(desc.parameterTypeFullName)"></v-text-field>
-                        <v-menu v-model="menu[desc.name+'date']"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="290px"
-                                v-if="desc.parameterTypeFullName == 'System.DateTime'">
-                            <template v-slot:activator="{ on }">
-                                <v-text-field :label="(desc.label||desc.name) + ' Date'"
-                                              :hint="desc.helpMessage"
-                                              :rules="rules(desc)"
-                                              :required="desc.isMandatory"
-                                              v-model="value[desc.name+'date']"
-                                              readonly
-                                              v-on="on"></v-text-field>
+                                      v-if="textfieldTypes.includes(desc.parameterTypeFullName)">
+                            <template v-slot:append>
+                                <v-icon icon text v-on:click="openDirManager(desc)">mdi-folder-search</v-icon>
+                                <v-icon icon text v-on:click="openFileManager(desc)">mdi-file-search</v-icon>
                             </template>
-                            <v-date-picker v-model="value[desc.name+'date']" v-on:input="menu[desc.name+'date'] = false"></v-date-picker>
-                        </v-menu>
-                        <v-menu v-model="menu[desc.name+'time']"
-                                :close-on-content-click="false"
-                                :nudge-right="40"
-                                transition="scale-transition"
-                                offset-y
-                                min-width="290px"
-                                v-if="desc.parameterTypeFullName == 'System.DateTime'">
-                            <template v-slot:activator="{ on }">
-                                <v-text-field :label="(desc.label||desc.name) + ' Time'"
-                                              :hint="desc.helpMessage"
-                                              :rules="rules(desc)"
-                                              :required="desc.isMandatory"
-                                              v-model="value[desc.name+'time']"
-                                              readonly
-                                              v-on="on"></v-text-field>
-                            </template>
-                            <v-time-picker v-model="value[desc.name+'time']" v-on:input="menu[desc.name+'time'] = false"></v-date-picker>
-                        </v-menu>
+                        </v-text-field>
+                        <datetime-field :label="(desc.label||desc.name)"
+                                        :hint="desc.helpMessage"
+                                        :rules="rules(desc)"
+                                        :required="desc.isMandatory"
+                                        v-model="value[desc.name]"
+                                        v-if="desc.parameterTypeFullName == 'System.DateTime'">
+                        </datetime-field>
                     </div>
                 </v-form>
             </v-card-text>
@@ -65,7 +41,7 @@
 </template>
 <script type="module">
     import {createCliXml} from '/js/clixml.js'
-
+    
     Vue.component('powershelluiprompt', {
         template: '#powershell-ui-prompt-component',
         data() {
@@ -81,6 +57,12 @@
             }
         },
         methods: {
+            supportFileManager(desc) {
+                return desc.parameterTypeFullName === 'System.String' && desc.name.toLowerCase().endsWith('path');
+            },
+            appendIcon(desc) {
+                return this.supportFileManager(desc) ? "mdi-folder-search" : null;
+            },
             rules(desc) {
                 const result = [];
                 const label = desc.label||desc.name;
@@ -104,9 +86,7 @@
                 for (let desc of this.descriptions) {
                     let value = null;
                     if (desc.parameterTypeFullName == 'System.DateTime') {
-                        const date = this.value[desc.name+'date'];
-                        const time = this.value[desc.name+'time'];
-                        value = new Date(`${date} ${time}`).toJSON();
+                        value = new Date(this.value[desc.name]).toJSON();
                     }
                     else {
                        value = this.value[desc.name];
@@ -115,6 +95,12 @@
                 }
                 this.$signalr.invoke('Prompt', model);
                 this.dialog = false;
+            },
+            openDirManager(desc) {
+                ipcRenderer.send('select-directory', desc.name);
+            },
+            openFileManager(desc) {
+                ipcRenderer.send('select-file', desc.name);
             }
         },
         mounted() {
@@ -128,6 +114,9 @@
                 this.dialog = true;
                 this.$refs.form.reset();
             })
+            ipcRenderer.on('select-file-reply', (sender, path, name) => {
+                this.value[name] = path;
+            });
         }
     })
 </script>

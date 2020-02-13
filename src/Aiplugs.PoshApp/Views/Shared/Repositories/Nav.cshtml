@@ -201,7 +201,7 @@
                 this.deleteTarget = repository;
             },
             openFileManager() {
-                ipcRenderer.send('select-directory');
+                ipcRenderer.send('select-directory', '$repository');
             }
         },
         async mounted() {

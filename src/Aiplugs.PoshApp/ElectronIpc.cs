@@ -18,7 +18,20 @@ namespace Aiplugs.PoshApp
                 };
 
                 string[] dirs = await Electron.Dialog.ShowOpenDialogAsync(mainWindow, options);
-                Electron.IpcMain.Send(mainWindow, "select-directory-reply", dirs);
+                Electron.IpcMain.Send(mainWindow, "select-directory-reply", dirs, args);
+            });
+
+            Electron.IpcMain.On("select-file", async (args) => {
+                var mainWindow = Electron.WindowManager.BrowserWindows.First();
+                var options = new OpenDialogOptions
+                {
+                    Properties = new OpenDialogProperty[] {
+                        OpenDialogProperty.openFile,
+                    }
+                };
+
+                string[] dirs = await Electron.Dialog.ShowOpenDialogAsync(mainWindow, options);
+                Electron.IpcMain.Send(mainWindow, "select-file-reply", dirs, args);
             });
 
             Electron.IpcMain.On("open-activation", async (args) =>
