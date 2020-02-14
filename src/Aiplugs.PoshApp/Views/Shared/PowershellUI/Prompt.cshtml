@@ -16,7 +16,7 @@
                                       :required="desc.isMandatory"
                                       v-model="value[desc.name]"
                                       v-if="textfieldTypes.includes(desc.parameterTypeFullName)">
-                            <template v-slot:append>
+                            <template v-slot:append v-if="supportFileManager(desc)">
                                 <v-icon icon text v-on:click="openDirManager(desc)">mdi-folder-search</v-icon>
                                 <v-icon icon text v-on:click="openFileManager(desc)">mdi-file-search</v-icon>
                             </template>
@@ -59,9 +59,6 @@
         methods: {
             supportFileManager(desc) {
                 return desc.parameterTypeFullName === 'System.String' && desc.name.toLowerCase().endsWith('path');
-            },
-            appendIcon(desc) {
-                return this.supportFileManager(desc) ? "mdi-folder-search" : null;
             },
             rules(desc) {
                 const result = [];
@@ -114,6 +111,9 @@
                 this.dialog = true;
                 this.$refs.form.reset();
             })
+            ipcRenderer.on('select-directory-reply', (sender, path, name) => {
+                this.value[name] = path;
+            });
             ipcRenderer.on('select-file-reply', (sender, path, name) => {
                 this.value[name] = path;
             });
