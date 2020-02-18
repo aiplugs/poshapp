@@ -64,7 +64,7 @@ export default {
                 }, { root: true });
             }
         },
-        async activate({ commit, dispatch }, activationCode) {s
+        async activate({ commit, dispatch }, activationCode) {
             const response = await fetch('/api/activation', {
                 method: 'post',
                 headers: {
