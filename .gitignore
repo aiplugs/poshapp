@@ -5,3 +5,4 @@ obj
 *.user
 node_modules
 src/monaco-editor/dist
+node-tar-extract
