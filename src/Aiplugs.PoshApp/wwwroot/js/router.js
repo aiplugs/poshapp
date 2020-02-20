@@ -9,5 +9,6 @@ export default new VueRouter({
         { path: '/repositories/:id', components: { default: Vue.component('Repository'), nav: Vue.component('RepositoryNav') } },
         { path: '/settings/', components: { nav: Vue.component('SettingsNav') } },
         { path: '/settings/activation', components: { default: Vue.component('Activation'), nav: Vue.component('SettingsNav') } },
+        { path: '/settings/version', components: { default: Vue.component('Version'), nav: Vue.component('SettingsNav') } },
     ]
 })

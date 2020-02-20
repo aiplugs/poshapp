@@ -3,28 +3,33 @@
   "splashscreen": {
     "imageFile": ""
   },
-  "singleInstance": false,
+  "singleInstance": true,
   "build": {
-    "appId": "com.Aiplugs.PoshApp.app",
-    "productName": "Aiplugs.PoshApp",
+    "appId": "com.aiplugs.poshapp",
+    "productName": "POSH App",
     "copyright": "Copyright © 2019",
-    "buildVersion": "1.0.0",
+    "buildVersion": "0.9.7",
     "compression": "maximum",
     "directories": {
       "output": "../../../bin/Desktop"
     },
+    "publish": [{
+      "provider": "github",
+      "owner": "aiplugs",
+      "repo":  "poshapp"
+    }],
     "extraResources": [
       {
         "from": "./bin",
         "to": "bin",
-        "filter": ["**/*"]
+        "filter": [ "**/*" ]
       }
     ],
     "files": [
       {
         "from": "./ElectronHostHook/node_modules",
         "to": "ElectronHostHook/node_modules",
-        "filter": ["**/*"]
+        "filter": [ "**/*" ]
       },
       "**/*"
     ]

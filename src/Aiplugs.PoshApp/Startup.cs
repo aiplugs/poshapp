@@ -76,14 +76,13 @@ namespace Aiplugs.PoshApp
         }
         public async void ElectronBootstrap()
         {
-            var browserWindow = await Electron.WindowManager.CreateWindowAsync(new BrowserWindowOptions
+            await Electron.WindowManager.CreateWindowAsync(new BrowserWindowOptions
             {
+                Title = "POSH App",
                 Width = 1152,
                 Height = 864,
                 Show = true,
             });
-
-            browserWindow.SetTitle("POSH App");
         }
     }
 }

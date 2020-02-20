@@ -96,6 +96,9 @@
                 this.$signalr.on('GitLogNotFound', name => {
                     if (this.$route.params.id == name) {
                         this.items.splice(0);
+                        this.status.splice(0);
+                        this.origin = null;
+                        this.local = null;
                         this.message = 'This repository have not initialized git.'
                     }
                 })
