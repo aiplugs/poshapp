@@ -94,10 +94,20 @@
                 this.dialog = false;
             },
             openDirManager(desc) {
-                ipcRenderer.send('select-directory', desc.name);
-            },
+                if (desc.parameterTypeFullName.endsWith('[]') || desc.parameterTypeFullName.startsWith('IEnumerable')) {
+                    ipcRenderer.send('select-directories', desc.name);
+                }
+                else {
+                    ipcRenderer.send('select-directory', desc.name);
+                }
+            }, 
             openFileManager(desc) {
-                ipcRenderer.send('select-file', desc.name);
+                if (desc.parameterTypeFullName.endsWith('[]') || desc.parameterTypeFullName.startsWith('IEnumerable')) {
+                    ipcRenderer.send('select-files', desc.name);
+                }
+                else {
+                    ipcRenderer.send('select-file', desc.name);
+                }
             }
         },
         mounted() {
@@ -111,7 +121,13 @@
                 this.dialog = true;
                 this.$refs.form.reset();
             })
-            ipcRenderer.on('select-directory-reply', (sender, path, name) => {
+            ipcRenderer.on('select-directories-reply', (sender, path, name) => {
+                this.value[name] = path;
+            });
+            ipcRenderer.on('select-director-reply', (sender, path, name) => {
+                this.value[name] = path;
+            });
+            ipcRenderer.on('select-files-reply', (sender, path, name) => {
                 this.value[name] = path;
             });
             ipcRenderer.on('select-file-reply', (sender, path, name) => {

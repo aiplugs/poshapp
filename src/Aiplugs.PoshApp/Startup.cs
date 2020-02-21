@@ -81,6 +81,7 @@ namespace Aiplugs.PoshApp
                 Title = "POSH App",
                 Width = 1152,
                 Height = 864,
+                AutoHideMenuBar = true,
                 Show = true,
             });
         }

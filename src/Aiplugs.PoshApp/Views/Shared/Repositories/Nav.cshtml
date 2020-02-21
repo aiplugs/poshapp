@@ -83,7 +83,7 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <v-dialog v-model="deleteTarget" max-width="600">
+        <v-dialog :value="deleteDialog" max-width="600">
             <v-card>
                 <v-card-title>Are you sure you want to Delete?</v-card-title>
                 <v-card-actions>
@@ -115,7 +115,7 @@
                     v => /^[a-zA-Z0-9_]*$/.test(v) || 'Valid characters are A-Z a-z 0-9 _'
                 ],
                 pathRules: [
-                    v => !!v || 'Repository Name is required'
+                    v => !!v || 'Repository Path is required'
                 ],
                 originRules: [
                     v => this.repositoryType == 'local' || !!v || 'Origin Url is required'
@@ -126,6 +126,9 @@
         computed: {
             ...Vuex.mapState('repositories', ['repositories']),
             ...Vuex.mapGetters('activation', ['exceededFreePlanForRepositories']),
+            deleteDialog() {
+                return this.deleteTarget != null;
+            }
         },
         methods: {
             ...Vuex.mapActions('repositories', ['loadRepositories', 'createRepository', 'updateRepository', 'deleteRepository']),   
@@ -201,12 +204,12 @@
                 this.deleteTarget = repository;
             },
             openFileManager() {
-                ipcRenderer.send('select-directory', '$repository');
+                ipcRenderer.send('select-repository-path');
             }
         },
         async mounted() {
             await this.loadRepositories();
-            ipcRenderer.on('select-directory-reply', (sender, path) => {
+            ipcRenderer.on('select-repository-path-reply', (sender, path) => {
                 this.path = path;
             });
             this.$signalr.on('GitCloneFaild', name => {
@@ -214,7 +217,7 @@
             });
         },
         beforeRouteLeave (to, from , next) {
-            ipcRenderer.removeAllListeners('select-directory-reply');
+            ipcRenderer.removeAllListeners('select-repository-path-reply');
             this.$signalr.off('GitCloneFaild');
             next();
         }
