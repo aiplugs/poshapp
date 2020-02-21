@@ -10,6 +10,12 @@
                     filled rounded dense
                     v-if="p.type == 'System.DateTimeOffset' || p.type == 'System.DateTime'">
                 </datetime-field>
+                <v-select
+                    v-model="p.value"
+                    :label="p.name"
+                    :items="validateSet(p)"
+                    v-else-if="p.validateSet">
+                </v-select>
                 <v-text-field 
                     v-model="p.value" 
                     :label="p.name" 
@@ -99,6 +105,9 @@
             colSize(parameter) {
                 return this.isNumberType(parameter.type) ? 2 : null;
             },
+            validateSet(parameter) {
+                return parameter.validateSet.map(v => ({ text: v, value: v }));
+            },
             getClixmls() {
                 return this.parameters.reduce((o, p) => {
                     if (p.value !== undefined) {
@@ -127,7 +136,7 @@
             })
             this.$signalr.onconnected(() => {
                 this.getParameters();
-            }) 
+            })
         },
         beforeDestroy() {
             this.$signalr.off('DetailResult')

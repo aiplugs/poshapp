@@ -72,7 +72,7 @@ namespace Aiplugs.PoshApp.Services.Powersehll
                 var validateSetAttr = (AttributeAst)paramAst.Attributes.FirstOrDefault(attr => attr.TypeName.Name == "ValidateSet");
                 if (validateSetAttr != null) 
                 {
-                    info.ValidateSet = validateSetAttr.PositionalArguments.Select(arg => arg.Extent.Text).ToArray();
+                    info.ValidateSet = validateSetAttr.PositionalArguments.Select(arg => (string)arg.SafeGetValue()).ToArray();
                 }
 
                 var validateCountAttr = (AttributeAst)paramAst.Attributes.FirstOrDefault(attr => attr.TypeName.Name == "ValidateCount");

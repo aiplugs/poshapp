@@ -68,7 +68,8 @@ namespace Aiplugs.PoshApp.Services.Powersehll
                     return;
 
                 using var ps = PowerShell.Create(runspace);
-                ps.Streams.Error.DataAdding += (sender, args) => {
+                ps.Streams.Error.DataAdding += (sender, args) =>
+                {
                     var record = (ErrorRecord)args.ItemAdded;
                     Client.SendAsync("WriteErrorLine", record.ToString()).Wait();
                 };
@@ -84,11 +85,13 @@ namespace Aiplugs.PoshApp.Services.Powersehll
                         var result = ps.InvokeWithPipeline(content, detailCmd.InputObject);
                         await Client.SendAsync("DetailResult", JsonConvert.SerializeObject(result));
                     }
-                    else if (invokeCommand is ActionInvokeCommand actionCmd) {
+                    else if (invokeCommand is ActionInvokeCommand actionCmd) 
+                    {
                         var result = ps.InvokeWithPipeline(content, actionCmd.InputObject);
                         await Client.SendAsync("ActionResult", actionCmd.ScriptId, JsonConvert.SerializeObject(result));
                     }
-                    else if (invokeCommand is GetParametersCommand) {
+                    else if (invokeCommand is GetParametersCommand) 
+                    {
                         var parameters = ps.GetParameters(content);
                         await Client.SendAsync("GetParameters", parameters.Select(p => new {
                             p.Name,
@@ -100,15 +103,20 @@ namespace Aiplugs.PoshApp.Services.Powersehll
                             p.ValueFromPipeline,
                             p.ValueFromPipelineByPropertyName,
                             p.ValueFromRemainingArguments,
+                            p.ValidateSet,
                             Type = p.Type.FullName
                         }));
                     }
                 } 
-                catch(ParseException parseException) {
+                catch(ParseException parseException) 
+                {
                     await Client.SendAsync("ParseError", parseException.Message);
+                    await Client.SendAsync("UnitResult");
                 }
-                catch(Exception exception) {
+                catch(Exception exception) 
+                {
                     await Client.SendAsync("WriteErrorLine", exception.Message);
+                    await Client.SendAsync("UnitResult");
                 }
             }
         }

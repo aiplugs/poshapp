@@ -56,6 +56,9 @@
                         right: true
                     });
                 })
+                this.$signalr.on('UnitResult', () => {
+                    this.loading = null;
+                })
             },
             run(value) {
                 this.loading = '$run';
@@ -75,6 +78,8 @@
         },
         beforeRouteLeave (to, from , next) {
             this.$signalr.off('DefaultResult');
+            this.$signalr.off('ActionResult');
+            this.$signalr.off('UnitResult');
             next();
         }
     })

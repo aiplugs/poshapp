@@ -116,7 +116,6 @@
                 })
                 this.$signalr.on("ActionResult", (id, json) => {
                     this.loading = null;
-                    this.loadings[id] = false;
                     const data = JSON.parse(json);
                     this.toast({
                         text: `${id} is succeeded` ,
@@ -124,6 +123,9 @@
                         top: true,
                         right: true
                     });
+                })
+                this.$signalr.on('UnitResult', () => {
+                    this.loading = null;
                 })
             },
             run(value) {
@@ -150,6 +152,7 @@
         beforeRouteLeave (to, from , next) {
             this.$signalr.off('DefaultResult');
             this.$signalr.off('ActionResult');
+            this.$signalr.off('UnitResult');
             next();
         }
     })
