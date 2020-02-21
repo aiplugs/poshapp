@@ -6,7 +6,7 @@ namespace Aiplugs.PoshApp
 {
     public class ElectronIpc
     {
-        public static async void Setup()
+        public static void Setup()
         {
             var menu = new MenuItem[] {
                     new MenuItem {
@@ -137,7 +137,7 @@ namespace Aiplugs.PoshApp
                 Electron.Clipboard.WriteText(text.ToString());
             });
 
-            await Electron.AutoUpdater.CheckForUpdatesAndNotifyAsync();
+            Electron.AutoUpdater.CheckForUpdatesAndNotifyAsync();
         }
     }
 }
