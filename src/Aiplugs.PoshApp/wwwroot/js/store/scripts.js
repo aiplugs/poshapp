@@ -106,6 +106,22 @@ export default {
                 }
                 return `${repo}:${id}`;
             };
+        },
+        findPageByDetail(state) {
+            return (repo, id) => {
+                const key = `${repo}:${id}`;
+                const domestics = state.metadata[repo].filter(s => s.type === 'List' && s.detail === id);
+                const others = Object.keys(state.metadata).map(key => state.metadata[key]).flat().filter(s => s.type === 'List' && s.detail === key);
+                return domestics.concat(others)[0];
+            };
+        },
+        findPageByAction(state) {
+            return (repo, id) => {
+                const key = `${repo}:${id}`;
+                const domestics = state.metadata[repo].filter(s => s.actions && s.actions.includes(id));
+                const others = Object.keys(state.metadata).map(key => state.metadata[key]).flat().filter(s => s.actions && s.actions.includes(key));
+                return domestics.concat(others)[0];
+            };
         }
     },
     mutations: {

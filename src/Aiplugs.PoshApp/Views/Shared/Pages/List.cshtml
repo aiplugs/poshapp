@@ -34,6 +34,9 @@
         <transition name="slide-x-reverse-transition">
             <detail-page :script="detailScriptId" :input="detailInput" v-if="detailScriptId" v-on:close="detailScriptId=null"></detail-page>
         </transition>
+        <v-btn color="primary" fab dark style="position: absolute; bottom: 8px; right: 8px;" v-on:click="gotoEditor">
+            <v-icon>mdi-xml</v-icon>
+        </v-btn>
     </div>
 </template>
 <script type="module">
@@ -140,6 +143,15 @@
                 const clixml = item.$clixml;
                 this.detailInput = clixml;
                 this.detailScriptId = this.detailId;
+            },
+            gotoEditor() {
+                if (this.detailId) {
+                    const [repo, id] = this.detailId.split(':');
+                    this.$router.push(`/scripts/${repo}/${id}`)
+                }
+                else {
+                    this.$router.push(`/scripts/${this.$route.params.repo}/${this.$route.params.id}`)
+                }
             }
         },
         mounted() {

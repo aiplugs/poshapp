@@ -1,5 +1,9 @@
 <template id="scripts-component">
     <div style="position: absolute; width: 100%; height: 100%;" v-resize="handleResize">
+        <div>
+            <v-btn text v-on:click="save" :disabled="!editor">Save</v-btn>
+            <v-btn text v-on:click="gotoApp">Goto App</v-btn>
+        </div>
         <div ref="editor" class="fill-height"></div>
     </div>
 </template>
@@ -67,6 +71,47 @@
             handleResize() {
                 if (this.editor) {
                     this.editor.layout();
+                }
+            },
+            async save() {
+                const value = this.editor.getModel().getValue();
+                await this.saveScriptContent(this.$route.params.repo, this.$route.params.id, value);
+                this.toast({
+                    text: "Saved",
+                    color: "success",
+                    top: true,
+                    right: true
+                });
+            },
+            gotoListFromDetail(repo, id) {
+                const page = this.$store.getters['scripts/findPageByDetail'](repo, id);
+                if (page) {
+                    this.$router.push(`/${page.type.toLowerCase()}/${page.repository}/${page.id}`);
+                }
+            },
+            gotoPageFromAction(repo, id) {
+                const page = this.$store.getters['scripts/findPageByAction'](repo, id);
+                if (page) {
+                    if (page.type === 'Detail') {
+                        this.gotoListFromDetail(page.repository, page.id);
+                    }
+                    else {
+                        this.$router.push(`/${page.type.toLowerCase()}/${page.repository}/${page.id}`);
+                    }
+                }
+            },
+            gotoApp() {
+                const { repo, id } = this.$route.params;
+                const script = this.$store.getters['scripts/find'](repo, id);
+
+                if (['List', 'Singleton'].includes(script.type)) {
+                    this.$router.push(`/${script.type.toLowerCase()}/${repo}/${id}`);
+                }
+                else if (script.type === 'Detail') {
+                    this.gotoListFromDetail(repo, id);
+                }
+                else if (script.type === 'Action') {
+                    this.gotoPageFromAction(repo, id);
                 }
             }
         },
