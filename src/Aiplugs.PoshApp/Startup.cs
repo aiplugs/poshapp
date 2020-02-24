@@ -83,6 +83,7 @@ namespace Aiplugs.PoshApp
                 Height = 864,
                 AutoHideMenuBar = true,
                 Show = true,
+                Icon = "~/icon/poshapp-icon-256x256.png"
             });
         }
     }
