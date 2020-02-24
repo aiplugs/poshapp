@@ -14,6 +14,9 @@
         <div class="flex scroll-content">
             <data-viewer :data="data"></data-viewer>
         </div>
+        <v-btn fab dark text color="grey" style="position: absolute; bottom: 8px; right: 8px;" v-on:click="gotoEditor">
+            <v-icon>mdi-xml</v-icon>
+        </v-btn>
     </div>
 </template>
 <script type="module">
@@ -67,6 +70,9 @@
             invokeAction(id) {
                 this.loading = id;
                 this.$signalr.invoke('InvokeAction', id, null);
+            },
+            gotoEditor() {
+                this.$router.push(`/scripts/${this.$route.params.repo}/${this.$route.params.id}`)
             }
         },
         mounted() {

@@ -34,7 +34,7 @@
         <transition name="slide-x-reverse-transition">
             <detail-page :script="detailScriptId" :input="detailInput" v-if="detailScriptId" v-on:close="detailScriptId=null"></detail-page>
         </transition>
-        <v-btn color="primary" fab dark style="position: absolute; bottom: 8px; right: 8px;" v-on:click="gotoEditor">
+        <v-btn fab dark text color="grey" style="position: absolute; bottom: 8px; right: 8px;" v-on:click="gotoEditor">
             <v-icon>mdi-xml</v-icon>
         </v-btn>
     </div>
@@ -145,8 +145,8 @@
                 this.detailScriptId = this.detailId;
             },
             gotoEditor() {
-                if (this.detailId) {
-                    const [repo, id] = this.detailId.split(':');
+                if (this.detailScriptId) {
+                    const [repo, id] = this.detailScriptId.split(':');
                     this.$router.push(`/scripts/${repo}/${id}`)
                 }
                 else {
