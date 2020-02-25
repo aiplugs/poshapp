@@ -10,7 +10,7 @@
             <v-textarea label="Activation Request Code" v-model="requestCode" readonly auto-grow rows="3" v-on:click="copyRequestCode"></v-textarea>
             <v-form v-model="valid">
                 <v-text-field label="Activation Code" v-model="activationCode" :rules="[v => !!v || 'Activation Code is required']"></v-text-field>
-                <v-btn color="primary" block v-on:click="activation" :disabled="!valid" :loading="loading">Register Activation Code</v-btn>
+                <v-btn color="primary" block v-on:click="handleActivation" :disabled="!valid" :loading="loading">Register Activation Code</v-btn>
             </v-form>
         </div>
         <div v-else-if="status==='Expired'">
