@@ -64,17 +64,21 @@
                 const result = [];
                 const label = desc.label||desc.name;
 
+                const optional = function (f) {
+                    return v => v === null || v === undefined || f(v);
+                }
+
                 if (desc.isMandatory)
                     result.push(v => !!v || `${label} is required`);
 
                 if (desc.parameterTypeFullName == 'System.Int32'
                  || desc.parameterTypeFullName == 'System.Int64')
-                    result.push(v => !isNaN(parseInt(v)) || `${label} need integer value`)
+                    result.push(optional(v => !isNaN(parseInt(v)) || `${label} need integer value`))
 
                 if (desc.parameterTypeFullName == 'System.Float'
                  || desc.parameterTypeFullName == 'System.Double'
                  || desc.parameterTypeFullName == 'System.Decimal')
-                    result.push(v => !isNaN(parseFloat(v)) || `${label} need number value`)
+                    result.push(optional(v => !isNaN(parseFloat(v)) || `${label} need number value`))
 
                 return result;
             },
@@ -83,7 +87,7 @@
                 for (let desc of this.descriptions) {
                     let value = null;
                     if (desc.parameterTypeFullName == 'System.DateTime') {
-                        value = new Date(this.value[desc.name]).toJSON();
+                       value = new Date(this.value[desc.name]).toJSON();
                     }
                     else {
                        value = this.value[desc.name];

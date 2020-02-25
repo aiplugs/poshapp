@@ -32,7 +32,17 @@ namespace Aiplugs.PoshApp.Services
             {
                 try
                 {
-                    io.PromptQueue.Enqueue(fields.ToDictionary(o => o.Key, o => o.Value != null ? new PSObject(PSSerializer.Deserialize(o.Value)) : null));
+                    io.PromptQueue.Enqueue(fields.ToDictionary(o => o.Key, o =>
+                    {
+                        if (o.Value == null)
+                            return null;
+
+                        var value = PSSerializer.Deserialize(o.Value);
+                        if (value == null)
+                            return null;
+
+                        return new PSObject(value);
+                    }));
                 }
                 catch (XmlException ex)
                 {

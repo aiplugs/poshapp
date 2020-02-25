@@ -56,7 +56,8 @@ function extract(element) {
             }
             if (typeName === 'System.Collections.Hashtable'||
                 typeName === 'System.Collections.Specialized.OrderedDictionary'||
-                typeName === 'Deserialized.System.Collections.Specialized.OrderedDictionary') {
+                typeName === 'Deserialized.System.Collections.Specialized.OrderedDictionary',
+                typeName.startsWith('System.Collections.Generic.Dictionary')) {
                 const dct = element.querySelector('DCT');
                 return Array.from(dct.children)
                             .map(el => {

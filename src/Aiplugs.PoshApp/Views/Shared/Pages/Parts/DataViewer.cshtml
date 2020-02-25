@@ -1,10 +1,10 @@
 <template id="data-viewer">
     <div>
         <div v-for="datum in data" :key="datum.$clixml">
-            <p v-if="datum.value === null">NULL</p>
+            <p class="pl-4 pr-4" v-if="datum.value === null">NULL</p>
             <div v-else-if="isEmbdedHtml(datum.value)" v-html="getEmbdedHtml(datum.value)"></div>
-            <p v-else-if="typeof datum.value == 'string'||typeof datum.value == 'number'">{{datum.value}}</p>
-            <p v-else-if="typeof datum.value == 'object' && datum.value.constructor == Date">{{datum.value.toLocaleString()}}</p>
+            <p class="pl-4 pr-4" v-else-if="typeof datum.value == 'string'||typeof datum.value == 'number'">{{datum.value}}</p>
+            <p class="pl-4 pr-4" v-else-if="typeof datum.value == 'object' && datum.value.constructor == Date">{{datum.value.toLocaleString()}}</p>
             <v-simple-table v-else-if="typeof datum.value == 'object' && Array.isArray(datum.value)">
                 <template v-slot:default>
                     <thead>
