@@ -67,6 +67,8 @@ namespace Aiplugs.PoshApp.Services.Powersehll
                 if (content == null)
                     return;
 
+                var workingDir = await _service.GetScriptDir(invokeCommand.ScriptId);
+                runspace.SessionStateProxy.Path.SetLocation(workingDir);
                 using var ps = PowerShell.Create(runspace);
                 ps.Streams.Error.DataAdding += (sender, args) =>
                 {

@@ -251,5 +251,36 @@ namespace Aiplugs.PoshApp
                 _semaphore.Release();
             }
         }
+
+        public async Task<string> GetScriptDir(string scriptId)
+        {
+            var splited = scriptId.Split(':');
+
+            if (splited.Length != 2)
+                throw new ArgumentException(nameof(scriptId));
+
+            var repositoryName = splited[0];
+
+            var scriptName = splited[1];
+
+            var repository = await GetRepository(repositoryName);
+
+            if (repository == null)
+                return null;
+
+            var script = await GetScript(repository, scriptName);
+
+            if (script == null)
+                return null;
+
+            return GetScriptDir(repository, script);
+        }
+
+        public string GetScriptDir(Repository repository, Script script)
+        {
+            var path = GetScriptPath(repository, script.Path);
+
+            return Path.GetDirectoryName(path);
+        }
     }
 }
