@@ -104,6 +104,9 @@ namespace Aiplugs.PoshApp.Services.Powersehll
                             p.ValueFromPipelineByPropertyName,
                             p.ValueFromRemainingArguments,
                             p.ValidateSet,
+                            p.ValidateLength,
+                            p.ValidateRange,
+                            p.ValidatePattern,
                             Type = p.Type.FullName
                         }));
                     }

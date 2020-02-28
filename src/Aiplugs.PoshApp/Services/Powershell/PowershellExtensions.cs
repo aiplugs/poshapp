@@ -78,45 +78,69 @@ namespace Aiplugs.PoshApp.Services.Powersehll
                 var validateCountAttr = (AttributeAst)paramAst.Attributes.FirstOrDefault(attr => attr.TypeName.Name == "ValidateCount");
                 if (validateCountAttr != null) 
                 {
+                    if (validateCountAttr.PositionalArguments.Count > 0)
+                        info.ValidateCount = new[] { ExtractInt(validateCountAttr, 0), ExtractInt(validateCountAttr, 1) };
+
+                    if (validateCountAttr.NamedArguments.Count > 0)
+                        info.ValidateCount = new[] { ExtractInt(validateCountAttr, "MinLength"), ExtractInt(validateCountAttr, "MaxLength") };
                 }
 
                 var validateLengthAttr = (AttributeAst)paramAst.Attributes.FirstOrDefault(attr => attr.TypeName.Name == "ValidateLength");
                 if (validateLengthAttr != null) 
                 {
+                    if (validateLengthAttr.PositionalArguments.Count > 0)
+                        info.ValidateLength = new[] { ExtractInt(validateLengthAttr, 0), ExtractInt(validateLengthAttr, 1) };
+
+                    if (validateLengthAttr.NamedArguments.Count > 0)
+                        info.ValidateLength = new[] { ExtractInt(validateLengthAttr, "MinLength"), ExtractInt(validateLengthAttr, "MaxLength") };
                 }
 
                 var validateRangeAttr = (AttributeAst)paramAst.Attributes.FirstOrDefault(attr => attr.TypeName.Name == "ValidateRange");
                 if (validateRangeAttr != null) 
                 {
+                    if (validateRangeAttr.PositionalArguments.Count > 0)
+                        info.ValidateRange = new[] { ExtractLong(validateRangeAttr, 0), ExtractLong(validateRangeAttr, 1) };
+
+                    if (validateRangeAttr.NamedArguments.Count > 0)
+                        info.ValidateRange = new[] { ExtractLong(validateRangeAttr, "MinRange"), ExtractLong(validateRangeAttr, "MaxRange") };
                 }
 
                 var validatePatternAttr = (AttributeAst)paramAst.Attributes.FirstOrDefault(attr => attr.TypeName.Name == "ValidatePattern");
                 if (validatePatternAttr != null) 
                 {
+                    info.ValidatePattern = ExtractString(validatePatternAttr, 0);
                 }
 
                 return info;
             });
         }
         private static string ExtractString(AttributeAst attr, string paramName)
-            => attr?.NamedArguments.FirstOrDefault(a => a.ArgumentName == paramName)?.Argument.Extent.Text;
+        { 
+            return (string)attr?.NamedArguments.FirstOrDefault(a => a.ArgumentName == paramName)?.Argument.SafeGetValue();
+        }
+        private static string ExtractString(AttributeAst attr, int position)
+        { 
+            return (string)attr?.PositionalArguments.ElementAtOrDefault(position)?.SafeGetValue();
+        }
         private static bool ExtractBoolean(AttributeAst attr, string paramName)
         {
-            var arg = attr?.NamedArguments.FirstOrDefault(a => a.ArgumentName == paramName);
-
-            if (arg == null)
-                return default(bool);
-
-            return Convert.ToBoolean(((VariableExpressionAst)arg.Argument).VariablePath.UserPath);
+            return Convert.ToBoolean(attr?.NamedArguments.FirstOrDefault(a => a.ArgumentName == paramName)?.Argument.SafeGetValue() ?? default(bool));
         }
         private static int ExtractInt(AttributeAst attr, string paramName)
         {
-            var arg = attr?.NamedArguments.FirstOrDefault(a => a.ArgumentName == paramName);
-
-            if (arg == null)
-                return default(int);
-
-            return Convert.ToInt32(((VariableExpressionAst)arg.Argument).VariablePath.UserPath);
+            return (int)(attr?.NamedArguments.FirstOrDefault(a => a.ArgumentName == paramName)?.Argument.SafeGetValue() ?? default(int));
+        }
+        private static int ExtractInt(AttributeAst attr, int position)
+        {
+            return (int)(attr?.PositionalArguments.ElementAtOrDefault(position)?.SafeGetValue() ?? default(int));
+        }
+        private static long ExtractLong(AttributeAst attr, string paramName)
+        {
+            return Convert.ToInt64(attr?.NamedArguments.FirstOrDefault(a => a.ArgumentName == paramName)?.Argument.SafeGetValue() ?? default(long));
+        }
+        private static long ExtractLong(AttributeAst attr, int position)
+        {
+            return Convert.ToInt64(attr?.PositionalArguments.ElementAtOrDefault(position)?.SafeGetValue() ?? default(long));
         }
     }
     public class PSParameterInfo
@@ -136,13 +160,9 @@ namespace Aiplugs.PoshApp.Services.Powersehll
         public string DefaultParameterSetName { get; set; }
         public string DefaultValue { get; set; }
         public string[] ValidateSet { get;set; }
-    }
-
-    public class PSInvokeResult
-    {
-        public ICollection<PSObject> Output { get; } = new List<PSObject>();
-        public ICollection<PSObject> Information { get; } = new List<PSObject>();
-        public ICollection<PSObject> Warning { get; } = new List<PSObject>();
-        public ICollection<PSObject> Progress { get; } = new List<PSObject>();
+        public int[] ValidateCount { get; set; }
+        public int[] ValidateLength { get; set; }
+        public long[] ValidateRange { get; set; }
+        public string ValidatePattern { get; set; }
     }
 }
