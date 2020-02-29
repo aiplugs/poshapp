@@ -76,6 +76,7 @@
             async save() {
                 const value = this.editor.getModel().getValue();
                 await this.saveScriptContent(this.$route.params.repo, this.$route.params.id, value);
+                this.content = value;
                 this.toast({
                     text: "Saved",
                     color: "success",
