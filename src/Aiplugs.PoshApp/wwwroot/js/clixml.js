@@ -32,7 +32,7 @@ function extract(element) {
         const tnref= element.querySelector(':scope > TNRef');
         if (types.length === 0 && tnref) {
             const refId = tnref.getAttribute('RefId');
-            types = element.parentElement.querySelectorAll(`TN[RefId="${refId}"] > T`);
+            types = element.getRootNode().querySelectorAll(`TN[RefId="${refId}"] > T`);
         }
 
         if (types.length === 0 && element.children.length > 0) {
