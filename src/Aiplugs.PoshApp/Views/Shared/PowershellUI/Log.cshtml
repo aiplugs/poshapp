@@ -13,7 +13,7 @@
             <div style="flex: 1;"></div>
             <pre v-for="(message, index) in messages" :key="index"
                  v-text="message.text"
-                 :class="resolveColor(message)" class="pl-4 pr-4"></pre>
+                 :class="resolveColor(message)" class="pl-4 pr-4" style="white-space:pre-wrap;"></pre>
             <div class="black text-right" ref="bottom" style="position:sticky;bottom:0;width:100%;">
                 <v-btn dark text icon v-on:click="dialog=false">
                     <v-icon>mdi-chevron-down</v-icon>
@@ -43,10 +43,8 @@
                 const foregroundColors = ['black--text', 'blue--text text--darken-4', 'green--text text--darken-4', 'cyan--text text--darken-4', 'red--text text--darken-4', 'pink--text text--darken-4', 'yellow--text text--darken-4', 'grey--text', 'grey--text text--darken-4', 'blue--text', 'green--text', 'cyan--text', 'red--text', 'pink--text', 'yellow--text', 'white--text']
                 const backgroudColors = ['black', 'blue darken-4', 'green darken-4', 'cyan darken-4', 'red darken-4', 'pink darken-4', 'yellow darken-4', 'grey', 'grey darken-4', 'blue', 'green', 'cyan', 'red', 'pink', 'yellow', 'white']
                 return [...foregroundColors[color].split(' '), ...backgroudColors[bgColor].split(' ')]
-            }
-        },
-        mounted() {
-            this.$signalr.on("WriteWithColor", (color, bgColor, text) => {
+            },
+            write(color, bgColor, text) {
                 if (this.messages.length > this.max) {
                     this.messages.shift()
                 }
@@ -55,6 +53,14 @@
                 requestIdleCallback(() => {
                     this.$refs.bottom.parentElement.parentElement.scrollTo(0, this.$refs.bottom.offsetTop)
                 })
+            }
+        },
+        mounted() {
+            this.$signalr.on("WriteWithColor", (color, bgColor, text) => {
+                this.write(color, bgColor, text);
+            })
+            this.$signalr.on("WriteWarningLine", message => {
+                this.write(6, 0, message);
             })
         }
     })
