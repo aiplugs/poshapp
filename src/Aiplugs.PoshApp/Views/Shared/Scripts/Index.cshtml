@@ -118,13 +118,11 @@
         mounted() {
             this.createEditor();
         },
-        async beforeRouteUpdate (to, from, next) {
-            if (this.content != null) {
-                if (this.confirmLeave())
-                    next();
-            } else {
-                next();
-            }
+        async beforeRouteUpdate(to, from, next) {
+            if (this.content != null && !this.confirmLeave())
+                return;
+
+            next();
             await this.changeContent(to.params.repo, to.params.id);
         },
         beforeRouteLeave (to, from , next) {
