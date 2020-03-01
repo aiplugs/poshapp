@@ -128,7 +128,7 @@
                 return rules;
             },
             colSize(parameter) {
-                return this.isNumberType(parameter.type) ? 2 : null;
+                return this.isNumberType(parameter.type) || parameter.validateSet ? 2 : null;
             },
             validateSet(parameter) {
                 return parameter.validateSet.map(v => ({ text: v, value: v }));
