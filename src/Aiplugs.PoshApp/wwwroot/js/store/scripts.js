@@ -14,15 +14,15 @@ function selectData(script) {
     let data = null;
     if (type === 'List') {
         const { group, detail, actions } = script;
-        data = { id, type, displayName, group, detail, actions };
+        data = { id, type, displayName, group, detail, actions: [...actions] };
     }
     else if (type === 'Detail') {
         const { actions } = script;
-        data = { id, type, actions };
+        data = { id, type, actions: [...actions] };
     }
     else if (type === 'Singleton') {
         const { group, actions } = script;
-        data = { id, type, displayName, group, actions };
+        data = { id, type, displayName, group, actions: [...actions] };
     }
     else if (type === 'Action') {
         data = { id, type, displayName };
