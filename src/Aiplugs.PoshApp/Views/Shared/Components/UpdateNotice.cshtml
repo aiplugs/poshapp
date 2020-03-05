@@ -21,7 +21,7 @@
         },
         methods: {
             install() {
-                ipcRenderer.on('quit-and-install');
+                ipcRenderer.send('quit-and-install');
             }
         },
         mounted() {
