@@ -1,7 +1,7 @@
 ﻿<template id="powershell-ui-status-component">
     <div class="d-flex">
         <span :title="text" class="d-flex align-center">
-            <v-icon small>{{icon}}</v-icon>
+            <v-icon small :class="color">{{icon}}</v-icon>
         </span>
         <v-dialog v-model="dialog" width="600">
             <v-card>
@@ -23,6 +23,7 @@
         data() {
             return {
                 text: null,
+                color: [],
                 icon: 'md mdi-circle-off-outline',
                 dialog: false
             }
@@ -31,21 +32,26 @@
             this.$signalr.onclose(err => {
                 this.text = "Close";
                 this.icon = "md mdi-circle-off-outline";
+                this.color.splice(0, 1, 'red--text');
             })
             this.$signalr.onreconnecting(err => {
                 this.text = "Reconnecting...";
                 this.icon = "mdi-dots-horizontal";
+                this.color.splice(0, 1, 'red--text');
             })
             this.$signalr.onreconnected(connectedId => {
                 this.text = "Connected";
                 this.icon = "mdi-circle-outline";
+                this.color.splice(0);
             })
             this.$signalr.start().then(() => {
                 this.text = "Connected";
                 this.icon = "mdi-circle-outline";
+                this.color.splice(0);
             }).catch(() => {
                 this.text = "Faild";
                 this.icon = "md mdi-circle-off-outline";
+                this.color.splice(0, 1, 'red--text');
                 this.dialog = true;
             })
         }
