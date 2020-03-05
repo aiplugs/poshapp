@@ -6,7 +6,7 @@ namespace Aiplugs.PoshApp
 {
     public class ElectronIpc
     {
-        public static void Setup()
+        public static void Setup(ScriptsService scriptsService)
         {
             var menu = new MenuItem[] {
                     new MenuItem {
@@ -130,6 +130,12 @@ namespace Aiplugs.PoshApp
             Electron.IpcMain.On("open-activation", async (args) =>
             {
                 await Electron.Shell.OpenExternalAsync("https://poshapp.aiplugs.com/licenses");
+            });
+
+            Electron.IpcMain.On("open-repository-dir", async (name) =>
+            {
+                var repository = await scriptsService.GetRepository(name.ToString());
+                await Electron.Shell.OpenItemAsync(repository.Path);
             });
 
             Electron.IpcMain.On("copy-to", (text) =>

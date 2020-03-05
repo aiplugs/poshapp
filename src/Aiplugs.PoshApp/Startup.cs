@@ -46,7 +46,7 @@ namespace Aiplugs.PoshApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ScriptsService scriptsService)
         {
             if (env.IsDevelopment())
             {
@@ -78,7 +78,7 @@ namespace Aiplugs.PoshApp
             if (HybridSupport.IsElectronActive)
             {
                 ElectronBootstrap();
-                ElectronIpc.Setup();
+                ElectronIpc.Setup(scriptsService);
             }
         }
         public async void ElectronBootstrap()
