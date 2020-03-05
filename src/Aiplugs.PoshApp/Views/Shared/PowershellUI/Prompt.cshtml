@@ -128,7 +128,7 @@
             ipcRenderer.on('select-directories-reply', (sender, path, name) => {
                 this.value[name] = path;
             });
-            ipcRenderer.on('select-director-reply', (sender, path, name) => {
+            ipcRenderer.on('select-directory-reply', (sender, path, name) => {
                 this.value[name] = path;
             });
             ipcRenderer.on('select-files-reply', (sender, path, name) => {
