@@ -143,6 +143,17 @@ namespace Aiplugs.PoshApp
                 Electron.Clipboard.WriteText(text.ToString());
             });
 
+            Electron.IpcMain.On("quit-and-install", (_) =>
+            {
+                Electron.AutoUpdater.QuitAndInstall();
+            });
+
+            Electron.AutoUpdater.OnUpdateAvailable += (info) =>
+            {
+                var mainWindow = Electron.WindowManager.BrowserWindows.First();
+                Electron.IpcMain.Send(mainWindow, "update-available");
+            };
+
             Electron.AutoUpdater.CheckForUpdatesAndNotifyAsync();
         }
     }

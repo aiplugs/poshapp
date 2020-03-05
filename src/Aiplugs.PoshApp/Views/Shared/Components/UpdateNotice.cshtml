@@ -1,0 +1,33 @@
+﻿<template id="update-notice-component">
+    <v-dialog v-model="dialog" max-width="600">
+        <v-card>
+            <v-card-title>New version is released!</v-card-title>
+            <v-divider></v-divider>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn text v-on:click="dialog=false">At later</v-btn>
+                <v-btn color="primary" v-on:click="install">Quit and Install now</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+</template>
+<script>
+    Vue.component('updatenotice', {
+        template: '#update-notice-component',
+        data() {
+            return {
+                dialog: false
+            }
+        },
+        methods: {
+            install() {
+                ipcRenderer.on('quit-and-install');
+            }
+        },
+        mounted() {
+            ipcRenderer.on('update-available', (sender) => {
+                this.dialog = true;
+            });
+        }
+    })
+</script>
