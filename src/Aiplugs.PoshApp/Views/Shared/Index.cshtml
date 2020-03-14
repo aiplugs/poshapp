@@ -20,9 +20,22 @@
     <script src="/lib/vue-router/vue-router.min.js"></script>
     <script src="/lib/vuex/vuex.min.js"></script>
     <script src="/lib/vue-async-computed/vue-async-computed.js"></script>
-    <script>
-        const { ipcRenderer } = require("electron");
-    </script>
+    @if (ElectronNET.API.HybridSupport.IsElectronActive)
+    {
+        <script>
+            const { ipcRenderer } = require("electron");
+        </script>
+    }
+    else
+    {
+        <script>
+            const ipcRenderer = {
+                on: function() {},
+                send: function() {},
+                removeAllListeners: function() {},
+            }
+        </script>
+    }
     <partial name="Components/ActivationNotice" />
     <partial name="Components/UpdateNotice" />
     <partial name="Components/DateTime" />
