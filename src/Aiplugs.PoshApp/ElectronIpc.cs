@@ -154,7 +154,7 @@ namespace Aiplugs.PoshApp
                 Electron.IpcMain.Send(mainWindow, "update-available");
             };
 
-            Electron.AutoUpdater.CheckForUpdatesAndNotifyAsync();
+            Electron.AutoUpdater.CheckForUpdatesAndNotifyAsync().ConfigureAwait(false);
         }
     }
 }
