@@ -45,7 +45,7 @@ export default {
                     if (script.group) {
                         if (!groups[script.group])
                             groups[script.group] = [];
-                        groups[script.group].push({ type: "item", name: script.id });
+                        groups[script.group].push({ type: "item", name: script.id, displayName: script.displayName });
                     }
                     else {
                         tree.push({ type: "item", name: script.id, displayName: script.displayName });
