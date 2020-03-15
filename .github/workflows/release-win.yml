@@ -26,7 +26,7 @@ jobs:
       with:
         working-directory: ./src/Aiplugs.PoshApp/bin/Desktop/
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: POSH App Setup ${{ github.event.release.tag_name }}.exe
+        asset_path: POSH\ App\ Setup\ ${{ github.event.release.tag_name }}.exe
         asset_name: POSH-App-Setup-${{ github.event.release.tag_name }}.exe
         asset_content_type: application/octet-stream
     - name: Upload Release Asset2
@@ -36,7 +36,7 @@ jobs:
       with:
         working-directory: ./src/Aiplugs.PoshApp/bin/Desktop/
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: POSH App Setup ${{ github.event.release.tag_name }}.exe.blockmap
+        asset_path: POSH\ App\ Setup\ ${{ github.event.release.tag_name }}.exe.blockmap
         asset_name: POSH-App-Setup-${{ github.event.release.tag_name }}.exe.blockmap
         asset_content_type: application/octet-stream
     - name: Upload Release Asset3
