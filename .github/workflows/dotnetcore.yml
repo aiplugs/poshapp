@@ -1,4 +1,4 @@
-name: .NET Core
+name: build
 
 on:
   push:
@@ -17,5 +17,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+        node-version: 12.x
+    - name: Install tool
+      run: dotnet tool install --tool-path .tools ElectronNET.CLI
+    - name: Move to project
+      run: cd ./src/Aiplugs.PoshApp/
     - name: Build with dotnet
-      run: dotnet build ./src/Aiplugs.PoshApp.sln --configuration Release
+      run: ../../.tools/electronize build /target win
