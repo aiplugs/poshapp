@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "electronnet.cli": {
+      "version": "7.30.2",
+      "commands": [
+        "electronize"
+      ]
+    }
+  }
+}
