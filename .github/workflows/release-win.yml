@@ -19,17 +19,13 @@ jobs:
     - name: Build with dotnet
       working-directory: ./src/Aiplugs.PoshApp/
       run: dotnet tool run electronize build /target win
-    - name: Rename files
-      working-directory: ./src/Aiplugs.PoshApp/bin/Desktop/
-      shell: bash
-      run: rename 's/ /-/g' *
     - name: Upload Release Asset1
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./src/Aiplugs.PoshApp/bin/Desktop/POSH-App-Setup-${{ github.event.release.tag_name }}.exe
+        asset_path: ./src/Aiplugs.PoshApp/bin/Desktop/POSH App Setup ${{ github.event.release.tag_name }}.exe
         asset_name: POSH-App-Setup-${{ github.event.release.tag_name }}.exe
         asset_content_type: application/octet-stream
     - name: Upload Release Asset2
@@ -38,7 +34,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./src/Aiplugs.PoshApp/bin/Desktop/POSH-App-Setup-${{ github.event.release.tag_name }}.exe.blockmap
+        asset_path: ./src/Aiplugs.PoshApp/bin/Desktop/POSH App Setup ${{ github.event.release.tag_name }}.exe.blockmap
         asset_name: POSH-App-Setup-${{ github.event.release.tag_name }}.exe.blockmap
         asset_content_type: application/octet-stream
     - name: Upload Release Asset3
