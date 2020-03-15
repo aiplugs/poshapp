@@ -66,7 +66,10 @@ namespace Aiplugs.PoshApp
                 };
 
                 string[] dirs = await Electron.Dialog.ShowOpenDialogAsync(mainWindow, options);
-                Electron.IpcMain.Send(mainWindow, "select-repository-path-reply", dirs.First());
+                if (dirs != null && dirs.Length > 0)
+                {
+                    Electron.IpcMain.Send(mainWindow, "select-repository-path-reply", dirs.First());
+                }
             });
 
             Electron.IpcMain.On("select-directory", async (args) =>
@@ -80,7 +83,10 @@ namespace Aiplugs.PoshApp
                 };
 
                 string[] dirs = await Electron.Dialog.ShowOpenDialogAsync(mainWindow, options);
-                Electron.IpcMain.Send(mainWindow, "select-directory-reply", dirs.First(), args);
+                if (dirs != null && dirs.Length > 0)
+                {
+                    Electron.IpcMain.Send(mainWindow, "select-directory-reply", dirs.First(), args);
+                }
             });
 
             Electron.IpcMain.On("select-directories", async (args) =>
@@ -109,7 +115,10 @@ namespace Aiplugs.PoshApp
                 };
 
                 string[] files = await Electron.Dialog.ShowOpenDialogAsync(mainWindow, options);
-                Electron.IpcMain.Send(mainWindow, "select-file-reply", files.First(), args);
+                if (files != null && files.Length > 0)
+                {
+                    Electron.IpcMain.Send(mainWindow, "select-file-reply", files.First(), args);
+                }
             });
 
             Electron.IpcMain.On("select-files", async (args) =>
