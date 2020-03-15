@@ -19,8 +19,8 @@ jobs:
         dotnet-version: 3.1.101
         node-version: 12.x
     - name: Install tool
-      run: dotnet tool install --tool-path .tools ElectronNET.CLI
+      run: dotnet tool restore
     - name: Move to project
       run: cd ./src/Aiplugs.PoshApp/
     - name: Build with dotnet
-      run: ../../.tools/electronize build /target win
+      run: dotnet tool run electronize build /target win
