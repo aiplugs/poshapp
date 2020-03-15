@@ -23,4 +23,4 @@ jobs:
     - name: Move to project
       run: cd ./src/Aiplugs.PoshApp/
     - name: Build with dotnet
-      run: ../../tools/electronize build /target win
+      run: ../../.tools/electronize build /target win
