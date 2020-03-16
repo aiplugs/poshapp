@@ -50,7 +50,8 @@ function extract(element) {
                 const el = element.querySelector('ToString');
                 return el !== null ? decodeUTF16(el.textContent) : null;
             }
-            if (typeName === 'System.Array') {
+            if (typeName === 'System.Array'||
+                typeName.startsWith('System.Collections.Generic.List')) {
                 const lst = element.querySelector('LST');
                 return Array.from(lst.children).map(el => extract(el));
             }
