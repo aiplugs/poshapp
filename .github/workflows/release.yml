@@ -11,7 +11,7 @@ jobs:
       - name: Get plain tag name
         id: gettagname
         shell: pwsh
-        run: $OUTPUT_TAG_NAME = "${{ github.event.release.tag_name }}".Substring(1)
+        run: echo "::set-output name=tag_name::$("${{ github.event.release.tag_name }}".Substring(1))"
       - name: test
         run: echo ${{ steps.gettagname.outputs.tag_name }}
       
