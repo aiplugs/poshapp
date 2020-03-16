@@ -163,7 +163,7 @@ namespace Aiplugs.PoshApp
                 Electron.AutoUpdater.QuitAndInstall();
             });
 
-            Electron.AutoUpdater.OnUpdateAvailable += (info) =>
+            Electron.AutoUpdater.OnUpdateDownloaded += (info) =>
             {
                 var mainWindow = Electron.WindowManager.BrowserWindows.First();
                 Electron.IpcMain.Send(mainWindow, "update-available");
