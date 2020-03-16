@@ -8,10 +8,46 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-      - name: Get plain tag name
-        id: gettagname
-        shell: pwsh
-        run: echo "::set-output name=tag_name::$("${{ github.event.release.tag_name }}".Substring(1))"
-      - name: test
-        run: echo ${{ steps.gettagname.outputs.tag_name }}
+    - name: Get plain tag name
+      id: gettagname
+      shell: pwsh
+      run: echo "::set-output name=tag_name::$("${{ github.event.release.tag_name }}".Substring(1))"
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+        node-version: 12.x
+    - name: Install tool
+      run: dotnet tool restore
+    - name: Build with dotnet
+      working-directory: ./src/Aiplugs.PoshApp/
+      run: dotnet tool run electronize build /target win
+    - name: Upload Release Asset1
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./src/Aiplugs.PoshApp/bin/Desktop/POSH App Setup ${{ steps.gettagname.outputs.tag_name }}.exe
+        asset_name: POSH-App-Setup-${{ steps.gettagname.outputs.tag_name }}.exe
+        asset_content_type: application/octet-stream
+    - name: Upload Release Asset2
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./src/Aiplugs.PoshApp/bin/Desktop/POSH App Setup ${{ steps.gettagname.outputs.tag_name }}.exe.blockmap
+        asset_name: POSH-App-Setup-${{ steps.gettagname.outputs.tag_name }}.exe.blockmap
+        asset_content_type: application/octet-stream
+    - name: Upload Release Asset3
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./src/Aiplugs.PoshApp/bin/Desktop/latest.yml
+        asset_name: latest.yml
+        asset_content_type: text/yaml
       
