@@ -51,12 +51,14 @@
     </v-app>
 </template>
 <script>
+    function checkForUpdates() {
+        ipcRenderer.send('check-for-updates');
+        setTimeout(checkForUpdates, 60 * 60 * 1000);
+    }
     Vue.component('App', {
         template: "#app-component",
         mounted() {
-            setTimeout(() => {
-                ipcRenderer.send('check-update');
-            }, 5000);
+            checkForUpdates();
         }
     })
 </script>

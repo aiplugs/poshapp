@@ -152,7 +152,13 @@ namespace Aiplugs.PoshApp
                 Electron.Clipboard.WriteText(text.ToString());
             });
 
-            Electron.IpcMain.On("quit-and-install", (_) =>
+
+            Electron.IpcMain.On("check-for-updates", _ =>
+            {
+                Electron.AutoUpdater.CheckForUpdatesAndNotifyAsync().ConfigureAwait(false);
+            });
+
+            Electron.IpcMain.On("quit-and-install", _ =>
             {
                 Electron.AutoUpdater.QuitAndInstall();
             });
@@ -162,8 +168,6 @@ namespace Aiplugs.PoshApp
                 var mainWindow = Electron.WindowManager.BrowserWindows.First();
                 Electron.IpcMain.Send(mainWindow, "update-available");
             };
-
-            Electron.AutoUpdater.CheckForUpdatesAndNotifyAsync().ConfigureAwait(false);
         }
     }
 }
