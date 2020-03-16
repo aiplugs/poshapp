@@ -8,6 +8,10 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-    - name: test
-      run: echo ${{ github.event.release.tag_name.substring(1) }}
+      - name: Get plain tag name
+        id: gettagname
+        shell: pwsh
+        run: $OUTPUT_TAG_NAME = "${{ github.event.release.tag_name }}".Substring(1)
+      - name: test
+        run: echo ${{ steps.gettagname.outputs.tag_name }}
       
