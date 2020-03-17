@@ -157,8 +157,8 @@ namespace Aiplugs.PoshApp.Services.Git
                 When = o.Author.When
             });
 
-            var remote = repository.Branches["origin/master"]?.Tip.Id.Sha;
-            var local = repository.Head.Tip.Id.Sha;
+            var remote = repository.Branches["origin/master"]?.Tip?.Id.Sha;
+            var local = repository.Head?.Tip?.Id.Sha;
 
             Client.SendAsync("GitLog", cmd.Name, top, remote, local);
 
