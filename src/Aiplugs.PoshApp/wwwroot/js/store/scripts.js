@@ -137,8 +137,8 @@ export default {
         },
         replaceScript(state, script) {
             let { id } = script;
-            if (script['@id']) {
-                id = script['@id'];
+            if (script.$id) {
+                id = script.$id;
             }
             const index = state.metadata[script.repository].findIndex(d => d.id === id);
             const data = selectData(script);
@@ -165,7 +165,7 @@ export default {
         async updateScript(context, script) {
             const type = script.type;
             const data = selectData(script);
-            const url = `/api/repositories/${script.repository}/scripts@${type.toLowerCase()}/${script['@id']}`;
+            const url = `/api/repositories/${script.repository}/scripts@${type.toLowerCase()}/${script.$id}`;
             const body = JSON.stringify(data);
             const response = await fetch(url, { method: 'put', headers: { 'Content-Type': 'application/json' }, body });
             if (response.ok) {

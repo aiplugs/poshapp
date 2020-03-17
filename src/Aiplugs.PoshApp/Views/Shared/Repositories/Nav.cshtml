@@ -216,9 +216,13 @@
                 this.deleteRepository({ name });
             });
         },
-        beforeRouteLeave (to, from , next) {
-            ipcRenderer.removeAllListeners('select-repository-path-reply');
-            this.$signalr.off('GitCloneFaild');
+        beforeRouteLeave(to, from, next) {
+            const len = Math.min(to.path.length, from.path.length)
+            const sameRoute = to.path.substring(0, len) === from.path.substring(0, len);
+            if (!sameRoute) {
+                ipcRenderer.removeAllListeners('select-repository-path-reply');
+                this.$signalr.off('GitCloneFaild');
+            }
             next();
         }
     })
