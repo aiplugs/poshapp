@@ -16,8 +16,18 @@
                     :label="p.name"
                     :hint="p.helpMessage"
                     :items="validateSet(p)"
+                    :disabled="disabledAll"
                     v-else-if="p.validateSet">
                 </v-select>
+                <v-switch
+                    v-model="p.value"
+                    :label="p.name"
+                    :hint="p.helpMessage"
+                    :rules="rules(p)"
+                    :disabled="disabledAll"
+                    inset 
+                    v-else-if="p.type == 'System.Boolean'">
+                </v-switch>
                 <v-text-field 
                     v-model="p.value" 
                     :label="p.name" 

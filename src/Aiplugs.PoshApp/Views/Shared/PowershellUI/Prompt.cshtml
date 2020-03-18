@@ -21,12 +21,20 @@
                                 <v-icon icon text v-on:click="openFileManager(desc)">mdi-file-search</v-icon>
                             </template>
                         </v-text-field>
+                        <v-switch :label="(desc.label||desc.name)"
+                                  :hint="desc.helpMessage"
+                                  :rules="rules(desc)"
+                                  :required="desc.isMandatory"
+                                  inset
+                                  v-model="value[desc.name]"
+                                  v-else-if="desc.parameterTypeFullName == 'System.Boolean'">
+                        </v-switch>
                         <datetime-field :label="(desc.label||desc.name)"
                                         :hint="desc.helpMessage"
                                         :rules="rules(desc)"
                                         :required="desc.isMandatory"
                                         v-model="value[desc.name]"
-                                        v-if="desc.parameterTypeFullName == 'System.DateTime'">
+                                        v-else-if="desc.parameterTypeFullName == 'System.DateTime'">
                         </datetime-field>
                     </div>
                 </v-form>
