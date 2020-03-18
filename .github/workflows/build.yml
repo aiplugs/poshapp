@@ -20,4 +20,4 @@ jobs:
       run: dotnet tool restore
     - name: Build with dotnet
       working-directory: ./src/Aiplugs.PoshApp/
-      run: dotnet tool run electronize build /target custom "win10-x64;"
+      run: dotnet tool run electronize build /target custom "win10-x64;win"
