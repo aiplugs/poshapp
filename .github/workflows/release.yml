@@ -22,7 +22,7 @@ jobs:
       run: dotnet tool restore
     - name: Build with dotnet
       working-directory: ./src/Aiplugs.PoshApp/
-      run: dotnet tool run electronize build /target win
+      run: dotnet tool run electronize build /target custom win10-x64
     - name: Upload Release Asset1
       uses: actions/upload-release-asset@v1
       env:
