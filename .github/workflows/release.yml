@@ -21,6 +21,9 @@ jobs:
     - name: Install tool
       run: dotnet tool restore
     - name: Build with dotnet
+      env:
+        CSC_LINK: ${{ secrets.CSC_LINK_WIN }}
+        CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_WIN }}
       working-directory: ./src/Aiplugs.PoshApp/
       run: dotnet tool run electronize build /target custom "win10-x64;win"
     - name: Upload Release Asset1
