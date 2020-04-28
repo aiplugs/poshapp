@@ -1,46 +1,33 @@
 <template id="detail-page">
-    <section v-if="data" class="d-flex flex-column white" style="position: absolute; top:0; width:calc(100vw - 56px - 256px); height: calc(100vh - 24px); overflow:hidden;">
+    <section v-if="detailResult" class="d-flex flex-column white" style="position: absolute; top:0; width:calc(100vw - 56px - 256px); height: calc(100vh - 24px); overflow:hidden;">
         <header>
             <v-btn text v-on:click="$emit('close')">
                 <v-icon>mdi-arrow-right</v-icon>
             </v-btn>
-            <v-btn text v-for="action in actions" :key="action.id" v-on:click="invokeAction(action.id)">{{action.displayName || action.id}}</v-btn>
+            <v-btn text v-for="action in actions" :key="action.id" v-on:click="invokeAction({scriptId:action.id, input:[input]})">{{action.displayName || action.id}}</v-btn>
         </header>
         <div class="flex scroll-content">
-            <data-viewer :data="data"></data-viewer>
+            <data-viewer :data="detailResult"></data-viewer>
         </div>
     </section>
 </template>
 
-<script type="module">
-    import { parsePSDataCollection } from '/js/clixml.js'
+<script>
     Vue.component('detail-page', {
         template: '#detail-page',
         props: ['script', 'input'],
-        data() {
-            return {
-                data: null
-            }
-        },
         computed: {
+            ...Vuex.mapState('signalr', ['detailResult']),
             actions() {
                 const [repo, id] = this.script.split(':');
                 return this.$store.getters['scripts/findActions'](repo, id);
             }
         },
-        methods:{
-            invokeAction(name) {
-                this.$signalr.invoke('InvokeAction', name, null);
-            }
+        methods: {
+            ...Vuex.mapActions('signalr', ['invokeDetail', 'invokeAction'])
         },
         mounted() {
-            this.$signalr.on('DetailResult', json => {
-                this.data = parsePSDataCollection(JSON.parse(json));
-            })
-            this.$signalr.invoke('InvokeDetail', this.script, this.input);
-        },
-        beforeDestroy() {
-            this.$signalr.off('DetailResult')
+            this.invokeDetail({ scriptId: this.script, input: this.input });
         }
     })
 </script>

@@ -11,7 +11,7 @@
         </template>
         <div class="black d-flex flex-column overflow-y-auto no-scrollbar" style="width: 600px; height: 600px; scroll-behavior: smooth;">
             <div style="flex: 1;"></div>
-            <pre v-for="(message, index) in messages" :key="index"
+            <pre v-for="(message, index) in logMessages" :key="index"
                  v-text="message.text"
                  :class="resolveColor(message)" class="pl-4 pr-4" style="white-space:pre-wrap;"></pre>
             <div class="black text-right" ref="bottom" style="position:sticky;bottom:0;width:100%;">
@@ -25,16 +25,21 @@
 <script>
     Vue.component('powershelluilog', {
         template: '#powershell-ui-log-component',
-        props: {
-            max: {
-                type: Number,
-                default: 30
-            }
-        },
         data() {
             return {
                 dialog: false,
-                messages: []
+            }
+        },
+        computed: {
+            ...Vuex.mapState('signalr', ['logMessages'])
+        },
+        watch: {
+            logMessages() {
+                this.dialog = true;
+                Vue.nextTick()
+                    .then(() => {
+                        this.scrollDown();
+                    })
             }
         },
         methods: {
@@ -44,24 +49,9 @@
                 const backgroudColors = ['black', 'blue darken-4', 'green darken-4', 'cyan darken-4', 'red darken-4', 'pink darken-4', 'yellow darken-4', 'grey', 'grey darken-4', 'blue', 'green', 'cyan', 'red', 'pink', 'yellow', 'white']
                 return [...foregroundColors[color].split(' '), ...backgroudColors[bgColor].split(' ')]
             },
-            write(color, bgColor, text) {
-                if (this.messages.length > this.max) {
-                    this.messages.shift()
-                }
-                this.messages.push({color, bgColor, text})
-                this.dialog = true;
-                requestIdleCallback(() => {
-                    this.$refs.bottom.parentElement.parentElement.scrollTo(0, this.$refs.bottom.offsetTop)
-                })
+            scrollDown() {
+                this.$refs.bottom.parentElement.scrollTo(0, this.$refs.bottom.parentElement.scrollHeight)
             }
         },
-        mounted() {
-            this.$signalr.on("WriteWithColor", (color, bgColor, text) => {
-                this.write(color, bgColor, text);
-            })
-            this.$signalr.on("WriteWarningLine", message => {
-                this.write(6, 0, message);
-            })
-        }
     })
 </script>

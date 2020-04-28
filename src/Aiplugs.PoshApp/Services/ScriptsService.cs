@@ -16,7 +16,7 @@ namespace Aiplugs.PoshApp
             [ScriptType.List] = "param(\n\t[int]\n\t$Page,\n\n\t[int]\n\t$PageSize\n)\n",
             [ScriptType.Detail] = "param(\n\t[Parameter(ValueFromPipeline=$true,Mandatory=$true)]\n\t[PSObject]\n\t$InputObject\n)\n",
             [ScriptType.Singleton] = "",
-            [ScriptType.Action] = "param(\n\t[Parameter(ValueFromPipeline=$true)]\n\t[PSObject[]]\n\t$InputObject\n)\nprocess {\n\n}"
+            [ScriptType.Action] = "param(\n\t[Parameter(ValueFromPipeline=$true)]\n\t[PSObject[]]\n\t$InputObject\n)\n"
         };
         private readonly ConfigAccessor _configAccessor;
         private readonly LicenseService _license;

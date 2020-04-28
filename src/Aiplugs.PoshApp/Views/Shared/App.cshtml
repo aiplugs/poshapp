@@ -51,14 +51,17 @@
     </v-app>
 </template>
 <script>
-    function checkForUpdates() {
-        ipcRenderer.send('check-for-updates');
-        setTimeout(checkForUpdates, 60 * 60 * 1000);
-    }
     Vue.component('App', {
         template: "#app-component",
+        methods: {
+            ...Vuex.mapActions('ipc', ['checkForUpdates']),
+        },
         mounted() {
-            checkForUpdates();
+            const update = () => {
+                this.checkForUpdates();
+            };
+            setTimeout(update, 60 * 60 * 1000);
+            update();
         }
     })
 </script>

@@ -90,13 +90,14 @@ namespace Aiplugs.PoshApp.Services.Git
                     CredentialsProvider = new LibGit2Sharp.Handlers.CredentialsHandler(GetCredential)
                 });
             }
-            catch(Exception)
+            catch (Exception ex)
             {
-                if (_credentials.ContainsKey(cmd.Origin)) {
+                if (_credentials.ContainsKey(cmd.Origin))
+                {
                     _credentials.Remove(cmd.Origin);
                 }
                 Client.SendAsync("GitCloneFaild", cmd.Name).Wait();
-                throw;
+                throw ex;
             }
 
             Client.SendAsync("GitClone", cmd.Name).Wait();

@@ -24,16 +24,7 @@
     {
         <script>
             const { ipcRenderer } = require("electron");
-        </script>
-    }
-    else
-    {
-        <script>
-            const ipcRenderer = {
-                on: function() {},
-                send: function() {},
-                removeAllListeners: function() {},
-            }
+            window.ipcRenderer = ipcRenderer;
         </script>
     }
     <partial name="Components/ActivationNotice" />

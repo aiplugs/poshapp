@@ -3,24 +3,36 @@
         <header>
             <v-row class="pl-4 pr-4" style="width: 100%;">
                 <v-col cols="12" class="pt-0 pb-0">
-                    <parameters-form ref="form" :script="scriptId" :page="page" :page-size="pageSize" :loading="loading=='$run'" :disabled="disabled" v-on:run="run"></parameters-form>
+                    <parameters-form ref="form"
+                                     :script="scriptId"
+                                     :page="page"
+                                     :page-size="pageSize"
+                                     :loading="invoking=='$default'"
+                                     :disabled="disabled"
+                                     v-on:run="run">
+                    </parameters-form>
                 </v-col>
             </v-row>
             <v-row class="pl-4 pr-4">
-                <v-btn text v-for="action in actions" :key="action.name" :loading="loading==action.id" :disabled="disabled" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
+                <v-btn text v-for="action in actions"
+                       :key="action.name"
+                       :loading="invoking==action.id"
+                       :disabled="disabled"
+                       v-on:click="invokeAction({ scriptId:action.id, input: selected.map(item => item.$clixml) })"
+                       retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
             </v-row>
         </header>
         <v-divider></v-divider>
         <div class="flex scroll-content">
             <v-data-table v-model="selected"
-                          :headers="headers"
-                          :items="list"
+                          :headers="view.headers"
+                          :items="view.list"
                           :page.sync="page"
                           :items-per-page="pageSize"
                           item-key="$clixml"
                           hide-default-footer
                           show-select
-                          v-if="list.length > 0">
+                          v-if="view.list.length > 0">
                 <template v-slot:item.$poshapp_action="{ item }">
                     <v-btn icon text v-on:click="openDetail(item)">
                         <v-icon>mdi-fullscreen</v-icon>
@@ -28,8 +40,9 @@
                 </template>
             </v-data-table>
         </div>
+        <div class="text-center overline" v-if="view.list.length > 0">Total {{view.total}}</div>
         <div class="ma-auto" style="width: 80%;">
-            <v-pagination v-model="page" :length="total" v-if="list.length > 0"></v-pagination>
+            <v-pagination v-model="page" :length="view.pageCount" v-if="view.list.length > 0"></v-pagination>
         </div>
         <transition name="slide-x-reverse-transition">
             <detail-page :script="detailScriptId" :input="detailInput" v-if="detailScriptId" v-on:close="detailScriptId=null"></detail-page>
@@ -39,24 +52,20 @@
         </v-btn>
     </div>
 </template>
-<script type="module">
-    import { parsePSDataCollection, createCliXml } from '/js/clixml.js'
+<script>
     Vue.component('ListPage', {
         template: '#list-page-component',
         data() {
             return {
                 selected:[],
                 detailScriptId: null,
-                detailInput: null,
+                detailInput: null, 
                 page: 1,
                 pageSize: 10,
-                total: 0,
-                list: [],
-                headers: [],
-                loading: null,
             }
         }, 
         computed: {
+            ...Vuex.mapState('signalr', ['invoking','defaultResult']),
             scriptId() {
                 return `${this.$route.params.repo}:${this.$route.params.id}`;
             },
@@ -69,79 +78,53 @@
                 return this.$store.getters['scripts/findActions'](repo, id);
             },
             disabled() {
-                return !!this.loading
+                return !!this.invoking
+            },
+            view() {
+                const data = this.defaultResult;
+                if (data == null) {
+                    return { list: [], headers:[], total: 0 }
+                }
+
+                let index = 0;
+                let total = data.length;
+                if (typeof data[index].value === 'number') {
+                    total = data[index].value;
+                    index++;
+                }
+
+                const pageCount = ~~(total / this.pageSize) + Math.min(1, total % this.pageSize);
+
+                const dataset = data.slice(index);
+
+                const allKeys = Object.keys(dataset.reduce((o,d) => Object.assign(o,d.value), {}));
+                    
+                const headers = allKeys.map(key => ({ text:key, value:key, sortable: false }));
+                    
+                if (this.detailId) {
+                    headers.unshift({text: '', value: '$poshapp_action', width: 64, sortable: false });
+                }
+
+                const list = dataset.filter(d => typeof d.value == 'object').map(d => {
+                    return Object.assign({ $clixml: d.clixml }, d.value);
+                });
+
+                return { list, headers, total, pageCount };
             }
         },
         methods: {
-            ...Vuex.mapActions('toast', ['toast']),
-            ...Vuex.mapMutations('list', ['updateList','replaceData','setDetail']),
+            ...Vuex.mapActions('signalr', ['invokeDefault', 'invokeAction', 'clearResult']),
             init() {
+                this.clearResult();
                 this.selected.splice(0);
-                this.list.splice(0);
-                this.headers.splice(0);
-                this.total = 0;
-                this.$signalr.on("DefaultResult", json => {
-                    this.loading = null;
-
-                    const data = parsePSDataCollection(JSON.parse(json));
-                    
-                    if (data.length == 0)
-                        return;
-
-                    let index = 0;
-                    let total = data.length;
-                    const pageSize = this.pageSize - 0;
-
-                    if (typeof data[index].value === 'number') {
-                        total = data[index].value;
-                        index++;
-                    }
-
-                    const pageCount = ~~(total / pageSize) + Math.min(1, total % pageSize);
-
-                    const dataset = data.slice(index);
-
-                    const allKeys = Object.keys(dataset.reduce((o,d) => Object.assign(o,d.value),{}));
-                    
-                    const headers = allKeys.map(key => ({ text:key, value:key, sortable: false }));
-                    
-                    if (this.detailId) {
-                        headers.unshift({text: '', value: '$poshapp_action', width: 64, sortable: false });
-                    }
-
-                    this.pageSize = this.$refs.form.getPageSize();
-                    this.total = pageCount;
-                    this.headers.splice(0, this.headers.length, ...headers);
-                    this.list.splice(0, this.list.length, ...dataset.filter(d => typeof d.value == 'object').map(d => {
-                        d.value.$clixml = d.clixml;
-                        return d.value;
-                    }));
-                })
-                this.$signalr.on("ActionResult", (id, json) => {
-                    this.loading = null;
-                    const data = JSON.parse(json);
-                    this.toast({
-                        text: `${id} is succeeded` ,
-                        color: "info",
-                        top: true,
-                        right: true
-                    });
-                })
-                this.$signalr.on('UnitResult', () => {
-                    this.loading = null;
-                })
             },
-            run(value) {
-                this.loading = '$run';
-                this.$signalr.invoke('Invoke', this.scriptId, value);
-            },
-            invokeAction(id) {
-                this.loading = id;
-                this.$signalr.invoke('InvokeAction', id, this.selected.map(item => item.$clixml));
+            run({ value, page, pageSize }) {
+                this.invokeDefault({ scriptId: this.scriptId, input: value });
+                this.page = page;
+                this.pageSize = pageSize;
             },
             openDetail(item) {
-                const clixml = item.$clixml;
-                this.detailInput = clixml;
+                this.detailInput = item.$clixml;
                 this.detailScriptId = this.detailId;
             },
             gotoEditor() {
@@ -159,12 +142,6 @@
         },
         beforeRouteUpdate (to, from, next) {
             this.init();  
-            next();
-        },
-        beforeRouteLeave (to, from , next) {
-            this.$signalr.off('DefaultResult');
-            this.$signalr.off('ActionResult');
-            this.$signalr.off('UnitResult');
             next();
         }
     })

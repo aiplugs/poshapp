@@ -1,72 +1,32 @@
 ﻿<template id="powershell-ui-progress-component">
-    <span>
-        <span class="d-flex align-center" v-for="(progress, activityId) in progresses" :key="activityId" v-if="!dialog">
-            {{progress.activity}}
-            <v-progress-linear color="light-blue"
-                               height="10"
-                               striped
-                               :value="progress.percentComplete"
-                               style="width: 100px;">
-            </v-progress-linear>
-        </span>
-        <v-dialog v-model="dialog" max-width="600px">
-            <v-card>
-                <v-card-text>
-                    <v-list>
-                        <v-list-item v-for="(progress, activityId) in progresses" :key="activityId">
-                            <v-list-item-content>
-                                <v-list-item-title>{{progress.activity}}</v-list-item-title>
-                                <v-progress-linear color="light-blue"
-                                                   height="10"
-                                                   striped
-                                                   :value="progress.percentComplete">
-                                </v-progress-linear>
-                                <v-list-item-subtitle>{{progress.statusDescription}}: {{progress.currentOperation}}</v-list-item-subtitle>
-                            </v-list-item-content>
-                        </v-list-item>
-                    </v-list>
-                </v-card-text>
-                <v-divider></v-divider>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn text v-on:click="close=true">CLOSE</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-    </span>
+    <v-dialog :value="progressesLength > 0" max-width="600px">
+        <v-card>
+            <v-card-text>
+                <v-list>
+                    <v-list-item v-for="(progress, activityId) in progresses" :key="activityId">
+                        <v-list-item-content>
+                            <v-list-item-title>{{progress.activity}}</v-list-item-title>
+                            <v-progress-linear color="light-blue"
+                                               height="10"
+                                               striped
+                                               :value="progress.percentComplete">
+                            </v-progress-linear>
+                            <v-list-item-subtitle>{{progress.statusDescription}}: {{progress.currentOperation}}</v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list>
+            </v-card-text>
+        </v-card>
+    </v-dialog>
 </template>
 <script>
     Vue.component('powershelluiprogress', {
         template: '#powershell-ui-progress-component',
-        data() {
-            return {
-                close: false,
-                progresses: {},
-            }
-        },
         computed: {
-            dialog: {
-                get() {
-                    return this.progressesLength > 0 && !this.close;
-                },
-                set(value) {
-                    this.close = !value;
-                }
-            },
+            ...Vuex.mapState('signalr', ['progresses']),
             progressesLength() {
                 return Object.keys(this.progresses).filter(name => !name.startsWith('_')).length;
             }
-        },
-        mounted() {
-            this.$signalr.on('WriteProgress', (sourceId, progress) => {
-                this.$set(this.progresses, progress.activityId, progress);
-                if (progress.percentComplete == 100) {
-                    this.$delete(this.progresses, progress.activityId);
-                    if (this.progressesLength === 0) {
-                        this.close = false;
-                    }
-                }
-            })
         }
     })
 </script>

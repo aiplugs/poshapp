@@ -3,33 +3,37 @@
         <header>
             <v-row class="pl-4 pr-4" style="width: 100%;">
                 <v-col cols="12" class="pt-0 pb-0">
-                    <parameters-form ref="form" :script="scriptId" :loading="loading=='$run'" :disabled="disabled" v-on:run="run"></parameters-form>
+                    <parameters-form ref="form" 
+                                     :script="scriptId" 
+                                     :loading="invoking=='$default'" 
+                                     :disabled="disabled" 
+                                     v-on:run="run">
+                    </parameters-form>
                 </v-col>
             </v-row>
             <v-row class="pl-4 pr-4">
-                <v-btn text v-for="action in actions" :key="action.name" :loading="loading==action.id" :disabled="disabled" v-on:click="invokeAction(action.id)" retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
+                <v-btn text v-for="action in actions" 
+                       :key="action.name" 
+                       :loading="invoking==action.id" 
+                       :disabled="disabled" 
+                       v-on:click="invokeAction({scriptId:action.id, input: null})" 
+                       retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
             </v-row>
         </header>
         <v-divider></v-divider>
         <div class="flex scroll-content">
-            <data-viewer :data="data"></data-viewer>
+            <data-viewer :data="defaultResult"></data-viewer>
         </div>
         <v-btn fab dark text color="grey" style="position: absolute; bottom: 8px; right: 8px;" v-on:click="gotoEditor">
             <v-icon>mdi-xml</v-icon>
         </v-btn>
     </div>
 </template>
-<script type="module">
-    import { parsePSDataCollection } from '/js/clixml.js'
+<script>
     Vue.component('SingletonPage', {
         template: '#singleton-page-component',
-        data() {
-            return {
-                data: null,
-                loading: null
-            }
-        }, 
         computed: {
+            ...Vuex.mapState('signalr', ['invoking', 'defaultResult']),
             scriptId() {
                 return `${this.$route.params.repo}:${this.$route.params.id}`;
             },
@@ -38,38 +42,16 @@
                 return this.$store.getters['scripts/findActions'](repo, id);
             },
             disabled() {
-                return !!this.loading
+                return this.invoking != null
             }
         },
         methods: {
-            ...Vuex.mapActions('toast', ['toast']),
+            ...Vuex.mapActions('signalr', ['invokeDefault', 'invokeAction', 'clearResult']),
             init() {
-                this.data = null;
-                this.$signalr.on('DefaultResult', json => {
-                    this.loading = null;
-                    this.data = parsePSDataCollection(JSON.parse(json));
-                });
-                this.$signalr.on("ActionResult", (id, json) => {
-                    this.loading = null;
-                    const data = JSON.parse(json);
-                    this.toast({
-                        text: `${id} is succeeded` ,
-                        color: "info",
-                        top: true,
-                        right: true
-                    });
-                })
-                this.$signalr.on('UnitResult', () => {
-                    this.loading = null;
-                })
+                this.clearResult();
             },
-            run(value) {
-                this.loading = '$run';
-                this.$signalr.invoke('Invoke', this.scriptId, value);
-            },
-            invokeAction(id) {
-                this.loading = id;
-                this.$signalr.invoke('InvokeAction', id, null);
+            run({ value }) {
+                this.invokeDefault({ scriptId: this.scriptId, input: value });
             },
             gotoEditor() {
                 this.$router.push(`/scripts/${this.$route.params.repo}/${this.$route.params.id}`)
@@ -80,12 +62,6 @@
         },
         beforeRouteUpdate (to, from, next) {
             this.init();  
-            next();
-        },
-        beforeRouteLeave (to, from , next) {
-            this.$signalr.off('DefaultResult');
-            this.$signalr.off('ActionResult');
-            this.$signalr.off('UnitResult');
             next();
         }
     })

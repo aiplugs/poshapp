@@ -52,7 +52,7 @@
                             </v-text-field>
                             <div class="d-flex align-center">
                                 <v-text-field label="Directory Path"
-                                              v-model="path"
+                                              :value="path"
                                               :rules="pathRules"
                                               :disabled="readonlyPath"
                                               readonly
@@ -102,7 +102,6 @@
             return {
                 openNewDialog: false,
                 name: null,
-                path: null,
                 origin: null,
                 readonlyOrigin: false,
                 readonlyPath: false,
@@ -124,13 +123,19 @@
             }
         },
         computed: {
+            ...Vuex.mapState('ipc', ['selectedDirectory']),
+            ...Vuex.mapState('signalr', ['connectionId']),
             ...Vuex.mapState('repositories', ['repositories']),
             ...Vuex.mapGetters('activation', ['exceededFreePlanForRepositories']),
+            path() {
+                return this.selectedDirectory.repository;
+            },
             deleteDialog() {
                 return this.deleteTarget != null;
             }
         },
         methods: {
+            ...Vuex.mapActions('ipc', ['selectDirectory']),   
             ...Vuex.mapActions('repositories', ['loadRepositories', 'createRepository', 'updateRepository', 'deleteRepository']),   
             ...Vuex.mapMutations('activation', ['showActivationNotice']),
             async handleDelete() {
@@ -145,7 +150,7 @@
                     name: this.name,
                     path: this.path,
                     origin: this.origin,
-                    connectionId: this.$signalr.connectionId
+                    connectionId: this.connectionId
                 };
                 await this.createOrUpdate(payload);
                 this.openNewDialog = false;
@@ -168,7 +173,6 @@
             clearDialogModel() {
                 this.repositoryId = null;
                 this.name = null;
-                this.path = null;
                 this.origin = null;
                 this.readonlyPath = false;
                 this.readonlyOrigin = false;
@@ -178,7 +182,6 @@
                 if (data) {
                     this.repositoryId = data.name;
                     this.name = data.name;
-                    this.path = data.path;
                     this.origin = data.origin;
                     this.readonlyPath = true;
                     this.readonlyOrigin = !!this.origin;
@@ -204,26 +207,11 @@
                 this.deleteTarget = repository;
             },
             openFileManager() {
-                ipcRenderer.send('select-repository-path');
+                this.selectDirectory({ name: 'repository' });
             }
         },
-        async mounted() {
-            await this.loadRepositories();
-            ipcRenderer.on('select-repository-path-reply', (sender, path) => {
-                this.path = path;
-            });
-            this.$signalr.on('GitCloneFaild', name => {
-                this.deleteRepository({ name });
-            });
-        },
-        beforeRouteLeave(to, from, next) {
-            const len = Math.min(to.path.length, from.path.length)
-            const sameRoute = to.path.substring(0, len) === from.path.substring(0, len);
-            if (!sameRoute) {
-                ipcRenderer.removeAllListeners('select-repository-path-reply');
-                this.$signalr.off('GitCloneFaild');
-            }
-            next();
+        mounted() {
+            this.loadRepositories();
         }
     })
 </script>

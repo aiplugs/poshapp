@@ -1,13 +1,13 @@
 ﻿<template id="powershell-ui-prompt-for-choice-component">
-    <v-dialog v-model="dialog" max-width="600px" persistent>
-        <v-card>
+    <v-dialog :value="promptForChoice != null" max-width="600px" persistent>
+        <v-card v-if="promptForChoice != null">
             <v-card-title class="headline" primary-title>
-                {{caption}}
+                {{promptForChoice.caption}}
             </v-card-title>
             <v-card-text>
-                <p style="white-space: pre-wrap">{{message}}</p>
+                <p style="white-space: pre-wrap">{{promptForChoice.message}}</p>
                 <table>
-                    <tr v-for="(choice, index) in choices" :key="index">
+                    <tr v-for="(choice, index) in promptForChoice.choices" :key="index">
                         <td>{{format(choice.label)}}</td>
                         <td>{{choice.helpMessage}}</td>
                     </tr>
@@ -16,9 +16,9 @@
             <v-divider></v-divider>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn text v-for="(choice, index) in choices"
+                <v-btn text v-for="(choice, index) in promptForChoice.choices"
                        :key="index"
-                       :color="index==defaultChoice?'primary':null"
+                       :color="index==promptForChoice.defaultChoice?'primary':null"
                        v-on:click="select(index)">
                     {{format(choice.label)}}
                 </v-btn>
@@ -29,32 +29,17 @@
 <script>
     Vue.component('powershelluipromptforchoice', {
         template: '#powershell-ui-prompt-for-choice-component',
-        data() {
-            return {
-                dialog: false,
-                caption: null,
-                message: null,
-                choices: [],
-                defaultChoice: 0
-            }
+        computed: {
+            ...Vuex.mapState('signalr', ['promptForChoice'])
         },
         methods: {
+            ...Vuex.mapActions('signalr', ['invokePromptForChoice']),
             format(label) {
                 return (label||'').replace(/&/, '');
             },
             select(index) {
-                this.$signalr.invoke('PromptForChoice', index);
-                this.dialog = false;
+                this.invokePromptForChoice({ index });
             }
-        },
-        mounted() {
-            this.$signalr.on('PromptForChoice', (caption, message, choices, defaultChoice) => {
-                this.caption = caption;
-                this.message = message;
-                this.choices.splice(0, this.choices.length, ...choices);
-                this.defaultChoice = defaultChoice;
-                this.dialog = true;
-            })
         }
     })
 </script>

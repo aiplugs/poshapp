@@ -101,22 +101,31 @@
         },
         methods: {
             ...Vuex.mapActions('activation', ['activate', 'refleshActivationCode']),
+            ...Vuex.mapActions('ipc', ['copyTo']),
             openEx() {
                 ipcRenderer.send("open-activation");
             },
             async copyRequestCode() {
-                await ipcRenderer.send("copy-to", this.requestCode);
+                await this.copyTo(this.requestCode);
                 alert("Copied!");
             },
             async handleReflesh() {
-                this.loading = true;
-                await this.refleshActivationCode();
-                this.loading = false;
+                try {
+                    this.loading = true;
+                    await this.refleshActivationCode();
+                }
+                finally {
+                    this.loading = false;
+                }
             },
             async handleActivation() {
-                this.loading = true;
-                await this.activate(this.activationCode);
-                this.loading = false;
+                try {
+                    this.loading = true;
+                    await this.activate(this.activationCode);
+                }
+                finally {
+                    this.loading = false;
+                }
             }
         }
     })

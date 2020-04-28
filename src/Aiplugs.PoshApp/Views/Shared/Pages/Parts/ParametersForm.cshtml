@@ -3,7 +3,7 @@
         <v-row>
             <v-col class="pb-0" v-for="p in parameters" :key="p.name" :md="colSize(p)">
                 <datetime-field
-                    v-model="p.value" 
+                    v-model="value[p.name]"
                     :label="p.name"
                     :hint="p.helpMessage"
                     :rules="rules(p)"
@@ -12,7 +12,7 @@
                     v-if="p.type == 'System.DateTimeOffset' || p.type == 'System.DateTime'">
                 </datetime-field>
                 <v-select
-                    v-model="p.value"
+                    v-model="value[p.name]"
                     :label="p.name"
                     :hint="p.helpMessage"
                     :items="validateSet(p)"
@@ -20,7 +20,7 @@
                     v-else-if="p.validateSet">
                 </v-select>
                 <v-switch
-                    v-model="p.value"
+                    v-model="value[p.name]"
                     :label="p.name"
                     :hint="p.helpMessage"
                     :rules="rules(p)"
@@ -29,7 +29,7 @@
                     v-else-if="p.type == 'System.Boolean'">
                 </v-switch>
                 <v-text-field 
-                    v-model="p.value" 
+                    v-model="value[p.name]" 
                     :label="p.name" 
                     :hint="p.helpMessage"
                     :type="inputType(p)" 
@@ -61,42 +61,37 @@
         },
         data() {
             return {
-                loadingParams: true, 
-                parameters: [],
                 valid: true,
+                value: { Page: this.page - 1, PageSize: this.pageSize }
             }
         },
         computed: {
+            ...Vuex.mapState('signalr', ['loadingParams', 'parameters']),
             disabledAll() {
                 return this.disabled || this.loadingParams
             }
         },
         watch: {
             page(value) {
-                this.setPage(value);
-                this.emitRun();
+                const page = value - 1;
+                if (this.value.Page != page) {
+                    this.value.Page = page;
+                    this.emitRun();
+                }
             },
             pageSize(value) {
-                this.setPageSize(value);
-                this.emitRun();
+                const pageSize = value - 0;
+                if (this.value.PageSize != pageSize) {
+                    this.value.PageSize = pageSize;
+                    this.emitRun();
+                }
             },
             script() {
-                this.getParameters();
+                this.invokeGetParameters({ scriptId: this.script });
             }
         },
         methods: {
-            setPage(value) {
-                const p = this.parameters.find(p => p.name == 'Page');
-                if (p) {
-                    this.$set(p, 'value', value - 1);
-                }
-            },
-            setPageSize(value) {
-                const p = this.parameters.find(p => p.name == 'PageSize');
-                if (p) {
-                    this.$set(p, 'value', value);
-                }
-            },
+            ...Vuex.mapActions('signalr', ['invokeGetParameters']),
             isNumberType(type) {
                 const numberTypes = ['System.Int32','System.Int64','System.Single','System.Double','System.Decimal'];
                 return numberTypes.includes(type);
@@ -145,37 +140,22 @@
             },
             getClixmls() {
                 return this.parameters.reduce((o, p) => {
-                    if (p.value !== undefined) {
-                        o[p.name] = createCliXml(p.type, p.value);
+                    if (this.value[p.name] !== undefined) {
+                        o[p.name] = createCliXml(p.type, this.value[p.name]);
                     }
                     return o;
                 }, {});
             },
-            getPageSize() {
-                const p = this.parameters.find(p => p.name == 'PageSize');
-                return p ? parseInt(p.value) : null;
-            },
             emitRun() {
-                this.$emit('run', this.getClixmls());
+                this.$emit('run', {
+                    value: this.getClixmls(),
+                    page: this.value.Page - 0 + 1,
+                    pageSize: this.value.PageSize - 0
+                });
             },
-            getParameters() {
-                this.loadingParams = true;
-                this.$signalr.invoke('GetParameters', this.script);
-            }
         },
         mounted() {
-            this.$signalr.on("GetParameters", parameters => {
-                this.parameters.splice(0, this.parameters.length, ...parameters);
-                this.setPage(this.page);
-                this.setPageSize(this.pageSize);
-                this.loadingParams = false;
-            })
-            this.$signalr.onconnected(() => {
-                this.getParameters();
-            })
-        },
-        beforeDestroy() {
-            this.$signalr.off('DetailResult')
+            this.invokeGetParameters({ scriptId: this.script });
         }
     })
 </script>

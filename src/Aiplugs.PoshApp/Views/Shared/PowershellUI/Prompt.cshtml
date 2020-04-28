@@ -1,13 +1,13 @@
 ﻿<template id="powershell-ui-prompt-component">
-    <v-dialog v-model="dialog" max-width="600px" persistent>
-        <v-card>
+    <v-dialog :value="prompt != null" max-width="600px" persistent>
+        <v-card v-if="prompt != null">
             <v-card-title class="headline" primary-title>
-                {{caption}}
+                {{prompt.caption}}
             </v-card-title>
             <v-card-text>
-                <p style="white-space: pre-wrap">{{message}}</p>
+                <p style="white-space: pre-wrap">{{prompt.message}}</p>
                 <v-form ref="form" v-model="valid">
-                    <div v-for="(desc, index) in descriptions" :key="index">
+                    <div v-for="(desc, index) in prompt.descriptions" :key="index">
                         <v-text-field ref="fields"
                                       :label="desc.label||desc.name"
                                       :data-name="desc.name"
@@ -54,17 +54,19 @@
         template: '#powershell-ui-prompt-component',
         data() {
             return {
-                dialog: false,
-                caption: null,
-                message: null,
-                descriptions: [],
                 valid: false,
                 value: {},
                 menu: {},
                 textfieldTypes: ['System.String','System.Int32','System.Int64','System.Float','System.Double','System.Decimal']
             }
         },
+        computed: {
+            ...Vuex.mapState('signalr', ['prompt']),
+            ...Vuex.mapState('ipc', ['selectedDirectory', 'selectedFile'])
+        },
         methods: {
+            ...Vuex.mapActions('signalr', ['invokePrompt']),
+            ...Vuex.mapActions('ipc', ['selectDirectory', 'selectFile', 'clearSelected']),
             supportFileManager(desc) {
                 return desc.parameterTypeFullName === 'System.String' && desc.name.toLowerCase().endsWith('path');
             },
@@ -91,8 +93,8 @@
                 return result;
             },
             handlePrompt() {
-                const model = {};
-                for (let desc of this.descriptions) {
+                const input = {};
+                for (let desc of this.prompt.descriptions) {
                     let value = null;
                     if (desc.parameterTypeFullName == 'System.DateTime') {
                        value = new Date(this.value[desc.name]).toJSON();
@@ -100,51 +102,48 @@
                     else {
                        value = this.value[desc.name];
                     }
-                    model[desc.name] = createCliXml(desc.parameterTypeFullName, value);
+                    input[desc.name] = createCliXml(desc.parameterTypeFullName, value);
                 }
-                this.$signalr.invoke('Prompt', model);
+                this.invokePrompt({ input });
+                this.clearSelected();
+                this.$refs.form.reset();
                 this.dialog = false;
             },
             openDirManager(desc) {
-                if (desc.parameterTypeFullName.endsWith('[]') || desc.parameterTypeFullName.startsWith('IEnumerable')) {
-                    ipcRenderer.send('select-directories', desc.name);
-                }
-                else {
-                    ipcRenderer.send('select-directory', desc.name);
-                }
+                this.selectDirectory({ name: desc.name });
             }, 
             openFileManager(desc) {
-                if (desc.parameterTypeFullName.endsWith('[]') || desc.parameterTypeFullName.startsWith('IEnumerable')) {
-                    ipcRenderer.send('select-files', desc.name);
-                }
-                else {
-                    ipcRenderer.send('select-file', desc.name);
-                }
+                this.selectFile({ name: desc.name });
             }
         },
-        mounted() {
-            this.$signalr.on('Prompt', (caption, message, descriptions) => {
-                this.caption = caption;
-                this.message = message;
-                this.descriptions.splice(0, this.descriptions.length, ...descriptions);
-                for (let desc of this.descriptions) {
-                    this.$set(this.value, desc.name, desc.defaultValue);
+        watch: {
+            prompt(o) {
+                if (o != null) {
+                    for (let desc of o.descriptions) {
+                        this.$set(this.value, desc.name, desc.defaultValue);
+                    }
                 }
-                this.dialog = true;
-                this.$refs.form.reset();
-            })
-            ipcRenderer.on('select-directories-reply', (sender, path, name) => {
-                this.value[name] = path;
-            });
-            ipcRenderer.on('select-directory-reply', (sender, path, name) => {
-                this.value[name] = path;
-            });
-            ipcRenderer.on('select-files-reply', (sender, path, name) => {
-                this.value[name] = path;
-            });
-            ipcRenderer.on('select-file-reply', (sender, path, name) => {
-                this.value[name] = path;
-            });
+            },
+            selectedDirectory(o) {
+                if (this.prompt != null) {
+                    const keys = Object.keys(o).filter(key => !key.startsWith('_'));
+                    for (let desc of this.prompt.descriptions) {
+                        if (keys.includes(desc.name)) {
+                            this.$set(this.value, desc.name, o[desc.name]);
+                        }
+                    }
+                }
+            },
+            selectedFile(o) {
+                if (this.prompt != null) {
+                    const keys = Object.keys(o).filter(key => !key.startsWith('_'));
+                    for (let desc of this.prompt.descriptions) {
+                        if (keys.includes(desc.name)) {
+                            this.$set(this.value, desc.name, o[desc.name]);
+                        }
+                    }
+                }
+            }
         }
     })
 </script>
