@@ -24,6 +24,7 @@ jobs:
       env:
         CSC_LINK: ${{ secrets.CSC_LINK_WIN }}
         CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_WIN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       working-directory: ./src/Aiplugs.PoshApp/
       run: dotnet tool run electronize build /target custom "win10-x64;win"
     - name: Upload Release Asset1
