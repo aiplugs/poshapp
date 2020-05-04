@@ -37,7 +37,8 @@ namespace Aiplugs.PoshApp.Services.Powersehll
             {
                 var host = new PowershellHost(new PowershellUI(this, new PowershellRawUI()));
                 var iss = InitialSessionState.CreateDefault();
-                iss.ExecutionPolicy = ExecutionPolicy.Unrestricted;
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    iss.ExecutionPolicy = ExecutionPolicy.Unrestricted;
                 using var runspace = RunspaceFactory.CreateRunspace(host, iss);
                 
                 runspace.Open();
