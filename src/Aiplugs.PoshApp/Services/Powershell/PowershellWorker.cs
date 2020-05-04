@@ -35,12 +35,8 @@ namespace Aiplugs.PoshApp.Services.Powersehll
         {
             try
             {
-                var host = new PowershellHost(new PowershellUI(this, new PowershellRawUI()));
-                var iss = InitialSessionState.CreateDefault();
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    iss.ExecutionPolicy = ExecutionPolicy.Unrestricted;
-                using var runspace = RunspaceFactory.CreateRunspace(host, iss);
-                
+                using var runspace = CreateRunspace();
+
                 runspace.Open();
 
                 while (!stoppingToken.IsCancellationRequested)
@@ -57,6 +53,19 @@ namespace Aiplugs.PoshApp.Services.Powersehll
                 Console.WriteLine(ex.Message);
                 System.Diagnostics.Trace.WriteLine(ex.Message);
             }
+        }
+
+        private Runspace CreateRunspace()
+        {
+            var host = new PowershellHost(new PowershellUI(this, new PowershellRawUI()));
+                
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+                var iss = InitialSessionState.CreateDefault();
+                iss.ExecutionPolicy = ExecutionPolicy.Unrestricted;
+                return RunspaceFactory.CreateRunspace(host, iss);
+            }
+
+            return RunspaceFactory.CreateRunspace(host);
         }
         private async Task TryInvokeCommand(Runspace runspace)
         {
