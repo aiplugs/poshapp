@@ -8,16 +8,26 @@
     "appId": "com.aiplugs.poshapp",
     "productName": "POSH App",
     "copyright": "Copyright © 2019",
-    "buildVersion": "0.9.28",
+    "buildVersion": "0.9.29-beta",
     "compression": "maximum",
+    "generateUpdatesFilesForAllChannels": true,
     "directories": {
       "output": "../../../bin/Desktop"
     },
+    "afterSign": "../../../notarize.js",
     "win": {
       "icon": "./bin/wwwroot/icon/poshapp-icon-256x256.ico"
     },
     "mac": {
-      "icon": "./bin/wwwroot/icon/poshapp-icon-512x512.icns"
+      "icon": "./bin/wwwroot/icon/poshapp-icon-512x512.icns",
+      "hardenedRuntime" : true,
+      "gatekeeperAssess": false,
+      "entitlements": "../../../entitlements.mac.plist",
+      "entitlementsInherit": "../../../entitlements.mac.plist",
+      "binaries": ["../../../bin/Desktop/mac/POSH App.app/Contents/Resources/bin/Aiplugs.PoshApp"]
+    },
+    "dmg": {
+
     },
     "linux": {
       "icon": "./bin/wwwroot/icon/"

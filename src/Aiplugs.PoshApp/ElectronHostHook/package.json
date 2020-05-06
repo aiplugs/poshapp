@@ -1,0 +1,12 @@
+{
+  "name": "electronhosthook",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {},
+  "author": "aiplugs",
+  "license": "ISC",
+  "devDependencies": {
+    "electron-notarize": "^0.3.0"
+  }
+}
