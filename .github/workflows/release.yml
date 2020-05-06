@@ -17,7 +17,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-        node-version: 12.x
+        node-version: 14.x
     - name: Install tool
       run: dotnet tool restore
     - name: Build with dotnet
@@ -67,6 +67,11 @@ jobs:
       with:
         dotnet-version: 3.1.101
         node-version: 14.x
+    - name: Prepare build lib
+      working-directory: ./src/Aiplugs.PoshApp/ElectronHostHook/
+      run: npm install
+    - name: Install tool
+      run: dotnet tool restore
     - name: Build with dotnet
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}

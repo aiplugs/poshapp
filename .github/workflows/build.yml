@@ -15,9 +15,16 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-        node-version: 12.x
+        node-version: 14.x
+    - name: Prepare build lib
+      working-directory: ./src/Aiplugs.PoshApp/ElectronHostHook/
+      run: npm install
     - name: Install tool
       run: dotnet tool restore
     - name: Build with dotnet
+      env:
+        CSC_LINK: ${{ secrets.CSC_LINK_WIN }}
+        CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_WIN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       working-directory: ./src/Aiplugs.PoshApp/
       run: dotnet tool run electronize build /target custom "win10-x64;win"
