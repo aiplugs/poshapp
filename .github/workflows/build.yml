@@ -5,19 +5,47 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  windows:
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-        node-version: 12.x
+        node-version: 14.x
+    - name: Prepare build lib
+      working-directory: ./src/Aiplugs.PoshApp/ElectronHostHook/
+      run: npm install
     - name: Install tool
       run: dotnet tool restore
     - name: Build with dotnet
+      env:
+        CSC_LINK: ${{ secrets.CSC_LINK_WIN }}
+        CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_WIN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       working-directory: ./src/Aiplugs.PoshApp/
       run: dotnet tool run electronize build /target custom "win10-x64;win"
+  macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+        node-version: 14.x
+    - name: Prepare build lib
+      working-directory: ./src/Aiplugs.PoshApp/ElectronHostHook/
+      run: npm install
+    - name: Install tool
+      run: dotnet tool restore
+    - name: Build with dotnet
+      env:
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+        CSC_LINK: ${{ secrets.CSC_LINK_MAC }}
+        CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_MAC }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      working-directory: ./src/Aiplugs.PoshApp/
+      run: dotnet tool run electronize build /target osx
