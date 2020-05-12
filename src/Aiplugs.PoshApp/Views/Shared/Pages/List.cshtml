@@ -88,7 +88,7 @@
 
                 let index = 0;
                 let total = data.length;
-                if (typeof data[index].value === 'number') {
+                if (data.length > 0 && typeof data[index].value === 'number') {
                     total = data[index].value;
                     index++;
                 }
