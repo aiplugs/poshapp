@@ -73,8 +73,9 @@
             ...Vuex.mapState('signalr', ['gitLog', 'gitLogMessage', 'gitStatus']),
             updatable() {
                 return this.gitLog
+                    && this.gitLog.name == this.$route.params.id
                     && this.gitLog.origin != this.gitLog.local
-                    && this.gitLog.logs.findIndex(item => item.commit == this.origin) < this.gitLog.logs.findIndex(item => item.commit == this.local)
+                    && this.gitLog.logs.findIndex(item => item.commit == this.gitLog.origin) < this.gitLog.logs.findIndex(item => item.commit == this.gitLog.local)
             },
             modified() {
                 return this.gitStatus.length > 0;
