@@ -8,7 +8,7 @@
     "appId": "com.aiplugs.poshapp",
     "productName": "POSH App",
     "copyright": "Copyright © 2019",
-    "buildVersion": "0.9.31",
+    "buildVersion": "0.9.32",
     "compression": "maximum",
     "generateUpdatesFilesForAllChannels": true,
     "directories": {
