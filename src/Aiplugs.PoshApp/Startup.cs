@@ -39,7 +39,9 @@ namespace Aiplugs.PoshApp
             })
             .AddRazorRuntimeCompilation()
             .AddNewtonsoftJson();
-            services.AddSignalR();
+            services.AddSignalR(o => {
+                o.MaximumReceiveMessageSize = 10 * 1024 * 1024;
+            });
             services.AddHttpClient();
             services.AddHostedService<PowershellWorker>();
             services.AddHostedService<GitWorker>();
