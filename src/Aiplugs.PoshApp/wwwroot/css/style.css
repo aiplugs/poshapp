@@ -79,6 +79,7 @@
     -webkit-overflow-scrolling: touch;
 }
 
-.scroll-content::-webkit-scrollbar {
-    display: none;
+.scroll-content::-webkit-scrollbar,
+.v-data-table__wrapper::-webkit-scrollbar {
+    display: none ;
 }

@@ -23,15 +23,17 @@
             </v-row>
         </header>
         <v-divider></v-divider>
-        <div class="flex scroll-content">
+        <div class="flex" ref="content" v-resize="handleResize" style="overflow: hidden;">
             <v-data-table v-model="selected"
                           :headers="view.headers"
                           :items="view.list"
                           :page.sync="page"
                           :items-per-page="pageSize"
+                          :height="height"
                           item-key="$clixml"
                           hide-default-footer
                           show-select
+                          fixed-header
                           v-if="view.list.length > 0">
                 <template v-slot:item.$poshapp_action="{ item }">
                     <v-btn icon text v-on:click="openDetail(item)">
@@ -40,9 +42,9 @@
                 </template>
             </v-data-table>
         </div>
-        <div class="text-center overline" v-if="view.list.length > 0">Total {{view.total}}</div>
+        <div class="text-center overline">Total {{view.total}}</div>
         <div class="ma-auto" style="width: 80%;">
-            <v-pagination v-model="page" :length="view.pageCount" v-if="view.list.length > 0"></v-pagination>
+            <v-pagination v-model="page" :length="view.pageCount"></v-pagination>
         </div>
         <transition name="slide-x-reverse-transition">
             <detail-page :script="detailScriptId" :input="detailInput" v-if="detailScriptId" v-on:close="detailScriptId=null"></detail-page>
@@ -62,6 +64,7 @@
                 detailInput: null, 
                 page: 1,
                 pageSize: 10,
+                height: 0
             }
         }, 
         computed: {
@@ -135,6 +138,11 @@
                 else {
                     this.$router.push(`/scripts/${this.$route.params.repo}/${this.$route.params.id}`)
                 }
+            },
+            handleResize() {
+                if (this.$refs.content)
+                this.height = this.$refs.content.getClientRects()[0].height;
+                console.log(this.height)
             }
         },
         mounted() {
