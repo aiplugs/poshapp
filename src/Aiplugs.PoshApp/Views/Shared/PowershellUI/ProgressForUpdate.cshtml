@@ -1,13 +1,21 @@
 ﻿<template id="powershell-ui-progress-for-update-component">
     <span class="d-flex align-center" v-if="updateDownloading">
-        Downloading update... {{updateDownloading.split(".")[0]}}%
+        Downloading update... {{progress}}%
     </span>
 </template>
 <script>
     Vue.component('powershelluiprogressforupdate', {
         template: '#powershell-ui-progress-for-update-component',
         computed: {
-            ...Vuex.mapState('ipc', ['updateDownloading'])
+            ...Vuex.mapState('ipc', ['updateDownloading']),
+            progress() {
+                if (!this.updateDownloading)
+                    return null;
+
+                const [head, tail] = this.updateDownloading.split('.');
+
+                return head + '.' + (tail || '0').slice(0, 1);
+            }
         }
     })
 </script>
