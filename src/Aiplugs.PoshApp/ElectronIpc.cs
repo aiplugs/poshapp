@@ -152,6 +152,12 @@ namespace Aiplugs.PoshApp
                 Electron.Clipboard.WriteText(text.ToString());
             });
 
+            Electron.IpcMain.On("reload", (text) =>
+            {
+                var mainWindow = Electron.WindowManager.BrowserWindows.First();
+                mainWindow.Reload();
+            });
+
 
             Electron.IpcMain.On("check-for-updates", _ =>
             {

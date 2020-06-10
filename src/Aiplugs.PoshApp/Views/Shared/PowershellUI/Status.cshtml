@@ -11,6 +11,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
+                    <v-btn text v-on:click="reload">Reload</v-btn>
                     <v-btn text v-on:click="reconnect">Reconnect</v-btn>
                 </v-card-actions>
             </v-card>
@@ -52,7 +53,8 @@
             }
         },
         methods: {
-            ...Vuex.mapActions('signalr',['reconnect'])
+            ...Vuex.mapActions('signalr',['reconnect']),
+            ...Vuex.mapActions('ipc',['reload'])
         }
     })
 </script>

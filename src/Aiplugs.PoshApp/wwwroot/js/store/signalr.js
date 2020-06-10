@@ -199,9 +199,14 @@ export default {
         async reconnect({ commit }) {
             if (signalr.state === 'Disconnected') {
                 init = signalr.start();
+                init.then(() => {
+                    commit('setStatus', { status: 'connected', connectionId: signalr.connectionId });
+                }).catch(() => {
+                    commit('setStatus', { status: 'faild' });
+                });
             }
             else if (signalr.state === 'Connected') {
-                commit('signalr/setStatus', { status: 'connected', connectionId: signalr.connectionId });
+                commit('setStatus', { status: 'connected', connectionId: signalr.connectionId });
             }
         }
     }

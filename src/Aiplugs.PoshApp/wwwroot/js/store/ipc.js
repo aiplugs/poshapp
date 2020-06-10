@@ -57,6 +57,9 @@ export default {
         },
         openRepositoryDir(_, { repositoryName }) {
             ipcRenderer.send('open-repository-dir', repositoryName);
+        },
+        reload() {
+            ipcRenderer.send('reload');
         }
     }
 };
