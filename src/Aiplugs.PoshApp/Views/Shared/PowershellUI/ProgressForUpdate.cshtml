@@ -1,6 +1,6 @@
 ﻿<template id="powershell-ui-progress-for-update-component">
     <span class="d-flex align-center" v-if="updateDownloading">
-        Downloading update... {{updateDownloading}}
+        Downloading update... {{updateDownloading.split(".")[0]}}%
     </span>
 </template>
 <script>
