@@ -3,7 +3,7 @@
   "splashscreen": {
     "imageFile": "./wwwroot/icon/poshapp-icon-256x256.png"
   },
-  "name": "POSH App",
+  "name": "poshapp",
   "author": "aiplugs",
   "description": "PowerShell GUI application",
   "singleInstance": true,
@@ -11,7 +11,7 @@
     "appId": "com.aiplugs.poshapp",
     "productName": "POSH App",
     "copyright": "Copyright © 2019",
-    "buildVersion": "0.9.37",
+    "buildVersion": "0.9.38",
     "compression": "maximum",
     "generateUpdatesFilesForAllChannels": true,
     "directories": {
