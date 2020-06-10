@@ -1,14 +1,17 @@
 {
   "executable": "Aiplugs.PoshApp",
   "splashscreen": {
-    "imageFile": ""
+    "imageFile": "./wwwroot/icon/poshapp-icon-256x256.png"
   },
+  "name": "POSH App",
+  "author": "aiplugs",
+  "description": "PowerShell GUI application",
   "singleInstance": true,
   "build": {
     "appId": "com.aiplugs.poshapp",
     "productName": "POSH App",
     "copyright": "Copyright © 2019",
-    "buildVersion": "0.9.35",
+    "buildVersion": "0.9.36",
     "compression": "maximum",
     "generateUpdatesFilesForAllChannels": true,
     "directories": {
@@ -20,11 +23,11 @@
     },
     "mac": {
       "icon": "./bin/wwwroot/icon/poshapp-icon-512x512.icns",
-      "hardenedRuntime" : true,
+      "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "entitlements": "../../../entitlements.mac.plist",
       "entitlementsInherit": "../../../entitlements.mac.plist",
-      "binaries": ["../../../bin/Desktop/mac/POSH App.app/Contents/Resources/bin/Aiplugs.PoshApp"]
+      "binaries": [ "../../../bin/Desktop/mac/POSH App.app/Contents/Resources/bin/Aiplugs.PoshApp" ]
     },
     "dmg": {
 
