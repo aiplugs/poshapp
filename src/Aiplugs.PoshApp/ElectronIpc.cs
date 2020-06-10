@@ -169,6 +169,12 @@ namespace Aiplugs.PoshApp
                 Electron.AutoUpdater.QuitAndInstall();
             });
 
+            Electron.AutoUpdater.OnDownloadProgress += (info) =>
+            {
+                var mainWindow = Electron.WindowManager.BrowserWindows.First();
+                Electron.IpcMain.Send(mainWindow, "update-downloading", info.Percent);
+            };
+
             Electron.AutoUpdater.OnUpdateDownloaded += (info) =>
             {
                 var mainWindow = Electron.WindowManager.BrowserWindows.First();

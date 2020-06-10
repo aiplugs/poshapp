@@ -1,0 +1,13 @@
+﻿<template id="powershell-ui-progress-for-update-component">
+    <span class="d-flex align-center" v-if="!updateDownloading">
+        Downloading update... {{updateDownloading}}
+    </span>
+</template>
+<script>
+    Vue.component('powershelluiprogressforupdate', {
+        template: '#powershell-ui-progress-for-update-component',
+        computed: {
+            ...Vuex.mapState('ipc', ['updateDownloading'])
+        }
+    })
+</script>

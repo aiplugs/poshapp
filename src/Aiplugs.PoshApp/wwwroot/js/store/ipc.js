@@ -8,12 +8,17 @@
 export default {
     namespaced: true,
     state: {
+        updateDownloading: null,
         updateAvailable: false,
         selectedDirectory: {},
         selectedFile: {}
     },
     mutations: {
+        setUpdateDownloading(state, progress) {
+            state.updateDownloading = progress;
+        },
         setUpdateAvailable(state) {
+            state.updateDownloading = null;
             state.updateAvailable = true;
         },
         clearUpdateAvailable(state) {
@@ -65,6 +70,9 @@ export default {
 };
 
 export function ipcPlugin(store) {
+    ipcRenderer.on('update-downloading', (sender, progress) => {
+        store.commit('ipc/setUpdateDownloading', progress);
+    });
     ipcRenderer.on('update-available', sender => {
         store.commit('ipc/setUpdateAvailable');
     });
