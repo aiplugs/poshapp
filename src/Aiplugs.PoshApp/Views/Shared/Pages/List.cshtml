@@ -47,7 +47,7 @@
             <v-pagination v-model="page" :length="view.pageCount"></v-pagination>
         </div>
         <transition name="slide-x-reverse-transition">
-            <detail-page :script="detailScriptId" :input="detailInput" v-if="detailScriptId" v-on:close="detailScriptId=null"></detail-page>
+            <detail-page :script="detailScriptId" :input="detailInput" v-if="detailScriptId" v-on:close="detailScriptId=null" style="z-index:2;"></detail-page>
         </transition>
         <v-btn fab dark text color="grey" style="position: absolute; bottom: 8px; right: 8px;" v-on:click="gotoEditor">
             <v-icon>mdi-xml</v-icon>
