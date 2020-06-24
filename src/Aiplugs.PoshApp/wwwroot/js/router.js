@@ -1,6 +1,6 @@
 export default new VueRouter({
     routes: [
-        { path: '/', components: { nav: Vue.component('PageNav') } },
+        { path: '/', components: { default: Vue.component('TopPage'), nav: Vue.component('PageNav') } },
         { path: '/list/:repo/:id', components: { default: Vue.component('ListPage'), nav: Vue.component('PageNav') } },
         { path: '/singleton/:repo/:id', components: { default: Vue.component('SingletonPage'), nav: Vue.component('PageNav') } },
         { path: '/scripts/', components: { nav: Vue.component('ScriptsNav') } },
