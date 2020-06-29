@@ -141,6 +141,21 @@ namespace Aiplugs.PoshApp
                 await Electron.Shell.OpenExternalAsync("https://poshapp.aiplugs.com/licenses");
             });
 
+            Electron.IpcMain.On("open-docs", async (url) =>
+            {
+                await Electron.Shell.OpenExternalAsync("https://github.com/aiplugs/poshapp/wiki");
+            });
+
+            Electron.IpcMain.On("open-issues", async (url) =>
+            {
+                await Electron.Shell.OpenExternalAsync("https://github.com/aiplugs/poshapp/issues");
+            });
+
+            Electron.IpcMain.On("open-releases", async (url) =>
+            {
+                await Electron.Shell.OpenExternalAsync("https://github.com/aiplugs/poshapp/releases");
+            });
+
             Electron.IpcMain.On("open-repository-dir", async (name) =>
             {
                 var repository = await scriptsService.GetRepository(name.ToString());
