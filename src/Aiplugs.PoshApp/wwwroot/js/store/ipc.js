@@ -10,6 +10,7 @@ export default {
     state: {
         updateDownloading: null,
         updateAvailable: false,
+        selecting: false,
         selectedDirectory: {},
         selectedFile: {}
     },
@@ -26,15 +27,20 @@ export default {
         },
         setSelectedDirectory(state, { name, path }) {
             Vue.set(state.selectedDirectory, name, path);
+            state.selecting = false;
         },
         clearSelectedDirectory(state) {
             state.selectedDirectory = {};
         },
         setSelectedFile(state, { name, path }) {
             Vue.set(state.selectedFile, name, path);
+            state.selecting = false;
         },
         clearSelectedFile(state) {
             state.selectedFile = {};
+        },
+        setSelecting(state) {
+            state.selecting = true;
         }
     },
     actions: {
@@ -48,11 +54,14 @@ export default {
             commit('clearSelectedDirectory');
             commit('clearSelectedFile');
         },
-        selectDirectory(_, { name }) {
+        selectDirectory({ commit }, { name }) {
             ipcRenderer.send('select-directory', name);
+            commit('setSelecting');
         },
-        selectFile(_, { name }) {
+        selectFile({ commit }, { name }) {
             ipcRenderer.send('select-file', name);
+            commit('clearSelectedFile');
+            commit('setSelecting');
         },
         openActivation() {
             ipcRenderer.send('open-activation'); 
