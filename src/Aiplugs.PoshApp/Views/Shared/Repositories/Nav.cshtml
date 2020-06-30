@@ -15,9 +15,9 @@
                             </v-btn>
                         </template>
                         <v-list>
-                            <v-list-item v-on:click="openEdit(repo)">
+                            @* <v-list-item v-on:click="openEdit(repo)">
                                 <v-list-item-title>Properties</v-list-item-title>
-                            </v-list-item>
+                            </v-list-item> *@
                             <v-list-item v-on:click="openDelete(repo)">
                                 <v-list-item-title>Delete</v-list-item-title>
                             </v-list-item>
@@ -63,6 +63,7 @@
                                     <v-icon>mdi-folder-search-outline</v-icon>
                                 </v-btn>
                             </div>
+                            <p v-if="selecting">※ Please restart the application if the file manager doesn't open.</p>
                         </v-form>
                     </v-container>
                 </v-card-text>
@@ -123,7 +124,7 @@
             }
         },
         computed: {
-            ...Vuex.mapState('ipc', ['selectedDirectory']),
+            ...Vuex.mapState('ipc', ['selectedDirectory', 'selecting']),
             ...Vuex.mapState('signalr', ['connectionId']),
             ...Vuex.mapState('repositories', ['repositories']),
             ...Vuex.mapGetters('activation', ['exceededFreePlanForRepositories']),
