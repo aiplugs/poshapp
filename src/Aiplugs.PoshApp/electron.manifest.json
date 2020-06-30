@@ -19,6 +19,7 @@
     },
     "afterSign": "../../../notarize.js",
     "win": {
+      "publisherName": [ "Yoshiyuki Taniguchi" ],
       "icon": "./bin/wwwroot/icon/poshapp-icon-256x256.ico"
     },
     "mac": {
