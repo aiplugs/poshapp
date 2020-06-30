@@ -4,7 +4,7 @@
     "imageFile": "./wwwroot/icon/poshapp-icon-256x256.png"
   },
   "name": "poshapp",
-  "author": "Yoshiyuki Taniguchi",
+  "author": "aiplugs",
   "description": "PowerShell GUI application",
   "singleInstance": true,
   "build": {
