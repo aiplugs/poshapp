@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Net.Security;
@@ -140,25 +142,23 @@ namespace Aiplugs.PoshApp.Services
             }
             return null;
         }
-        private async Task<X509Certificate2> GetPublicCertAsync(string domain)
+        private async Task<IEnumerable<X509Certificate2>> GetPublicCertAsync(string domain)
         {
             var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
 
             store.Open(OpenFlags.ReadWrite);
 
-            X509Certificate2 find()
+            IEnumerable<X509Certificate2> find()
             {
+                var now = DateTimeOffset.Now;
                 var collection = store.Certificates.Find(X509FindType.FindBySubjectName, domain, true);
 
-                if (collection.Count > 0)
-                    return collection[0];
-
-                return null;
+                foreach (var cert in collection)
+                {
+                    if (cert.NotBefore < now && now < cert.NotAfter)
+                        yield return cert;
+                }
             }
-
-            var cert = find();
-            if (cert != null)
-                return cert;
 
             try
             {
@@ -212,18 +212,23 @@ namespace Aiplugs.PoshApp.Services
                 if (!(header.typ == "JWT" && header.alg == "RS256"))
                     return (false, null);
 
-                var cert = await GetPublicCertAsync("poshapp.aiplugs.com");
+                var certs = await GetPublicCertAsync("poshapp.aiplugs.com");
 
-                if (cert == null)
+                if (certs == null)
                     return (false, null);
 
-                var rsa = cert.GetRSAPublicKey();
-                var rsaDeformatter = new RSAPKCS1SignatureDeformatter(rsa);
-                rsaDeformatter.SetHashAlgorithm("SHA256");
-                using var sha = SHA256.Create();
-                var result = rsaDeformatter.VerifySignature(sha.ComputeHash(Encoding.UTF8.GetBytes($"{splited[0]}.{splited[1]}")), signature);
+                foreach (var cert in certs)
+                {
+                    var rsa = cert.GetRSAPublicKey();
+                    var rsaDeformatter = new RSAPKCS1SignatureDeformatter(rsa);
+                    rsaDeformatter.SetHashAlgorithm("SHA256");
+                    using var sha = SHA256.Create();
+                    var result = rsaDeformatter.VerifySignature(sha.ComputeHash(Encoding.UTF8.GetBytes($"{splited[0]}.{splited[1]}")), signature);
 
-                return (result, payload);
+                    return (result, payload);
+                }
+
+                return (false, null);
             }
             catch
             {
