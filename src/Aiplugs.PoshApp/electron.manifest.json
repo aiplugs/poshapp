@@ -4,14 +4,14 @@
     "imageFile": "./wwwroot/icon/poshapp-icon-256x256.png"
   },
   "name": "poshapp",
-  "author": "aiplugs",
+  "author": "Yoshiyuki Taniguchi",
   "description": "PowerShell GUI application",
   "singleInstance": true,
   "build": {
     "appId": "com.aiplugs.poshapp",
     "productName": "POSH App",
     "copyright": "Copyright © 2019",
-    "buildVersion": "0.9.44",
+    "buildVersion": "0.9.45",
     "compression": "maximum",
     "generateUpdatesFilesForAllChannels": true,
     "directories": {
