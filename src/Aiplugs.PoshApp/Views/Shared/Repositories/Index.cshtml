@@ -1,6 +1,6 @@
 <template id="repository-component">
     <div class="flex-grow-1">
-        @* <v-btn text color="primary" v-on:click="handleOpen">Open Directory</v-btn> *@
+        <v-btn text color="primary" v-on:click="handleOpen">Open Directory</v-btn>
         <v-btn text color="primary" v-on:click="handleRefresh">Refresh</v-btn>
         <v-btn text color="primary" :disabled="!updatable" v-on:click="handleUpdate">Update</v-btn>
         <v-dialog v-model="resetDialog" width="600" v-if="modified">
