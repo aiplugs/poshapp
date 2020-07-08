@@ -159,7 +159,7 @@ namespace Aiplugs.PoshApp
             Electron.IpcMain.On("open-repository-dir", async (name) =>
             {
                 var repository = await scriptsService.GetRepository(name.ToString());
-                await Electron.Shell.OpenItemAsync(repository.Path);
+                await Electron.Shell.OpenPathAsync(repository.Path);
             });
 
             Electron.IpcMain.On("copy-to", (text) =>
