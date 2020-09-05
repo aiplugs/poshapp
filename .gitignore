@@ -7,3 +7,4 @@ node_modules
 src/monaco-editor/dist
 node-tar-extract
 .DS_Store
+build

@@ -40,7 +40,7 @@ namespace Aiplugs.PoshApp.Deamon
         }
 
 #pragma warning disable VSTHRD200
-        public async Task<IEnumerable<PSObject>> Invoke(string scriptId, Dictionary<string, string> parameters)
+        public async Task<IEnumerable<PSObject>> InvokeWithParameters(string scriptId, Dictionary<string, string> parameters)
         {
             return await DoAsync(async () =>
             {
@@ -56,7 +56,7 @@ namespace Aiplugs.PoshApp.Deamon
             });
         }
 
-        public async Task<IEnumerable<PSObject>> InvokeDetail(string scriptId, string clixml)
+        public async Task<IEnumerable<PSObject>> InvokeWithPipeline(string scriptId, string clixml)
         {
             return await DoAsync(async () =>
             {
@@ -69,7 +69,7 @@ namespace Aiplugs.PoshApp.Deamon
             });
         }
 
-        public async Task<IEnumerable<PSObject>> InvokeAction(string scriptId, string[] clixmls)
+        public async Task<IEnumerable<PSObject>> InvokeWithPipelines(string scriptId, string[] clixmls)
         {
             return await DoAsync(async () =>
             {
@@ -82,7 +82,7 @@ namespace Aiplugs.PoshApp.Deamon
             });
         }
 
-        public async Task<IEnumerable<PSParameterInfo>> GetParameters(string scriptId)
+        public async Task<IEnumerable<PSParameterInfo>> InvokeGetParameters(string scriptId)
         {
             return await DoAsync(async () => {
                 var content = await _scripts.GetScriptContentAsync(scriptId);
@@ -226,7 +226,6 @@ namespace Aiplugs.PoshApp.Deamon
 
         public async Task<HttpStatusCode> CreateListScript(string repositoryName, ListScript model)
         {
-
             var repository = await _scripts.GetRepositoryAsync(repositoryName);
 
             if (repository == null)
@@ -245,7 +244,7 @@ namespace Aiplugs.PoshApp.Deamon
 
             await _scripts.AddScriptAsync(repository, model);
 
-            return HttpStatusCode.NoContent;
+            return HttpStatusCode.Created;
         }
 
         public async Task<HttpStatusCode> UpdateListScript(string repositoryName, string id, ListScript model)
@@ -286,7 +285,7 @@ namespace Aiplugs.PoshApp.Deamon
 
             await _scripts.AddScriptAsync(repository, model);
 
-            return HttpStatusCode.NoContent;
+            return HttpStatusCode.Created;
         }
 
         public async Task<HttpStatusCode> UpdateDetailScript(string repositoryName, string id, DetailScript model)
@@ -327,7 +326,7 @@ namespace Aiplugs.PoshApp.Deamon
 
             await _scripts.AddScriptAsync(repository, model);
 
-            return HttpStatusCode.NoContent;
+            return HttpStatusCode.Created;
         }
 
         public async Task<HttpStatusCode> UpdateSingletonScript(string repositoryName, string id, SingletonScript model)
@@ -368,7 +367,7 @@ namespace Aiplugs.PoshApp.Deamon
 
             await _scripts.AddScriptAsync(repository, model);
 
-            return HttpStatusCode.NoContent;
+            return HttpStatusCode.Created;
         }
 
         public async Task<HttpStatusCode> UpdateActionScript(string repositoryName, string id, ActionScript model)
@@ -426,7 +425,7 @@ namespace Aiplugs.PoshApp.Deamon
         private System.Management.Automation.PowerShell CreatePowerShell(string workingDir)
         {
             _runspace.SessionStateProxy.Path.SetLocation(workingDir);
-            using var powershell = System.Management.Automation.PowerShell.Create(_runspace);
+            var powershell = System.Management.Automation.PowerShell.Create(_runspace);
             powershell.Streams.Error.DataAdding += (sender, args) =>
             {
                 var record = (ErrorRecord)args.ItemAdded;

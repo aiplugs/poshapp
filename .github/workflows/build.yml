@@ -14,18 +14,22 @@ jobs:
       with:
         dotnet-version: 3.1.101
         node-version: 14.x
-    - name: Prepare build lib
-      working-directory: ./src/Aiplugs.PoshApp/ElectronHostHook/
+    - name: Build deamon
+      working-directory: ./src/Aiplugs.PoshApp.Deamon/
+      run: dotnet publish -r win10-x64 /p:PublishSingleFile=true -c Release
+    - name: Copy artifacts
+      working-directory: ./src
+      run: cp Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/win10-x64/publish/Aiplugs.PoshApp.Deamon.exe Aiplugs.PoshApp.Electron/bin/Aiplugs.PoshApp.Deamon.exe
+    - name: Install modules
+      working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install
-    - name: Install tool
-      run: dotnet tool restore
-    - name: Build with dotnet
+    - name: Build electron
       env:
         CSC_LINK: ${{ secrets.CSC_LINK_WIN }}
         CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_WIN }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      working-directory: ./src/Aiplugs.PoshApp/
-      run: dotnet tool run electronize build /target custom "win10-x64;win"
+      working-directory: ./src/Aiplugs.PoshApp.Electron/
+      run: npm run electron:build
   macos:
     runs-on: macos-latest
     steps:
@@ -35,17 +39,21 @@ jobs:
       with:
         dotnet-version: 3.1.101
         node-version: 14.x
-    - name: Prepare build lib
-      working-directory: ./src/Aiplugs.PoshApp/ElectronHostHook/
+    - name: Build deamon
+      working-directory: ./src/Aiplugs.PoshApp.Deamon/
+      run: dotnet publish -r win10-x64 /p:PublishSingleFile=true -c Release
+    - name: Copy artifacts
+      working-directory: ./src
+      run: cp Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/osx-x64/publish/Aiplugs.PoshApp.Deamon Aiplugs.PoshApp.Electron/bin/Aiplugs.PoshApp.Deamon
+    - name: Install modules
+      working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install
-    - name: Install tool
-      run: dotnet tool restore
-    - name: Build with dotnet
+    - name: Build electron
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}
         APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         CSC_LINK: ${{ secrets.CSC_LINK_MAC }}
         CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_MAC }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      working-directory: ./src/Aiplugs.PoshApp/
-      run: dotnet tool run electronize build /target osx
+      working-directory: ./src/Aiplugs.PoshApp.Electron/
+      run: npm run electron:build

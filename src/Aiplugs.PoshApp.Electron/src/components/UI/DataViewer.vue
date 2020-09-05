@@ -1,4 +1,4 @@
-<template id="data-viewer">
+<template>
     <div>
         <div v-for="datum in data" :key="datum.$clixml">
             <p class="pl-4 pr-4" v-if="datum.value === null">NULL</p>
@@ -14,7 +14,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="(item, index) in datum.value" :key="index">
-                            <td v-for="key in Object.keys(item)">{{item[key]}}</td>
+                            <td v-for="key in Object.keys(item)" :key="key">{{item[key]}}</td>
                         </tr>
                     </tbody>
                 </template>
@@ -39,21 +39,20 @@
     </div>
 </template>
 <script>
-    Vue.component('data-viewer', {
-        template: '#data-viewer',
-        props: ['data'],
-        methods: {
-            getHeaders(array) {
-                return [...new Set(array.map(item => Object.keys(item)).flat())];
-            },
-            isEmbdedHtml(value) {
-                return typeof value === 'string' && /<!-- poshapp: \d+%?x\d+%? -->/.test(value);
-            },
-            getEmbdedHtml(value) {
-                const [_, width, height] = /<!--\s*poshapp:\s*(\d+%?)x(\d+%?)\s*-->/.exec(value);
-                const uri = URL.createObjectURL(new Blob([value], { type: 'text/html' }));
-                return `<iframe src="${uri}" width="${width}" height="${height}" frameborder="0"></iframe>`;
-            }
+export default {
+    props: ['data'],
+    methods: {
+        getHeaders(array) {
+            return [...new Set(array.map(item => Object.keys(item)).flat())];
+        },
+        isEmbdedHtml(value) {
+            return typeof value === 'string' && /<!-- poshapp: \d+%?x\d+%? -->/.test(value);
+        },
+        getEmbdedHtml(value) {
+            const [_, width, height] = /<!-- poshapp: (\d+%?)x(\d+%?) -->/.exec(value);
+            const uri = URL.createObjectURL(new Blob([value], { type: 'text/html' }));
+            return `<iframe src="${uri}" width="${width}" height="${height}" frameborder="0"></iframe>`;
         }
-    })
+    }
+}
 </script>

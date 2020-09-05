@@ -1,4 +1,4 @@
-﻿<template>
+<template>
     <v-menu v-model="dialog" ref="main"
             :nudge-top="600"
             :close-on-click="false"
@@ -23,6 +23,7 @@
     </v-menu>
 </template>
 <script>
+import Vue from 'vue'
 import { mapState} from 'vuex'
 export default {
     data() {

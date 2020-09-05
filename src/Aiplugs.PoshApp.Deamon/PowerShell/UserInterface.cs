@@ -82,7 +82,7 @@ namespace Aiplugs.PoshApp.Deamon
 
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
-            _rpc.NotifyAsync("Write", foregroundColor, backgroundColor, value).ConfigureAwait(false).GetAwaiter().GetResult();
+            _rpc.NotifyAsync("WriteWithColor", foregroundColor, backgroundColor, value).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         public override void Write(string value)

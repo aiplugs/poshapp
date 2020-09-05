@@ -85,7 +85,7 @@ namespace Aiplugs.PoshApp.Services.Git
                     OnProgress = (progress) =>
                     {
                         Client.SendAsync("GitProgress", cmd.Name, progress).Wait();
-                        return true;
+                        return true;    
                     },
                     CredentialsProvider = new LibGit2Sharp.Handlers.CredentialsHandler(GetCredential)
                 });
