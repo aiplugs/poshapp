@@ -20,6 +20,12 @@ module.exports = {
             ],
             "icon": "./src/assets/icon/poshapp-icon-256x256.ico"
           },
+          "nsis": {
+            "oneClick": false,
+            "perMachine": false,
+            "allowToChangeInstallationDirectory": false,
+            "license": "./eula.txt"
+          },
           "mac": {
             "icon": "./src/assets/icon/poshapp-icon-512x512.icns",
             "hardenedRuntime": true,
