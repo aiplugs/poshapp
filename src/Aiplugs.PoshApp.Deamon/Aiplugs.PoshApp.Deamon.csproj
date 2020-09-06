@@ -10,4 +10,10 @@
     <PackageReference Include="StreamJsonRpc" Version="2.4.48" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Modules/**/*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
