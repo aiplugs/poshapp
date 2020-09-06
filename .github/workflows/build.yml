@@ -20,7 +20,9 @@ jobs:
     - name: Copy artifacts
       shell: bash
       working-directory: ./src
-      run: cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/* Aiplugs.PoshApp.Electron/bin/*
+      run: |
+        md Aiplugs.PoshApp.Electron/bin/
+        cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/win10-x64/* Aiplugs.PoshApp.Electron/bin/*
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install
@@ -46,7 +48,9 @@ jobs:
     - name: Copy artifacts
       shell: bash
       working-directory: ./src
-      run: cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/* Aiplugs.PoshApp.Electron/bin/*
+      run: |
+        md Aiplugs.PoshApp.Electron/bin/
+        cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/osx-x64/* Aiplugs.PoshApp.Electron/bin/*
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install
