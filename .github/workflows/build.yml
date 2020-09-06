@@ -16,10 +16,10 @@ jobs:
         node-version: 14.x
     - name: Build deamon
       working-directory: ./src/Aiplugs.PoshApp.Deamon/
-      run: dotnet publish -r win10-x64 /p:PublishSingleFile=true -c Release
+      run: dotnet publish -c Release -r win10-x64 
     - name: Copy artifacts
       working-directory: ./src
-      run: cp Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/win10-x64/publish/Aiplugs.PoshApp.Deamon.exe Aiplugs.PoshApp.Electron/bin/Aiplugs.PoshApp.Deamon.exe
+      run: cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/* Aiplugs.PoshApp.Electron/bin/
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install
@@ -41,10 +41,10 @@ jobs:
         node-version: 14.x
     - name: Build deamon
       working-directory: ./src/Aiplugs.PoshApp.Deamon/
-      run: dotnet publish -r win10-x64 /p:PublishSingleFile=true -c Release
+      run: dotnet publish -c Release -r win10-x64
     - name: Copy artifacts
       working-directory: ./src
-      run: cp Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/osx-x64/publish/Aiplugs.PoshApp.Deamon Aiplugs.PoshApp.Electron/bin/Aiplugs.PoshApp.Deamon
+      run: cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/* Aiplugs.PoshApp.Electron/bin/
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install
