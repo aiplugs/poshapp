@@ -17,11 +17,8 @@
         }
     },
     actions: {
-        checkForUpdates() {
-            //ipcRenderer.send('check-for-updates');
-        },
         quitAndInstall() {
-            //ipcRenderer.send('quit-and-install');
+            window.ipcRenderer.send('QuitAndInstall');
         }
     }
 };

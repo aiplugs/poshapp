@@ -132,6 +132,9 @@ autoUpdater.on('download-progress', (progress) => {
 })
 autoUpdater.on('update-downloaded', (info) => {
 });
+ipcMain.handle('QuitAndInstall', () => {
+  autoUpdater.quitAndInstall();
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -164,6 +167,9 @@ app.on('ready', async () => {
   }
   createWindow()
   startPowerShellDeamon();
+  const channel = await connection.sendRequest(new rpc.RequestType('GetChannel'));
+  const version = app.getVersion().split('-')
+  autoUpdater.channel = channel || version[version.length - 1];
   autoUpdater.checkForUpdatesAndNotify();
 })
 

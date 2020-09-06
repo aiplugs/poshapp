@@ -19,13 +19,14 @@ namespace Aiplugs.PoshApp.Deamon
     {
         private readonly Runspace _runspace;
         private readonly JsonRpc _rpc;
+        private readonly ConfigAccessor _config;
         private readonly LicenseService _license;
         private readonly ScriptsService _scripts;
         public PoshAppService()
         {
-            var config = new ConfigAccessor();
-            _license = new LicenseService(config);
-            _scripts = new ScriptsService(config, _license);
+            _config = new ConfigAccessor();
+            _license = new LicenseService(_config);
+            _scripts = new ScriptsService(_config, _license);
             var sendingStream = Console.OpenStandardOutput();
             var receivingStream = Console.OpenStandardInput();
             _rpc = JsonRpc.Attach(sendingStream, receivingStream, this);
@@ -40,6 +41,11 @@ namespace Aiplugs.PoshApp.Deamon
         }
 
 #pragma warning disable VSTHRD200
+        public async Task<string> GetChannel()
+        {
+            var root = await _config.LoadRootConfigAsync();
+            return root.Channel;
+        }
         public async Task<IEnumerable<PSObject>> InvokeWithParameters(string scriptId, Dictionary<string, string> parameters)
         {
             return await DoAsync(async () =>
