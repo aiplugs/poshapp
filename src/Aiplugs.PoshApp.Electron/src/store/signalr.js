@@ -229,48 +229,10 @@ export default {
         async invokeGitClone(_, { path, origin }) {
             await window.ipcRenderer.invoke('GitClone', origin, path);
         },
-    //     async reconnect({ commit }) {
-    //         if (signalr.state === 'Disconnected') {
-    //             init = signalr.start();
-    //             init.then(() => {
-    //                 commit('setStatus', { status: 'connected', connectionId: signalr.connectionId });
-    //             }).catch(() => {
-    //                 commit('setStatus', { status: 'faild' });
-    //             });
-    //         }
-    //         else if (signalr.state === 'Connected') {
-    //             commit('setStatus', { status: 'connected', connectionId: signalr.connectionId });
-    //         }
-    //     }
     }
 };
 
 export function signalRPlugin(store) {
-    
-//     signalr.on('UnitResult', () => {
-//         store.commit('signalr/clearInvoking');
-//     });
-//     signalr.on('DefaultResult', json => {
-//         store.commit('signalr/clearInvoking');
-//         store.commit('signalr/setDefaultResult', parsePSDataCollection(JSON.parse(json)));
-//     });
-//     signalr.on('DetailResult', json => {
-//         store.commit('signalr/clearInvoking');
-//         store.commit('signalr/setDetailResult', parsePSDataCollection(JSON.parse(json)));
-//     });
-//     signalr.on('ActionResult', (id, json) => {
-//         store.commit('signalr/clearInvoking');
-//         store.dispatch('toast/toast', {
-//             text: `${id} is succeeded`,
-//             color: "info",
-//             top: true,
-//             right: true
-//         });
-//     });
-//     signalr.on('GetParameters', parameters => {
-//         store.commit('signalr/clearLoadingParams');
-//         store.commit('signalr/setParameters', parameters);
-//     });
     window.ipcRenderer.on('WriteWithColor', (event, color, bgColor, text) => {
         store.commit('signalr/writeHost', { color, bgColor, text });
     });
@@ -310,37 +272,4 @@ export function signalRPlugin(store) {
     window.ipcRenderer.on('GitProgress', (event, progress) => {
         store.commit('signalr/setGitProgress', { progress });
     });
-//     signalr.on('GitClone', name => {
-//         store.commit('signalr/setGitClone', { name });
-//     });
-//     signalr.on('GitCloneFaild', name => {
-//         store.commit('signalr/setGitCloneFaild', { name });
-//     });
-//     signalr.on('GitLog', (name, logs, origin, local) => {
-//         store.commit('signalr/setGitLog', { name, logs, origin, local });
-//     });
-//     signalr.on('GitLogNotFound', name => {
-//         store.commit('signalr/setGitLogNotFound', { name });
-//     });
-//     signalr.on('GitFetchProgress', (name, progress) => {
-//         store.commit('signalr/setGitFetchProgress', { name, progress });
-//     });
-//     signalr.on('GitStatus', (name, status) => {
-//         store.commit('signalr/setGitStatus', { name, status });
-//     });
-
-//     signalr.onclose(err => {
-//         store.commit('signalr/setStatus', { status: 'close' });
-//     });
-//     signalr.onreconnecting(err => {
-//         store.commit('signalr/setStatus', { status: 'reconnecting' });
-//     });
-//     signalr.onreconnected(connectedId => {
-//         store.commit('signalr/setStatus', { status: 'connected', connectionId: signalr.connectionId });
-//     });
-//     init.then(() => {
-//         store.commit('signalr/setStatus', { status: 'connected', connectionId: signalr.connectionId });
-//     }).catch(() => {
-//         store.commit('signalr/setStatus', { status: 'faild' });
-//     });
 }

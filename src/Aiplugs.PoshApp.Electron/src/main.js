@@ -14,6 +14,9 @@ import ScriptNav from './components/ScriptNav.vue'
 import ScriptIndex from './components/ScriptIndex.vue'
 import RepositoryNav from './components/RepositoryNav.vue'
 import RepositoryIndex from './components/RepositoryIndex.vue'
+import SettingsNav from './components/SettingsNav.vue'
+import SettingsActivation from './components/SettingsActivation.vue'
+import SettingsVersion from './components/SettingsVersion.vue'
 
 Vue.use(Vuetify)
 Vue.use(VueRouter)
@@ -29,9 +32,9 @@ const router = new VueRouter({
     { path: '/scripts/:repo/:id', components: { default: ScriptIndex, nav: ScriptNav } },
     { path: '/repositories/', components: { nav: RepositoryNav } },
     { path: '/repositories/:id', components: { default: RepositoryIndex, nav: RepositoryNav } },
-    // { path: '/settings/', components: { nav: Vue.component('SettingsNav') } },
-    // { path: '/settings/activation', components: { default: Vue.component('Activation'), nav: Vue.component('SettingsNav') } },
-    // { path: '/settings/version', components: { default: Vue.component('Version'), nav: Vue.component('SettingsNav') } },
+    { path: '/settings/', components: { nav: SettingsNav } },
+    { path: '/settings/activation', components: { default: SettingsActivation, nav: SettingsNav } },
+    { path: '/settings/version', components: { default: SettingsVersion, nav: SettingsNav } },
   ]
 })
 

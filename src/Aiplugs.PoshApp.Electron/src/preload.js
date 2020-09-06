@@ -3,7 +3,10 @@ import { ipcRenderer, remote } from 'electron'
 window.ipcRenderer = ipcRenderer;
 
 window.versions = {
-    chrome: process.versions.chrome
+    node: process.versions.node,
+    chrome: process.versions.chrome,
+    electron: process.versions.electron,
+    app: remote.app.getVersion()
 }
 
 window.selectFile = async function () {
