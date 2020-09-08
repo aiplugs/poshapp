@@ -22,7 +22,7 @@ jobs:
       working-directory: ./src
       run: |
         mkdir Aiplugs.PoshApp.Electron/bin/
-        cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/win10-x64/* Aiplugs.PoshApp.Electron/bin/
+        cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/win10-x64/publish/* Aiplugs.PoshApp.Electron/bin/
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install
@@ -50,7 +50,7 @@ jobs:
       working-directory: ./src
       run: |
         mkdir Aiplugs.PoshApp.Electron/bin/
-        cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/osx-x64/* Aiplugs.PoshApp.Electron/bin/
+        cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/osx-x64/publish/* Aiplugs.PoshApp.Electron/bin/
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install
