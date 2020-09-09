@@ -12,7 +12,7 @@ const rpc = require('vscode-jsonrpc')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const isMac = process.platform === 'darwin'
-/*Menu.setApplicationMenu(Menu.buildFromTemplate([
+Menu.setApplicationMenu(Menu.buildFromTemplate([
   // { role: 'appMenu' }
   ...(isMac ? [{
     label: app.name,
@@ -28,7 +28,35 @@ const isMac = process.platform === 'darwin'
       { role: 'quit' }
     ]
   }] : []),
+  // { role: 'editMenu' }
+  {
     label: 'Edit',
+    submenu: [
+      { role: 'undo' },
+      { role: 'redo' },
+      { type: 'separator' },
+      { role: 'cut' },
+      { role: 'copy' },
+      { role: 'paste' },
+      ...(isMac ? [
+        { role: 'pasteAndMatchStyle' },
+        { role: 'delete' },
+        { role: 'selectAll' },
+        { type: 'separator' },
+        {
+          label: 'Speech',
+          submenu: [
+            { role: 'startspeaking' },
+            { role: 'stopspeaking' }
+          ]
+        }
+      ] : [
+        { role: 'delete' },
+        { type: 'separator' },
+        { role: 'selectAll' }
+      ])
+    ]
+  },
   // { role: 'viewMenu' }
   {
     label: 'View',
@@ -82,7 +110,7 @@ const isMac = process.platform === 'darwin'
       },
     ]
   }
-]))*/
+]))
 
 let win
 
