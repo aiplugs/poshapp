@@ -191,7 +191,7 @@ if (isDevelopment) {
 let connection;
 async function startPowerShellDeamon () {
   const binary = process.platform == 'win32' ? 'Aiplugs.PoshApp.Deamon.exe' : 'Aiplugs.PoshApp.Deamon'
-  const prefix = process.platform == 'darwin' ? '../Resources/bin' : 'resources/bin'
+  const prefix = process.platform == 'darwin' ? '../bin' : 'resources/bin'
   const deamon = isDevelopment ? `bin/${binary}` : path.join(__dirname, prefix, binary)
   const childProcess = cp.spawn(deamon);
 
