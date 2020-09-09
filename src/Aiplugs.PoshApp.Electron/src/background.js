@@ -28,6 +28,7 @@ const isMac = process.platform === 'darwin'
       { role: 'quit' }
     ]
   }] : []),
+    label: 'Edit',
   // { role: 'viewMenu' }
   {
     label: 'View',
