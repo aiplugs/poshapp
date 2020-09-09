@@ -12,7 +12,7 @@ const rpc = require('vscode-jsonrpc')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const isMac = process.platform === 'darwin'
-Menu.setApplicationMenu(Menu.buildFromTemplate([
+/*Menu.setApplicationMenu(Menu.buildFromTemplate([
   // { role: 'appMenu' }
   ...(isMac ? [{
     label: app.name,
@@ -81,7 +81,7 @@ Menu.setApplicationMenu(Menu.buildFromTemplate([
       },
     ]
   }
-]))
+]))*/
 
 let win
 
