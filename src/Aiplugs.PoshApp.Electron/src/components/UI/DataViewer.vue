@@ -39,6 +39,7 @@
     </div>
 </template>
 <script>
+const htmlheader = /<!--\s*poshapp:\s*(\d+%?)\s*x\s*(\d+%?)\s*-->/
 export default {
     props: ['data'],
     methods: {
@@ -46,10 +47,10 @@ export default {
             return [...new Set(array.map(item => Object.keys(item)).flat())];
         },
         isEmbdedHtml(value) {
-            return typeof value === 'string' && /<!-- poshapp: \d+%?x\d+%? -->/.test(value);
+            return typeof value === 'string' && htmlheader.test(value);
         },
         getEmbdedHtml(value) {
-            const [_, width, height] = /<!-- poshapp: (\d+%?)x(\d+%?) -->/.exec(value);
+            const [_, width, height] = htmlheader.exec(value);
             const uri = URL.createObjectURL(new Blob([value], { type: 'text/html' }));
             return `<iframe src="${uri}" width="${width}" height="${height}" frameborder="0"></iframe>`;
         }
