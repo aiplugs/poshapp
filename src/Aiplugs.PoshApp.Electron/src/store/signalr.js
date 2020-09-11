@@ -142,9 +142,8 @@ export default {
         setGitStatus(state, { status }) {
             state.gitStatus.splice(0, state.gitStatus.length, ...status);
         },
-        setStatus(state, { status, connectionId }) {
-            state.status = status;
-            state.connectionId = connectionId;
+        clearGitStatus(state) {
+            state.gitStatus.splice(0);
         }
     },
     actions: {
@@ -210,6 +209,7 @@ export default {
             }
         },
         async invokeGitStatus({ commit }, { path }) {
+            commit('clearGitStatus');
             const status = await window.ipcRenderer.invoke('GitStatus', path);
             if (status != null) {
                 commit('setGitStatus', { status });

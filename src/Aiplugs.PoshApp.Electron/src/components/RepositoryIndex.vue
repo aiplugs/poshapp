@@ -17,8 +17,8 @@
                     <table>
                         <tbody>
                             <tr v-for="(item, index) in gitStatus" :key="index">
-                                <td>{{item.state}}</td>
-                                <td>{{item.script}}</td>
+                                <td>{{item.labels.join(',')}}</td>
+                                <td>{{item.file}}</td>
                             </tr>
                         </tbody>
                     </table>
