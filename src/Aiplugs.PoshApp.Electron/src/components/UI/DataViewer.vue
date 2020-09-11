@@ -5,7 +5,7 @@
             <div v-else-if="isEmbdedHtml(datum.value)" v-html="getEmbdedHtml(datum.value)"></div>
             <p class="pl-4 pr-4" v-else-if="typeof datum.value == 'string'||typeof datum.value == 'number'">{{datum.value}}</p>
             <p class="pl-4 pr-4" v-else-if="typeof datum.value == 'object' && datum.value.constructor == Date">{{datum.value.toLocaleString()}}</p>
-            <v-simple-table v-else-if="typeof datum.value == 'object' && Array.isArray(datum.value)">
+            <v-simple-table class="pb-8" v-else-if="typeof datum.value == 'object' && Array.isArray(datum.value)">
                 <template v-slot:default>
                     <thead>
                         <tr>
@@ -19,7 +19,7 @@
                     </tbody>
                 </template>
             </v-simple-table>
-            <v-simple-table v-else-if="typeof datum.value == 'object'">
+            <v-simple-table class="pb-8" v-else-if="typeof datum.value == 'object'">
                 <template v-slot:default>
                     <thead>
                         <tr>
