@@ -40,3 +40,9 @@ window.openExternal =  function (url) {
 window.openDirectory = function (path) {
     remote.shell.showItemInFolder(path);
 }
+
+window.repositoryConfigFilePath = function(respositoryPath) {
+    const suffix = process.platform == 'win32' ? '\\' : '/'
+    if (respositoryPath.endsWith(suffix) == false) respositoryPath += suffix
+    return respositoryPath + 'config.json'
+}

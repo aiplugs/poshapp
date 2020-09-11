@@ -97,7 +97,7 @@ export default {
         handleOpen() {
             const repo = this.find()(this.$route.params.id);
             if (repo) {
-                window.openDirectory(repo.path);
+                window.openDirectory(window.repositoryConfigFilePath(repo.path));
             }
         },
         handleRefresh() {
