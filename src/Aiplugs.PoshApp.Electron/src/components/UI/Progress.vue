@@ -23,7 +23,7 @@
 import {mapState} from 'vuex'
 export default {
     computed: {
-        ...mapState('signalr', ['progresses']),
+        ...mapState('ipc', ['progresses']),
         progressesLength() {
             return Object.keys(this.progresses).filter(name => !name.startsWith('_')).length;
         }

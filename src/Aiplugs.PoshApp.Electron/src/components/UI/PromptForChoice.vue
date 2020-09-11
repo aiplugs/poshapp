@@ -30,10 +30,10 @@
 import {mapState, mapActions} from 'vuex'
 export default {
     computed: {
-        ...mapState('signalr', ['promptForChoice'])
+        ...mapState('ipc', ['promptForChoice'])
     },
     methods: {
-        ...mapActions('signalr', ['invokePromptForChoice']),
+        ...mapActions('ipc', ['invokePromptForChoice']),
         format(label) {
             return (label||'').replace(/&/, '');
         },

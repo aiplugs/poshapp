@@ -7,7 +7,7 @@
 import {mapState} from 'vuex'
 export default {
     computed: {
-        ...mapState('signalr', ['gitClone'])
+        ...mapState('ipc', ['gitClone'])
     }
 }
 </script>

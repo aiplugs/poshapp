@@ -40,24 +40,13 @@ export default {
             if (result == 200) {
                 commit('addRepository', repository);
                 if (origin) {
-                    await dispatch('signalr/invokeGitClone', repository, { root: true });
+                    await dispatch('ipc/invokeGitClone', repository, { root: true });
                 }
                 return true;
             }
             return false;
         },
         async updateRepository({ commit }, payload) {
-            // const { id, name, path, origin, connectionId } = payload;
-            // const data = { name, path, origin, connectionId };
-            // const url = `/api/repositories/${id}`;
-            // const body = JSON.stringify(data);
-            // const response = await fetch(url, { method: 'post', headers: { 'Content-Type': 'application/json' }, body });
-
-            // if (response.ok) {
-            //     commit('replaceScript', payload);
-            //     return true;
-            // }
-
             return false;
         },
         async deleteRepository({ commit }, repository) {

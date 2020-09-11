@@ -71,7 +71,7 @@ export default {
         }
     }, 
     computed: {
-        ...mapState('signalr', ['invoking','defaultResult']),
+        ...mapState('ipc', ['invoking','defaultResult']),
         scriptId() {
             return `${this.$route.params.repo}:${this.$route.params.id}`;
         },
@@ -119,7 +119,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('signalr', ['invokeDefault', 'invokeAction', 'clearResult']),
+        ...mapActions('ipc', ['invokeDefault', 'invokeAction', 'clearResult']),
         init() {
             this.clearResult();
             this.selected.splice(0);

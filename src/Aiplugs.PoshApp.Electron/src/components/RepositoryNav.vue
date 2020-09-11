@@ -127,7 +127,6 @@ export default {
     },
     computed: {
         ...mapState('ipc', ['selectedDirectory', 'selecting']),
-        ...mapState('signalr', ['connectionId']),
         ...mapState('repositories', ['repositories']),
         ...mapGetters('activation', ['exceededFreePlanForRepositories']),
         deleteDialog() {
@@ -149,8 +148,7 @@ export default {
                 id: this.repositoryId,
                 name: this.name,
                 path: this.path,
-                origin: this.origin,
-                connectionId: this.connectionId
+                origin: this.origin
             };
             await this.createOrUpdate(payload);
             this.openNewDialog = false;

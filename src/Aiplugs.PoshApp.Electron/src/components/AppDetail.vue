@@ -19,14 +19,14 @@ export default {
     props: ['script', 'input'],
     components: { DataViewer },
     computed: {
-        ...mapState('signalr', ['detailResult']),
+        ...mapState('ipc', ['detailResult']),
         actions() {
             const [repo, id] = this.script.split(':');
             return this.$store.getters['scripts/findActions'](repo, id);
         }
     },
     methods: {
-        ...mapActions('signalr', ['invokeDetail', 'invokeAction'])
+        ...mapActions('ipc', ['invokeDetail', 'invokeAction'])
     },
     mounted() {
         this.invokeDetail({ scriptId: this.script, input: this.input });

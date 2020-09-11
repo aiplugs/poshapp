@@ -71,7 +71,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('signalr', ['gitLog', 'gitLogMessage', 'gitStatus']),
+        ...mapState('ipc', ['gitLog', 'gitLogMessage', 'gitStatus']),
         updatable() {
             return this.gitLog
                 && this.gitLog.name == this.$route.params.id
@@ -83,8 +83,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('signalr', ['invokeGitLog', 'invokeGitStatus', 'invokeGitFetch', 'invokeGitForcePull', 'invokeGitReset']),
-        ...mapActions('ipc', ['openRepositoryDir']),
+        ...mapActions('ipc', ['openRepositoryDir','invokeGitLog', 'invokeGitStatus', 'invokeGitFetch', 'invokeGitForcePull', 'invokeGitReset']),
         ...mapGetters('repositories',['find']),
         async getLog(repositoryName) {
             const repo = this.find()(repositoryName);

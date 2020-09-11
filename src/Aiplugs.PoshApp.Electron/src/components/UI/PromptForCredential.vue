@@ -45,10 +45,10 @@ export default {
         }
     },
     computed: {
-        ...mapState('signalr', ['promptForCredential']),
+        ...mapState('ipc', ['promptForCredential']),
     },
     methods: {
-        ...mapActions('signalr', ['invokePromptForCredential', 'invokePromptForGitCredential']),
+        ...mapActions('ipc', ['invokePromptForCredential', 'invokePromptForGitCredential']),
         async handlePromptForCredential() {
             const payload = { username: this.username, password: this.password };
             if (this.promptForCredential.forGit) {

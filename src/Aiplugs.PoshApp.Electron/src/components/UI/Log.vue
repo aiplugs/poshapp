@@ -32,7 +32,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('signalr', ['logMessages'])
+        ...mapState('ipc', ['logMessages'])
     },
     watch: {
         logMessages() {

@@ -68,7 +68,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('signalr', ['loadingParams', 'parameters']),
+        ...mapState('ipc', ['loadingParams', 'parameters']),
         disabledAll() {
             return this.disabled || this.loadingParams
         }
@@ -93,7 +93,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('signalr', ['invokeGetParameters']),
+        ...mapActions('ipc', ['invokeGetParameters']),
         isNumberType(type) {
             const numberTypes = ['System.Int32','System.Int64','System.Single','System.Double','System.Decimal'];
             return numberTypes.includes(type);

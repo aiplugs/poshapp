@@ -26,10 +26,10 @@ export default {
         }
     },
     computed: {
-        ...mapState('signalr', ['logErrors'])
+        ...mapState('ipc', ['logErrors'])
     },
     methods: {
-        ...mapMutations('signalr', ['clearError'])
+        ...mapMutations('ipc', ['clearError'])
     },
 }
 </script>

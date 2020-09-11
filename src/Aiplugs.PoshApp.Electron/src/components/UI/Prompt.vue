@@ -62,12 +62,10 @@ export default {
         }
     },
     computed: {
-        ...mapState('signalr', ['prompt']),
-        ...mapState('ipc', ['selectedDirectory', 'selectedFile'])
+        ...mapState('ipc', ['prompt', 'selectedDirectory', 'selectedFile'])
     },
     methods: {
-        ...mapActions('signalr', ['invokePrompt']),
-        ...mapActions('ipc', ['selectDirectory', 'selectFile', 'clearSelected']),
+        ...mapActions('ipc', ['invokePrompt', 'clearSelected']),
         supportFileManager(desc) {
             return desc.ParameterTypeFullName === 'System.String' && desc.Name.toLowerCase().endsWith('path');
         },
@@ -110,11 +108,11 @@ export default {
             this.$refs.form.reset();
             this.dialog = false;
         },
-        openDirManager(desc) {
-            this.selectDirectory({ name: desc.Name });
+        async openDirManager(desc) {
+            this.$set(this.value, desc.Name, await window.selectDirectory({ name: desc.Name }));
         }, 
-        openFileManager(desc) {
-            this.selectFile({ name: desc.Name });
+        async openFileManager(desc) {
+            this.$set(this.value, desc.Name, await window.selectFile({ name: desc.Name }));
         }
     },
     watch: {
@@ -125,26 +123,6 @@ export default {
                 }
             }
         },
-        selectedDirectory(o) {
-            if (this.prompt != null) {
-                const keys = Object.keys(o).filter(key => !key.startsWith('_'));
-                for (let desc of this.prompt.descriptions) {
-                    if (keys.includes(desc.Name)) {
-                        this.$set(this.value, desc.Name, o[desc.Name]);
-                    }
-                }
-            }
-        },
-        selectedFile(o) {
-            if (this.prompt != null) {
-                const keys = Object.keys(o).filter(key => !key.startsWith('_'));
-                for (let desc of this.prompt.descriptions) {
-                    if (keys.includes(desc.Name)) {
-                        this.$set(this.value, desc.Name, o[desc.Name]);
-                    }
-                }
-            }
-        }
     }
 }
 </script>
