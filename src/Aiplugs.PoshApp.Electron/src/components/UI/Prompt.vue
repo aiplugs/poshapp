@@ -80,7 +80,7 @@ export default {
             }
 
             if (desc.IsMandatory)
-                result.push(v => !!v || `${label} is required`);
+                result.push(v => v !== undefined || v !== null || v !== '' || `${label} is required`);
 
             if (desc.ParameterTypeFullName == 'System.Int32'
                 || desc.ParameterTypeFullName == 'System.Int64')

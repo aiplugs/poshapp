@@ -112,7 +112,7 @@ export default {
             }
 
             if (parameter.mandatory)
-                rules.push(v => !!v || `${parameter.name} is required.`);
+                rules.push(v => v !== undefined || v !== null || v !== '' || `${parameter.name} is required.`);
 
             if (parameter.type == 'System.Int32'
                 || parameter.type == 'System.Int64')
