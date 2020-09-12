@@ -2,7 +2,7 @@
 
 import path from 'path'
 import cp  from 'child_process'
-import { app, protocol, BrowserWindow, ipcMain, Menu } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, Menu, dialog, clipboard, shell } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const {autoUpdater} = require("electron-updater");
@@ -447,7 +447,9 @@ async function startPowerShellDeamon () {
     let count = 0;
     const walker = repository.createRevWalk();
     walker.sorting(Git.Revwalk.SORT.TOPOLOGICAL)
-    walker.push(originHead.sha());
+    if (!!originHead) {
+      walker.push(originHead.sha());
+    }
     walker.push(localHead.sha());
     const commits = await walker.getCommits(100);
     const logs = commits.map(commit => ({
@@ -458,7 +460,7 @@ async function startPowerShellDeamon () {
       message: commit.messageRaw(),
       messageShort:commit.message(), 
     }));
-    return  { logs, origin: originHead.sha(), local: localHead.sha() };
+    return  { logs, origin: !!originHead ? originHead.sha() : null, local: localHead.sha() };
   })
 
   ipcMain.handle("GitStatus", async (event, path) => {
@@ -495,39 +497,43 @@ async function startPowerShellDeamon () {
     let saveUserName;
     let savePassword;
     let challenge = 0;
-    await repository.fetch('origin', {
-      callbacks: {
-        credentials: async function (url, userName) {
-          const credentials = await keytar.findCredentials(url)
-          if (credentials.length > 0) { 
-            if (challenge < credentials.length) {
-              const index = challenge++;
-              return Git.Cred.userpassPlaintextNew(credentials[index].account, credentials[index].password)
-            } else {
-              await Promise.all(credentials.map(c => keytar.deletePassword(url, c.account)))
+    try {
+      await repository.fetch('origin', {
+        callbacks: {
+          credentials: async function (url, userName) {
+            const credentials = await keytar.findCredentials(url)
+            if (credentials.length > 0) { 
+              if (challenge < credentials.length) {
+                const index = challenge++;
+                return Git.Cred.userpassPlaintextNew(credentials[index].account, credentials[index].password)
+              } else {
+                await Promise.all(credentials.map(c => keytar.deletePassword(url, c.account)))
+              }
             }
+            return await (new Promise(function(resolve){
+              ipcMain.once('PromptForGitCredential', function(event, userName, password) {
+                saveService = url;
+                saveUserName = userName;
+                savePassword = password;
+                resolve(Git.Cred.userpassPlaintextNew(userName, password))
+              })
+              event.sender.send('PromptForGitCredential', url, userName);
+            }))
+          },
+          certificateCheck: function() {
+            // github will fail cert check on some OSX machines
+            // this overrides that check
+            return 0;
+          },
+          transferProgress: function(stats) {
+            const progress = (stats.receivedObjects() + stats.indexedObjects()) / (stats.totalObjects() * 2)
+            event.sender.send('GitProgress', progress);
           }
-          return await (new Promise(function(resolve){
-            ipcMain.once('PromptForGitCredential', function(event, userName, password) {
-              saveService = url;
-              saveUserName = userName;
-              savePassword = password;
-              resolve(Git.Cred.userpassPlaintextNew(userName, password))
-            })
-            event.sender.send('PromptForGitCredential', url, userName);
-          }))
-        },
-        certificateCheck: function() {
-          // github will fail cert check on some OSX machines
-          // this overrides that check
-          return 0;
-        },
-        transferProgress: function(stats) {
-          const progress = (stats.receivedObjects() + stats.indexedObjects()) / (stats.totalObjects() * 2)
-          event.sender.send('GitProgress', progress);
         }
-      }
-    });
+      })
+    } catch {
+      return null
+    }
     if (saveService && saveUserName && savePassword) {
       await keytar.setPassword(saveService, saveUserName, savePassword);
     }
@@ -589,3 +595,44 @@ async function startPowerShellDeamon () {
 
   connection.listen();
 }
+
+ipcMain.handle('GetVersions', (event) => {
+  return {
+    node: process.versions.node,
+    chrome: process.versions.chrome,
+    electron: process.versions.electron,
+    app: app.getVersion()
+  }
+})
+
+ipcMain.handle('SelectFile', async (event) => {
+  const {filePaths:[path]} = await dialog.showOpenDialog({ properties: ['openFile'] })
+  return path
+})
+
+ipcMain.handle('SelectFiles', async (event) => {
+  const {filePaths} = await dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] })
+  return filePaths
+})
+
+ipcMain.handle('SelectDirectory', async (event) => {
+  const {filePaths:[path]} = await dialog.showOpenDialog({ properties: ['openDirectory', 'createDirectory'] })
+  return path
+})
+
+ipcMain.handle('SelectDirectories', async (event) => {
+  const {filePaths} = await dialog.showOpenDialog({ properties: ['openDirectory', 'createDirectory', 'multiSelections'] })
+  return filePaths
+})
+
+ipcMain.handle('CopyToClipboard', (event, text) => {
+  clipboard.writeText(text)
+})
+
+ipcMain.handle('OpenExternal', (event, url) => {
+  shell.openExternal(url)
+})
+
+ipcMain.handle('OpenDirectory', (event, path) => {
+  shell.showItemInFolder(path)
+})

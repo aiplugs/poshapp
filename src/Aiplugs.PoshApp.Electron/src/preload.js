@@ -1,48 +1,25 @@
-import { ipcRenderer, remote } from 'electron'
+import { ipcRenderer } from 'electron'
 
 window.ipcRenderer = ipcRenderer;
 
-window.versions = {
-    node: process.versions.node,
-    chrome: process.versions.chrome,
-    electron: process.versions.electron,
-    app: remote.app.getVersion()
-}
+window.selectFile = () => ipcRenderer.invoke('SelectFile')
 
-window.selectFile = async function () {
-    const {filePaths:[path]} = await remote.dialog.showOpenDialog({ properties: ['openFile'] })
-    return path
-}
+window.selectFiles = () => ipcRenderer.invoke('SelectFiles')
 
-window.selectFiles = async function () {
-    const {filePaths} = await remote.dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] })
-    return filePaths
-}
+window.selectDirectory = () => ipcRenderer.invoke('SelectDirectory')
 
-window.selectDirectory = async function () {
-    const {filePaths:[path]} = await remote.dialog.showOpenDialog({ properties: ['openDirectory', 'createDirectory'] })
-    return path
-}
+window.selectDirectories = ()=> ipcRenderer.invoke('SelectDirectories')
 
-window.selectDirectories = async function () {
-    const {filePaths} = await remote.dialog.showOpenDialog({ properties: ['openDirectory', 'createDirectory', 'multiSelections'] })
-    return filePaths
-}
+window.copyToClipboard = text => ipcRenderer.invoke('CopyToClipboard', text)
 
-window.copyToClipboard = function (text) {
-    remote.clipboard.writeText(text)
-}
+window.openExternal =  url => ipcRenderer.invoke('OpenExternal', url)
 
-window.openExternal =  function (url) {
-    remote.shell.openExternal(url)
-}
-
-window.openDirectory = function (path) {
-    remote.shell.showItemInFolder(path);
-}
+window.openDirectory = path => ipcRenderer.invoke('OpenDirectory', path)
 
 window.repositoryConfigFilePath = function(respositoryPath) {
     const suffix = process.platform == 'win32' ? '\\' : '/'
     if (respositoryPath.endsWith(suffix) == false) respositoryPath += suffix
     return respositoryPath + 'config.json'
 }
+
+ipcRenderer.invoke('GetVersions').then(versions => window.versions = versions)
