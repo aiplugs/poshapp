@@ -150,7 +150,6 @@ function createWindow() {
 autoUpdater.on('checking-for-update', () => {
 })
 autoUpdater.on('update-available', (info) => {
-  win.webContents.send('UpdateAvailable')
 })
 autoUpdater.on('update-not-available', (info) => {
 })
@@ -160,6 +159,7 @@ autoUpdater.on('download-progress', (progress) => {
   win.webContents.send('UpdateDownloading', progress.percent);
 })
 autoUpdater.on('update-downloaded', (info) => {
+  win.webContents.send('UpdateAvailable')
 });
 ipcMain.handle('QuitAndInstall', () => {
   autoUpdater.quitAndInstall();
@@ -199,6 +199,7 @@ app.on('ready', async () => {
   const settingsChannel = await connection.sendRequest(new rpc.RequestType('GetChannel'));
   const currentChannel = app.getVersion().indexOf('beta') != -1 ? 'beta' : null;
   autoUpdater.channel = settingsChannel || currentChannel;
+  autoUpdater.autoDownload = true;
   autoUpdater.checkForUpdatesAndNotify();
 })
 
