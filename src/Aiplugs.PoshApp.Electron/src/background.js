@@ -196,9 +196,9 @@ app.on('ready', async () => {
   }
   createWindow()
   startPowerShellDeamon();
-  const channel = await connection.sendRequest(new rpc.RequestType('GetChannel'));
-  const version = app.getVersion().split('-')
-  autoUpdater.channel = channel || version[version.length - 1];
+  const settingsChannel = await connection.sendRequest(new rpc.RequestType('GetChannel'));
+  const currentChannel = app.getVersion().indexOf('beta') != -1 ? 'beta' : null;
+  autoUpdater.channel = settingsChannel || currentChannel;
   autoUpdater.checkForUpdatesAndNotify();
 })
 
