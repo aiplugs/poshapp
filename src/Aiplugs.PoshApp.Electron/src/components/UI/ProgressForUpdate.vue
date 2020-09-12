@@ -11,8 +11,10 @@ export default {
         progress() {
             if (!this.updateDownloading)
                 return null;
+            
+            const percent = this.updateDownloading.toString();
 
-            const [head, tail] = this.updateDownloading.split('.');
+            const [head, tail] = percent.split('.');
 
             return head + '.' + (tail || '0').slice(0, 1);
         }
