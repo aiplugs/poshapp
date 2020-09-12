@@ -35,7 +35,12 @@
                     :type="inputType(p)" 
                     :rules="rules(p)" 
                     :disabled="disabledAll"
-                    filled rounded dense v-else></v-text-field>
+                    filled rounded dense v-else>
+                    <template v-slot:append v-if="supportFileManager(p)">
+                        <v-icon icon text v-on:click="openDirManager(p)">mdi-folder-search</v-icon>
+                        <v-icon icon text v-on:click="openFileManager(p)">mdi-file-search</v-icon>
+                    </template>
+                </v-text-field>
             </v-col>
             <v-col class="pb-0" v-if="loadingParams">
                 <v-text-field filled rounded dense disabled></v-text-field>
@@ -155,6 +160,15 @@ export default {
                 pageSize: this.value.PageSize - 0
             });
         },
+        supportFileManager(p) {
+            return p.type === 'System.String' && p.name.toLowerCase().endsWith('path');
+        },
+        async openDirManager(p) {
+            this.$set(this.value, p.name, await window.selectDirectory({ name: p.name }));
+        }, 
+        async openFileManager(p) {
+            this.$set(this.value, p.name, await window.selectFile({ name: p.name }));
+        }
     },
     mounted() {
         this.invokeGetParameters({ scriptId: this.script });
