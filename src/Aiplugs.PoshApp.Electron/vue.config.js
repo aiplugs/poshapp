@@ -18,6 +18,7 @@ module.exports = {
             "publisherName": [
               "Yoshiyuki Taniguchi"
             ],
+            "verifyUpdateCodeSignature" : false,
             "icon": "./src/assets/icon/poshapp-icon-256x256.ico"
           },
           "nsis": {
