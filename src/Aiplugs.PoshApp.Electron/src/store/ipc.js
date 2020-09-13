@@ -245,6 +245,9 @@ export default {
 export function ipcPlugin(store) {
     window.ipcRenderer.on('UpdateDownloading', (sender, progress) => {
         store.commit('ipc/setUpdateDownloading', progress);
+        if (progress == 100) {
+            store.commit('ipc/setUpdateAvailable');
+        }
     });
     window.ipcRenderer.on('UpdateAvailable', sender => {
         store.commit('ipc/setUpdateAvailable');

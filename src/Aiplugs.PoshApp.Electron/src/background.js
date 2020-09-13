@@ -149,19 +149,22 @@ function createWindow() {
 
 autoUpdater.on('checking-for-update', () => {
 })
-autoUpdater.on('update-available', (info) => {
+autoUpdater.on('update-available', () => {
 })
-autoUpdater.on('update-not-available', (info) => {
+autoUpdater.on('update-not-available', () => {
 })
 autoUpdater.on('error', (err) => {
+  dialog.showMessageBox(win, {
+    message: JSON.stringify(err)
+  })
 })
 autoUpdater.on('download-progress', (progress) => {
   win.webContents.send('UpdateDownloading', progress.percent);
 })
-autoUpdater.on('update-downloaded', (info) => {
+autoUpdater.on('update-downloaded', () => {
   win.webContents.send('UpdateAvailable')
 });
-ipcMain.handle('QuitAndInstall', () => {
+ipcMain.on('QuitAndInstall', () => {
   autoUpdater.quitAndInstall();
 })
 
@@ -200,6 +203,7 @@ app.on('ready', async () => {
   const currentChannel = app.getVersion().indexOf('beta') != -1 ? 'beta' : null;
   autoUpdater.channel = settingsChannel || currentChannel;
   autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = !isMac;
   autoUpdater.checkForUpdatesAndNotify();
 })
 
