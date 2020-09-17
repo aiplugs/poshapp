@@ -132,6 +132,9 @@ export function parsePSDataCollection(data) {
         throw new Error("Argument data need array.");
 
     return data.map(d => {
+        if (d === null)
+            return { value: null, clixml: '<Nil />' };
+            
         const clixml = d.CliXml;
         const objs = parseXML(clixml).querySelector('Objs');
         const value = extract(objs);
