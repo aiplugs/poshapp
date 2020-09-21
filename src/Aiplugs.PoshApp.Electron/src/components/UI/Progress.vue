@@ -1,5 +1,5 @@
 <template>
-    <v-dialog :value="progressesLength > 0" max-width="600px">
+    <v-dialog :value="progressesLength > 0" max-width="600px" persistent>
         <v-card>
             <v-card-text>
                 <v-list>
