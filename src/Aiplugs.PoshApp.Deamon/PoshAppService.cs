@@ -22,14 +22,23 @@ namespace Aiplugs.PoshApp.Deamon
         private readonly ConfigAccessor _config;
         private readonly LicenseService _license;
         private readonly ScriptsService _scripts;
-        public PoshAppService()
+
+        private PoshAppService(string configDir)
         {
-            _config = new ConfigAccessor();
+            _config = new ConfigAccessor(configDir);
             _license = new LicenseService(_config);
             _scripts = new ScriptsService(_config, _license);
-            var sendingStream = Console.OpenStandardOutput();
-            var receivingStream = Console.OpenStandardInput();
+        }
+        public PoshAppService(Stream sendingStream, Stream receivingStream, string configDir = null) : this(configDir)
+        {
             _rpc = JsonRpc.Attach(sendingStream, receivingStream, this);
+            _runspace = CreateRunspace();
+        }
+        public PoshAppService(IJsonRpcMessageHandler handler, string configDir = null) : this(configDir)
+        {
+            _rpc = new JsonRpc(handler, this);
+            _rpc.CancelLocallyInvokedMethodsWhenConnectionIsClosed = true;
+            _rpc.StartListening();
             _runspace = CreateRunspace();
         }
         internal async Task StartAsync() {
@@ -135,6 +144,13 @@ namespace Aiplugs.PoshApp.Deamon
             if (await _scripts.ExistRepositoryAsync(name))
                 return HttpStatusCode.Conflict;
 
+            if (string.IsNullOrEmpty(path))
+            {
+                path = Path.Combine(_config.AppPath, name);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+            }
+
             var status = await _license.GetActivationStatusAsync();
             if (status == ActivationStatus.None)
             {
@@ -153,17 +169,29 @@ namespace Aiplugs.PoshApp.Deamon
             if (!await _scripts.ExistRepositoryAsync(name))
                 return HttpStatusCode.NotFound;
 
+            if (string.IsNullOrEmpty(path))
+            {
+                path = Path.Combine(_config.AppPath, name);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+            }
+
             await _scripts.UpdateRepositoryAsync(currentName, new Repository { Name = name, Path = path });
 
             return HttpStatusCode.OK;
         }
 
-        public async Task<HttpStatusCode> DeleteRepository(string name)
+        public async Task<HttpStatusCode> DeleteRepository(string name, bool deleteFiles)
         {
             if (!await _scripts.ExistRepositoryAsync(name))
                 return HttpStatusCode.NotFound;
 
+            var repository = await _scripts.GetRepositoryAsync(name);
+
             await _scripts.RemoveRepositoryAsync(name);
+
+            if (deleteFiles)    
+                Directory.Delete(repository.Path, true);
 
             return HttpStatusCode.NoContent;
         }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Aiplugs.PoshApp.Models;
 using Newtonsoft.Json;
@@ -10,14 +11,22 @@ namespace Aiplugs.PoshApp.Services
 {
     public class ConfigAccessor
     {
-        private static readonly string _appPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".poshapp");
-        private static readonly string _configPath = Path.Combine(_appPath, "config.json");
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private readonly JsonConverter[] _converters = new[] { new ScriptConverter() };
+
+        public ConfigAccessor(string configDir)
+        {
+            AppPath = configDir ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".poshapp");
+            ConfigPath = Path.Combine(AppPath, "config.json");
+        }
+
+        public string AppPath { get; private set; }
+        public string ConfigPath { get; private set; }
         public async Task<RootConfig> LoadRootConfigAsync()
         {
             TouchConfigIfNotExist();
 
-            var json = await File.ReadAllTextAsync(_configPath, Encoding.UTF8);
+            var json = await File.ReadAllTextAsync(ConfigPath, Encoding.UTF8);
 
             if (string.IsNullOrEmpty(json))
                 return new RootConfig();
@@ -29,7 +38,15 @@ namespace Aiplugs.PoshApp.Services
         {
             var json = JsonConvert.SerializeObject(config, Formatting.Indented);
 
-            await File.WriteAllTextAsync(_configPath, json, Encoding.UTF8);
+            await _semaphore.WaitAsync();
+            try
+            {
+                await File.WriteAllTextAsync(ConfigPath, json, Encoding.UTF8);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         public async Task<RepositoryConfig> LoadRepositoryConfigAsync(Repository repository)
@@ -51,7 +68,16 @@ namespace Aiplugs.PoshApp.Services
         {
             var configPath = GetConfigPath(repository);
             var json = JsonConvert.SerializeObject(config, Formatting.Indented);
-            await File.WriteAllTextAsync(configPath, json, Encoding.UTF8);
+
+            await _semaphore.WaitAsync();
+            try
+            {
+                await File.WriteAllTextAsync(configPath, json, Encoding.UTF8);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         private void CreateDirIfNotExist(string path)
@@ -66,8 +92,8 @@ namespace Aiplugs.PoshApp.Services
         }
         private void TouchConfigIfNotExist()
         {
-            CreateDirIfNotExist(_appPath);
-            TouchFileIfNotExist(_configPath);
+            CreateDirIfNotExist(AppPath);
+            TouchFileIfNotExist(ConfigPath);
         }
 
         private string GetConfigPath(Repository repository) => Path.Combine(repository.Path, "config.json");

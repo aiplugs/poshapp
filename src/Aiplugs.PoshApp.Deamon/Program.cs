@@ -1,6 +1,4 @@
-﻿using Aiplugs.PoshApp.Deamon.PowerShell;
-using StreamJsonRpc;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace Aiplugs.PoshApp.Deamon
@@ -9,7 +7,9 @@ namespace Aiplugs.PoshApp.Deamon
     {
         static async Task Main(string[] args)
         {
-            await new PoshAppService().StartAsync();
+            var sendingStream = Console.OpenStandardOutput();
+            var receivingStream = Console.OpenStandardInput();
+            await new PoshAppService(sendingStream, receivingStream).StartAsync();
         }
     }
 }

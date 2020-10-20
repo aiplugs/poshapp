@@ -1,10 +1,9 @@
 import "vuetify/dist/vuetify.min.css";
 import '@mdi/font/css/materialdesignicons.css'
-
+import init from './web.js'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import VueRouter from 'vue-router'
-import store from './store'
 import App from './App.vue'
 import Index from './components/Index.vue'
 import AppNav from './components/AppNav.vue'
@@ -17,6 +16,9 @@ import RepositoryIndex from './components/RepositoryIndex.vue'
 import SettingsNav from './components/SettingsNav.vue'
 import SettingsActivation from './components/SettingsActivation.vue'
 import SettingsVersion from './components/SettingsVersion.vue'
+import createStore from './store'
+
+
 
 Vue.use(Vuetify)
 Vue.use(VueRouter)
@@ -38,9 +40,21 @@ const router = new VueRouter({
   ]
 })
 
-new Vue({
-  store,
-  router,
-  vuetify: new Vuetify(),
-  render: h => h(App),
-}).$mount('#app')
+init().then(function(){
+  new Vue({
+    store: createStore(),
+    router,
+    vuetify: new Vuetify(),
+    render: h => h(App),
+  }).$mount('#app')
+});
+
+Vue.config.errorHandler = (err, vm, info) => {
+  alert(err)
+};
+window.addEventListener("error", event => {
+  alert(event.error)
+});
+window.addEventListener("unhandledrejection", event => {
+  alert(event.reason)
+});

@@ -155,7 +155,7 @@ export default {
     },
     actions: {
         quitAndInstall() {
-            window.ipcRenderer.send('QuitAndInstall');
+            window.quitAndInstall()
         },
         clearResult({ commit }) {
             commit('setDefaultResult', null);
@@ -163,19 +163,19 @@ export default {
         },
         async invokeDefault({ commit }, { scriptId, input }) {
             commit('setInvoking');
-            const data = await window.ipcRenderer.invoke('InvokeWithParameters', scriptId, input);
+            const data = await window.invokeWithParameters(scriptId, input);
             commit('clearInvoking');
             commit('setDefaultResult', parsePSDataCollection(data));
         },
         async invokeDetail({ commit },{ scriptId, input }) {
             commit('setInvoking');
-            const data = await window.ipcRenderer.invoke('InvokeWithPipeline', scriptId, input);
+            const data = await window.InvokeWithPipeline(scriptId, input);
             commit('clearInvoking');
             commit('setDetailResult', parsePSDataCollection(data));
         },
         async invokeAction({ commit, dispatch }, { scriptId, input }) {
             commit('setInvoking', scriptId);
-            await window.ipcRenderer.invoke('InvokeWithPipelines', scriptId, input);
+            await window.InvokeWithPipelines(scriptId, input);
             commit('clearInvoking');
             dispatch('toast/toast', {
                 text: `${scriptId} is succeeded`,
@@ -187,29 +187,29 @@ export default {
         async invokeGetParameters({ commit }, { scriptId }) {
             commit('setParameters', []);
             commit('setLoadingParams', []);
-            const parameters = await window.ipcRenderer.invoke('InvokeGetParameters', scriptId);
+            const parameters = await window.invokeGetParameters(scriptId);
             commit('clearLoadingParams');
             commit('setParameters', parameters);
         },
         async invokePrompt({ commit }, { input }) {
             commit('clearPrompt');
-            await window.ipcRenderer.send('Prompt', input);
+            await window.sendPrompt(input);
         },
         async invokePromptForChoice({ commit }, { index }) {
             commit('clearPromptForChoice');
-            await window.ipcRenderer.send('PromptForChoice', index);
+            await window.sendPromptForChoice(index);
         },
         async invokePromptForCredential({ commit }, { username, password }) {
             commit('clearPromptForCredential');
-            await window.ipcRenderer.send('PromptForCredential', username, password);
+            await window.sendPromptForCredential(username, password);
         },
         async invokePromptForGitCredential({ commit }, { username, password }) {
             commit('clearPromptForCredential');
-            await window.ipcRenderer.send('PromptForGitCredential', username, password);
+            await window.sendPromptForGitCredential(username, password);
         },
-        async invokeGitLog({ commit }, { name, path }) {
+        async invokeGitLog({ commit }, { path, name }) {
             commit('clearGitLog');
-            const data = await window.ipcRenderer.invoke('GitLog', path);
+            const data = await window.getGitLog(path, name);
             if (data != null) {
                 const { logs, origin, local } = data;
                 commit('setGitLog', { name, logs, origin, local });
@@ -218,77 +218,79 @@ export default {
                 commit('setGitLogNotFound');
             }
         },
-        async invokeGitStatus({ commit }, { path }) {
+        async invokeGitStatus({ commit }, { path, name }) {
             commit('clearGitStatus');
-            const status = await window.ipcRenderer.invoke('GitStatus', path);
+            const status = await window.getGitStatus(path, name);
             if (status != null) {
                 commit('setGitStatus', { status });
             }
         },
-        async invokeGitFetch({ commit }, { path }) {
-            await window.ipcRenderer.invoke('GitFetch', path);
+        async invokeGitFetch({ commit }, { path, name }) {
+            await window.fetchGit(path, name);
         },
         async invokeGitForcePull({ dispatch }, payload) {
             await dispatch('invokeGitFetch', payload);
             await dispatch('invokeGitReset', payload);
             await dispatch('invokeGitLog', payload);
         },
-        async invokeGitReset(_, { path }) {
-            await window.ipcRenderer.invoke('GitReset', path);
+        async invokeGitReset(_, { path, name }) {
+            await window.resetGit(path);
         },
-        async invokeGitClone(_, { path, origin }) {
-            await window.ipcRenderer.invoke('GitClone', origin, path);
+        async invokeGitClone({dispatch}, { path, origin, name }) {
+            await window.cloneGit(origin, path, name);
+            dispatch('invokeGitLog', { path, name });
+            dispatch('invokeGitStatus',  { path, name });
         },
     }
 };
 
 export function ipcPlugin(store) {
-    window.ipcRenderer.on('UpdateDownloading', (sender, progress) => {
+    window.ipcOn('UpdateDownloading', (sender, progress) => {
         store.commit('ipc/setUpdateDownloading', progress);
         if (progress == 100) {
             store.commit('ipc/setUpdateAvailable');
         }
     });
-    window.ipcRenderer.on('UpdateAvailable', sender => {
+    window.ipcOn('UpdateAvailable', sender => {
         store.commit('ipc/setUpdateAvailable');
     });
-    window.ipcRenderer.on('WriteWithColor', (event, color, bgColor, text) => {
+    window.ipcOn('WriteWithColor', (event, color, bgColor, text) => {
         store.commit('ipc/writeHost', { color, bgColor, text });
     });
-    window.ipcRenderer.on('WriteWarningLine', (event, message) => {
+    window.ipcOn('WriteWarningLine', (event, message) => {
         store.commit('ipc/writeWarning', { message });
     });
-    window.ipcRenderer.on('WriteErrorLine', (event, message) => {
+    window.ipcOn('WriteErrorLine', (event, message) => {
         store.commit('ipc/writeError', { message });
     });
-    window.ipcRenderer.on('WriteDebugLine', (event, message) => {
+    window.ipcOn('WriteDebugLine', (event, message) => {
         store.commit('ipc/writeDebug', { message });
     });
-    window.ipcRenderer.on('WriteVerboseLine', (event, message) => {
+    window.ipcOn('WriteVerboseLine', (event, message) => {
         store.commit('ipc/writeVerbose', { message });
     });
-    window.ipcRenderer.on('WriteProgress', (event, sourceId, progress) => {
+    window.ipcOn('WriteProgress', (event, sourceId, progress) => {
         store.commit('ipc/writeProgress', { progress });
     });
-    window.ipcRenderer.on('ParseError', (event, message) => {
+    window.ipcOn('ParseError', (event, message) => {
         store.commit('ipc/writeError', { message });
     });
-    window.ipcRenderer.on('Prompt', (event, caption, message, descriptions) => {
+    window.ipcOn('Prompt', (event, caption, message, descriptions) => {
         store.commit('ipc/setPrompt', { caption, message, descriptions });
     });
-    window.ipcRenderer.on('PromptForChoice', (event, caption, message, choices, defaultChoice) => {
+    window.ipcOn('PromptForChoice', (event, caption, message, choices, defaultChoice) => {
         store.commit('ipc/setPromptForChoice', { caption, message, choices, defaultChoice });
     });
-    window.ipcRenderer.on('PromptForCredential', (event, caption, message, userName, targetName) => {
+    window.ipcOn('PromptForCredential', (event, caption, message, userName, targetName) => {
         store.commit('ipc/setPromptForCredential', { caption, message, userName, targetName, allowedCredentialTypes: null, forGit: false });
     });
-    window.ipcRenderer.on('PromptForCredentialWithType', (event, caption, message, userName, targetName, allowedCredentialTypes) => {
+    window.ipcOn('PromptForCredentialWithType', (event, caption, message, userName, targetName, allowedCredentialTypes) => {
         store.commit('ipc/setPromptForCredential', { caption, message, userName, targetName, allowedCredentialTypes, forGit: false });
     });
-    window.ipcRenderer.on('PromptForGitCredential', (event, url, userName) => {
+    window.ipcOn('PromptForGitCredential', (event, url, userName) => {
         store.commit('ipc/setPromptForCredential', { caption: url, message: url, userName, targetName: null, allowedCredentialTypes: null, forGit: true });
     });
-    window.ipcRenderer.on('GitProgress', (event, progress) => {
+    window.ipcOn('GitProgress', (event, progress) => {
         store.commit('ipc/setGitProgress', { progress });
     });
 }

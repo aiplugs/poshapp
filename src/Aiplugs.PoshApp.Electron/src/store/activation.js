@@ -31,13 +31,13 @@ export default {
     },
     actions: {
         async loadActivationStatus({ commit }) {
-            const { status, requestCode } = await window.ipcRenderer.invoke("GetActivation")
+            const { status, requestCode } = await window.getActivation()
             commit('setStatus', status);
             commit('setRequestCode', requestCode);
         },
         async refleshActivationCode({ commit, dispatch }) {
             try {
-                const { status, requestCode } = await window.ipcRenderer.invoke('RefleshActivation')
+                const { status, requestCode } = await window.refleshActivation()
                 if (status !== 'Illigal') {
                     commit('setStatus', status);
                     commit('setRequestCode', requestCode);
@@ -60,7 +60,7 @@ export default {
         },
         async activate({ commit, dispatch }, activationCode) {
             try {
-                const { status, requestCode } = await window.ipcRenderer.invoke('PostActivation', activationCode)
+                const { status, requestCode } = await window.activate(activationCode)
                 if (status !== 'Illigal') {
                     commit('setStatus', status);
                     commit('setRequestCode', requestCode);

@@ -171,15 +171,14 @@ export default {
     },
     actions: {
         async loadScripts(context) {
-            const scripts = await window.ipcRenderer.invoke('GetScripts');
+            const scripts = await window.getScripts()
             context.commit('replaceAllScripts', scripts);
         },
         async updateScript({commit, dispatch}, script) {
-            const method = updateMethods[script.type.toLowerCase()]
             const data = selectData(script)
 
             try {
-                const response = await window.ipcRenderer.invoke(method, script.repository, script.$id, data)
+                const response = await window.updateScript(script.type, script.repository, script.$id, data)
                 if (response == 204) {
                     commit('replaceScript', script);
                     return true
@@ -196,11 +195,10 @@ export default {
             return false;
         },
         async createScript({commit, dispatch}, script) {
-            const method = createMethods[script.type.toLowerCase()]
             const data = selectData(script)
 
             try {
-                const response = await window.ipcRenderer.invoke(method, script.repository, data)
+                const response = await window.createScript(script.type, script.repository, data)
                 if (response == 201) {
                     commit('addScript', script);
                     return true
@@ -218,7 +216,7 @@ export default {
         },
         async deleteScript({commit, dispatch}, script) {
             try {
-                const response = await window.ipcRenderer.invoke('DeleteScript', script.repository, script.id)
+                const response = await window.deleteScript(script.repository, script.id)
                 if (response == 204) {
                     commit('removeScript', script);
                     return true;

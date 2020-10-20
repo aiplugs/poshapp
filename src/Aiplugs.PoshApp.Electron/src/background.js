@@ -245,7 +245,7 @@ async function startPowerShellDeamon () {
 
   const deleteRepository = new rpc.RequestType('DeleteRepository');
   ipcMain.handle("DeleteRepository", async (event, repositoryName) => {
-    return await connection.sendRequest(deleteRepository, [repositoryName]);
+    return await connection.sendRequest(deleteRepository, [repositoryName, false]);
   });
 
   const getScripts = new rpc.RequestType('GetScripts');
@@ -542,6 +542,7 @@ async function startPowerShellDeamon () {
     if (saveService && saveUserName && savePassword) {
       await keytar.setPassword(saveService, saveUserName, savePassword);
     }
+    return true;
   })
 
   ipcMain.handle("GitClone", async (event, origin, path) => {
@@ -586,6 +587,7 @@ async function startPowerShellDeamon () {
     if (saveService && saveUserName && savePassword) {
       await keytar.setPassword(saveService, saveUserName, savePassword);
     }
+    return true;
   })
   ipcMain.handle("GitReset", async (event, path) => {
     let repository = null;
@@ -596,6 +598,7 @@ async function startPowerShellDeamon () {
     }
     const originHead = await repository.getBranchCommit('origin/master');
     await Git.Reset.reset(repository, originHead, Git.Reset.TYPE.HARD);
+    return true;
   })
 
   connection.listen();

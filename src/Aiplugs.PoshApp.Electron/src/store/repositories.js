@@ -31,12 +31,12 @@ export default {
     },
     actions: {
         async loadRepositories({ commit }) {
-            const data = await window.ipcRenderer.invoke('GetRepositories');
+            const data = await window.getRepositories();
             commit('replaceRepositories', data);
         },
         async createRepository({ commit, dispatch }, repository) {
             const {name, path, origin} = repository;
-            const result = await window.ipcRenderer.invoke('CreateRepository', name, path);
+            const result = await window.createRepository(name, path);
             if (result == 200) {
                 commit('addRepository', repository);
                 if (origin) {
@@ -50,7 +50,7 @@ export default {
             return false;
         },
         async deleteRepository({ commit }, repository) {
-            const result = await window.ipcRenderer.invoke('DeleteRepository', repository.name);
+            const result = await window.deleteRepository(repository.name);
             
             if (result == 204) {
                 commit('removeRepository', repository);

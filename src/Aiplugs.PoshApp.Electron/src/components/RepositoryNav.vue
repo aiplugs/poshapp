@@ -52,7 +52,7 @@
                                           :rules="nameRules"
                                           required>
                             </v-text-field>
-                            <div class="d-flex align-center">
+                            <div class="d-flex align-center" v-if="desktop">
                                 <v-text-field label="Directory Path"
                                               :value="path"
                                               :rules="pathRules"
@@ -123,6 +123,7 @@ export default {
                 v => this.repositoryType == 'local' || !!v || 'Origin Url is required'
             ],
             deleteTarget: null,
+            desktop: window.electron === true
         }
     },
     computed: {
@@ -143,19 +144,19 @@ export default {
                 this.deleteTarget = null;
             }
         },
-        async handleCreateOrUpdate() {
+        handleCreateOrUpdate() {
             const payload = {
                 id: this.repositoryId,
                 name: this.name,
                 path: this.path,
                 origin: this.origin
             };
-            await this.createOrUpdate(payload);
+            this.createOrUpdate(payload);
             this.openNewDialog = false;
         },
         async createOrUpdate(payload) {
             if (this.isCreate) {
-                await this.createRepository(payload)
+                this.createRepository(payload)
             }
             else {
                 if (await this.updateRepository(payload)) {

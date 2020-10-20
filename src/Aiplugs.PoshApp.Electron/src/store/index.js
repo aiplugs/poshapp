@@ -8,13 +8,15 @@ import ipc, {ipcPlugin} from './ipc.js';
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
-    modules: {
-        toast,
-        scripts,
-        repositories,
-        activation,
-        ipc
-    },
-    plugins: [ipcPlugin]
-});
+export default function() {
+    return new Vuex.Store({
+        modules: {
+            toast,
+            scripts,
+            repositories,
+            activation,
+            ipc
+        },
+        plugins: [ipcPlugin]
+    });
+}

@@ -33,10 +33,10 @@ export default {
         ...mapActions('scripts', ['loadScriptContent','saveScriptContent']),
         ...mapActions('toast', ['toast']),
         async loadScriptContent(repo, id) {
-            return await window.ipcRenderer.invoke('GetScriptContent', repo, id)
+            return await window.getScriptContent(repo, id)
         },
         async saveScriptContent(repo, id, content) {
-            await window.ipcRenderer.invoke('PutScriptContent', repo, id, content);
+            await window.putScriptContent(repo, id, content);
         },
         async createEditor() {
             this.content = await this.loadScriptContent(this.$route.params.repo, this.$route.params.id);
