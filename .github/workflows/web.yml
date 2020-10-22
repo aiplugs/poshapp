@@ -1,0 +1,18 @@
+name: Publish Docker image
+on:
+  release:
+    types: [created]
+jobs:
+  push_to_registry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Push to GHCR
+        working-directory: ./src/Aiplugs.PoshApp.Web/
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login https://docker.pkg.github.com -u $GITHUB_ACTOR --password-stdin
+          docker ghcr.io/aiplugs/poshapp/web
+          docker build -f ./Aiplugs.PoshApp.Web/Dockerfile -t ghcr.io/aiplugs/poshapp/web:${{ github.event.release.tag_name }} ./
+          docker push ghcr.io/aiplugs/poshapp/web:${{ github.event.release.tag_name }}
+
