@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<coreProperties xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">
+  <dc:creator>Microsoft Corporation</dc:creator>
+  <dc:description>PackageManagement (a.k.a. OneGet) is a new way to discover and install software packages from around the web.
+ It is a manager or multiplexor of existing package managers (also called package providers) that unifies Windows package management with a single Windows PowerShell interface. With PackageManagement, you can do the following.
+  - Manage a list of software repositories in which packages can be searched, acquired and installed
+  - Discover software packages
+  - Seamlessly install, uninstall, and inventory packages from one or more software repositories</dc:description>
+  <dc:identifier>PackageManagement</dc:identifier>
+  <version>1.4.7</version>
+  <keywords>PackageManagement PSEdition_Core PSEdition_Desktop Linux Mac PSModule PSIncludes_Cmdlet PSCmdlet_Find-Package PSCmdlet_Get-Package PSCmdlet_Get-PackageProvider PSCmdlet_Get-PackageSource PSCmdlet_Install-Package PSCmdlet_Import-PackageProvider PSCmdlet_Find-PackageProvider PSCmdlet_Install-PackageProvider PSCmdlet_Register-PackageSource PSCmdlet_Set-PackageSource PSCmdlet_Unregister-PackageSource PSCmdlet_Uninstall-Package PSCmdlet_Save-Package PSCommand_Find-Package PSCommand_Get-Package PSCommand_Get-PackageProvider PSCommand_Get-PackageSource PSCommand_Install-Package PSCommand_Import-PackageProvider PSCommand_Find-PackageProvider PSCommand_Install-PackageProvider PSCommand_Register-PackageSource PSCommand_Set-PackageSource PSCommand_Unregister-PackageSource PSCommand_Uninstall-Package PSCommand_Save-Package PSIncludes_DscResource PSDscResource_PackageManagement PSDscResource_PackageManagementSource</keywords>
+  <lastModifiedBy>NuGet.Build.Tasks.Pack, Version=5.5.0.4, Culture=neutral, PublicKeyToken=31bf3856ad364e35;</lastModifiedBy>
+</coreProperties>
