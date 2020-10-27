@@ -3,8 +3,14 @@ name: build
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'src/**'
+      - '.github/workflows/build.yml'
   pull_request:
     types: [assigned, opened, synchronize, reopened]
+    paths:
+      - 'src/**'
+      - '.github/workflows/build.yml'
 
 jobs:
   windows:
