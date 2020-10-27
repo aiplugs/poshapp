@@ -15,7 +15,7 @@
         }
     },
     "variables": {
-        "hostingPlanName": "[concat(parameters('siteName'), '-asp')]"
+        "hostingPlanName": "[concat(parameters('name'), '-asp')]"
     },
     "resources": [
         {
