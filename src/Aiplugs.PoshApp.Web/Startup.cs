@@ -41,7 +41,6 @@ namespace Aiplugs.PoshApp.Web
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
             }
 
             app.UseHttpsRedirection();
