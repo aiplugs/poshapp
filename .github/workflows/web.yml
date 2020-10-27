@@ -23,7 +23,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./src
-          file: ./Aiplugs.PoshApp.Web/Dockerfile
+          file: ./src/Aiplugs.PoshApp.Web/Dockerfile
           push: true
           tags: |
             ghcr.io/aiplugs/poshapp/web:latest
