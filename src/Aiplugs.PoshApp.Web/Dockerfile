@@ -6,6 +6,11 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-bionic AS build
+RUN curl -sL https://deb.nodesource.com/setup_14.x |  bash -
+RUN apt-get install -y nodejs
+WORKDIR /src/Aiplugs.PoshApp.Electron
+RUN npm install
+RUN npm run build
 WORKDIR /src
 COPY ["Aiplugs.PoshApp.Web/Aiplugs.PoshApp.Web.csproj", "Aiplugs.PoshApp.Web/"]
 COPY ["Aiplugs.PoshApp.Deamon/Aiplugs.PoshApp.Deamon.csproj", "Aiplugs.PoshApp.Deamon/"]

@@ -4,12 +4,14 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'src/**'
+      - 'src/Aiplugs.PoshApp.Deamon'
+      - 'src/Aiplugs.PoshApp.Electron'
       - '.github/workflows/build.yml'
   pull_request:
     types: [assigned, opened, synchronize, reopened]
     paths:
-      - 'src/**'
+      - 'src/Aiplugs.PoshApp.Deamon'
+      - 'src/Aiplugs.PoshApp.Electron'
       - '.github/workflows/build.yml'
 
 jobs:

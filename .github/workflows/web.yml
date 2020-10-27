@@ -24,7 +24,6 @@ jobs:
         with:
           context: ./src
           file: ./src/Aiplugs.PoshApp.Web/Dockerfile
-          platforms: linux/amd64
           push: true
           tags: |
             ghcr.io/aiplugs/poshapp/web:latest
