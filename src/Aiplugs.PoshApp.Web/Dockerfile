@@ -8,15 +8,16 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-bionic AS build
 RUN curl -sL https://deb.nodesource.com/setup_14.x |  bash -
 RUN apt-get install -y nodejs
-WORKDIR /src/Aiplugs.PoshApp.Electron
-RUN npm install
-RUN npm run build
 WORKDIR /src
 COPY ["Aiplugs.PoshApp.Web/Aiplugs.PoshApp.Web.csproj", "Aiplugs.PoshApp.Web/"]
 COPY ["Aiplugs.PoshApp.Deamon/Aiplugs.PoshApp.Deamon.csproj", "Aiplugs.PoshApp.Deamon/"]
 RUN dotnet restore "Aiplugs.PoshApp.Web/Aiplugs.PoshApp.Web.csproj"
 COPY . .
-WORKDIR "/src/Aiplugs.PoshApp.Web"
+WORKDIR /src/Aiplugs.PoshApp.Electron
+RUN npm uninstall nodegit keytar
+RUN npm install
+RUN npm run build
+WORKDIR /src/Aiplugs.PoshApp.Web
 RUN dotnet build "Aiplugs.PoshApp.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
