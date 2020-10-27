@@ -9,7 +9,7 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: Push to GHCR
-        working-directory: ./src/Aiplugs.PoshApp.Web/
+        working-directory: ./src
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login https://ghcr.io -u aiplugs --password-stdin
           docker ghcr.io/aiplugs/poshapp/web
