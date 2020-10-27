@@ -1,0 +1,113 @@
+[INFO] Log file: C:\BA\421\a\GovCompDisc_Log_20200422202549.log 
+[INFO] Run correlation id: 7843b23a-08e0-4dc2-bd28-d056d1293cd0 
+[INFO] Manifest file: C:\BA\421\a\GovCompDisc_Manifest_20200422202549.json 
+[INFO] Metadata file: C:\BA\421\a\GovCompDisc_Metadata_20200422202549.json 
+[INFO] Attempting to load default detectors 
+[INFO] 21 detectors were found in Microsoft.VisualStudio.Services.Governance.ComponentDetection.Detectors
+ 
+[WARN] Provided search path C:\BA\_tasks\ComponentGovernanceComponentDetection_f2f0881f-4b99-4a1c-80ea-f5b13fd6cec4\0.2020417.1\ComponentDetectionTool\Plugins does not exist. 
+[VERBOSE] Finished applying restrictions to detectors. 
+
+
+[INFO] Finding components... 
+[VERBOSE] yarn.lock 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.YarnLockComponentDetector 
+[INFO] Starting enumeration of C:\BA\421 
+[INFO] Enumerated 321 files and 87 directories in 00:00:00.0492820 
+[VERBOSE] cgmanifest.json 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.ComponentManifestComponentDetector 
+[VERBOSE] packageList.lst:officePackageList.json 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.CorextComponentDetector 
+[VERBOSE] docker-compose.yml:docker-compose.yaml 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.DockerComposeDetector 
+[VERBOSE] dockerfile 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.DockerfileDetector 
+[INFO] No instructions received to scan docker images. 
+[VERBOSE] go.mod:go.sum 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.GoComponentDetector 
+[VERBOSE] *.lockfile 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.GradleComponentDetector 
+[VERBOSE] pom.xml 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.MavenDetector 
+[VERBOSE] pom.xml 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.MvnCliComponentDetector 
+[VERBOSE] package.json 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.NpmComponentDetector 
+[VERBOSE] package-lock.json:npm-shrinkwrap.json:lerna.json 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.NpmComponentDetectorWithRoots 
+[VERBOSE] *.nupkg:*.nuspec:nuget.config 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.NuGetComponentDetector 
+[VERBOSE] project.assets.json 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.NuGetProjectAssetsComponentDetector 
+[VERBOSE] setup.py:requirements.txt 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.PythonPipDetector 
+[VERBOSE] shrinkwrap.yaml:pnpm-lock.yaml 
+[VERBOSE] Gemfile.lock 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.PnpmComponentDetector 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.RubyComponentDetector 
+[VERBOSE] Cargo.toml:Cargo.lock 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.RustCrateDetector 
+[VERBOSE] Cargo.toml:Cargo.lock 
+[VERBOSE] Registered Microsoft.VisualStudio.Services.Governance.ComponentDetection.RustCrateV2Detector 
+[VERBOSE] Skipping maven detection as maven is not available in the local PATH. 
+[INFO]  
+[INFO] _______________________________________________________________________________________________________________________________________ 
+[INFO] |Component Detector Id         |Detection Time                |# Components Found            |# w/Dependency Information              | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |NuGet                         |0.92 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |Yarn                          |0.13 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |CgManifest                    |0.85 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |Npm                           |0.9 seconds                   |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |RustCrateDetector             |1 seconds                     |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |CorextCG                      |0.86 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |Gradle                        |0.89 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |MvnCli                        |1 seconds                     |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |NuGetProjectAssets            |0.93 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |Pnpm                          |0.98 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |Maven                         |0.89 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |DockerScan                    |0.88 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |Pip                           |0.99 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |Dockerfile (Beta)             |0.87 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |Go (Beta)                     |0.88 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |DockerCompose (Beta)          |0.87 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |RustCrateV2Detector (Beta)    |1 seconds                     |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |Ruby                          |0.99 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |NpmWithRoots                  |0.91 seconds                  |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO] |Total                         |1 seconds                     |0                             |0                                       | 
+[INFO] |______________________________|______________________________|______________________________|________________________________________| 
+[INFO]  
+
+[INFO] Detection time: 1.0193535 seconds. 
+
+[INFO] There are 0 unique components 
+[VERBOSE] Full list of discovered components:
+
+
+
+ 
+[INFO] Found no packages to submit. 
+[INFO] Submitting 0 registrations. 
+
+[INFO] The latest snapshot for this build and source cointains the same components and source identifier (ie. commit). No components were registered. 
+[INFO] Took 0.4703902 seconds to query alerts. 
+[INFO] Component Governance Alerts:            https://mscodehub.visualstudio.com/9b3ca4c9-7ab5-4b97-918d-b719c2534b0a/_componentGovernance/153565?_a=alerts&typeId=2983764 
+[INFO] Component Governance Detection History: https://mscodehub.visualstudio.com/9b3ca4c9-7ab5-4b97-918d-b719c2534b0a/_componentGovernance/153565?_a=history&typeId=2983764 
