@@ -12,7 +12,6 @@ jobs:
         working-directory: ./src/
         run: |
           echo ${{ secrets.CR_PAT }} | docker login https://ghcr.io -u iwate --password-stdin
-          docker ghcr.io/aiplugs/poshapp/web
           docker build -f ./Aiplugs.PoshApp.Web/Dockerfile -t ghcr.io/aiplugs/poshapp/web:latest -t ghcr.io/aiplugs/poshapp/web:${{ github.event.release.tag_name }} ./
           docker push ghcr.io/aiplugs/poshapp/web:latest
           docker push ghcr.io/aiplugs/poshapp/web:${{ github.event.release.tag_name }}
