@@ -9,7 +9,7 @@
     "variables": {
         "hostingPlanName": "[concat(parameters('name'), '-asp')]",
         "dockerRegistryUrl": "https://ghcr.io",
-        "linuxFxVersion": "DOCKER|ghcr.io/aiplugs/poshapp/web:v0.10.2-beta.0"
+        "linuxFxVersion": "DOCKER|ghcr.io/aiplugs/poshapp/web:v0.10.2-beta.1"
     },
     "resources": [
         {
