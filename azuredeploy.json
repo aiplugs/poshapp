@@ -53,10 +53,30 @@
                 },
                 "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
                 "clientAffinityEnabled": false
-            }
+            },
+            "resources": [
+                {
+                    "name": "authsettings",
+                    "type": "config",
+                    "apiVersion": "2018-11-01",
+                    "dependsOn": [ "[resourceId('Microsoft.Web/sites/', variables('webSiteName'))]" ],
+                    "tags": {
+                        "displayName": "websiteAuthSettings"
+                    },
+                    "properties": {
+                        "enabled": true,
+                        "httpApiPrefixPath": null,
+                        "unauthenticatedClientAction": "RedirectToLoginPage",
+                        "tokenStoreEnabled": false,
+                        "allowedExternalRedirectUrls": [],
+                        "defaultProvider": "AzureActiveDirectory",
+                        "isAadAutoProvisioned": true
+                    }
+                }
+            ]
         },
         {
-            "apiVersion": "2018-11-01",
+            "apiVersion": "2018-02-01",
             "name": "[variables('hostingPlanName')]",
             "type": "Microsoft.Web/serverfarms",
             "location": "[resourceGroup().location]",
