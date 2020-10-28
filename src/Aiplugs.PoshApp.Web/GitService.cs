@@ -57,7 +57,12 @@ namespace Aiplugs.PoshApp.Web
                     yield return "IGNORED";
             }
 
-            using var repository = new Repository(ResolvePath(name));
+            var path = ResolvePath(name);
+
+            if (!Repository.IsValid(path))
+                return null;
+
+            using var repository = new Repository(path);
 
             return repository.RetrieveStatus(new StatusOptions()).Select(item => new StatusReponse {
                 File = item.FilePath,
@@ -66,7 +71,12 @@ namespace Aiplugs.PoshApp.Web
         }
         public LogResponse GetLog(string name)
         {
-            using var repository = new Repository(ResolvePath(name));
+            var path = ResolvePath(name);
+
+            if (!Repository.IsValid(path))
+                return null;
+
+            using var repository = new Repository(path);
 
             var filter = new CommitFilter { IncludeReachableFrom = repository.Refs };
 
@@ -129,7 +139,12 @@ namespace Aiplugs.PoshApp.Web
 
         public HttpStatusCode Fetch(string name)
         {
-            using var repository = new Repository(ResolvePath(name));
+            var path = ResolvePath(name);
+
+            if (!Repository.IsValid(path))
+                return HttpStatusCode.NotFound;
+
+            using var repository = new Repository(path);
 
             var remote = repository.Network.Remotes["origin"];
 
