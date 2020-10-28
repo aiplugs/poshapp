@@ -40,6 +40,10 @@
                         {
                             "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
                             "value": "true"
+                        },
+                        {
+                            "name": "POSHAPP_DIR",
+                            "value": "/home/poshapp"
                         }
                     ],
                     "linuxFxVersion": "[variables('linuxFxVersion')]",

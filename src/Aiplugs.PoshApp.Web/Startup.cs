@@ -55,8 +55,8 @@ namespace Aiplugs.PoshApp.Web
 
             app.UseEndpoints(endpoints =>
             {
-                var poshappDir = Configuration["PoshappDir"]
-                    ?? Path.Combine(Environment.GetEnvironmentVariable("HOME")
+                var poshappDir = Configuration["POSHAPP_DIR"]
+                    ?? Path.Combine(Environment.GetEnvironmentVariable("WEBAPP_STORAGE_HOME")
                         ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".poshapp");
 
                 endpoints.MapGet("/powershell", async context =>
