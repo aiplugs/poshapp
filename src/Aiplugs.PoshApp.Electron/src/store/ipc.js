@@ -169,13 +169,13 @@ export default {
         },
         async invokeDetail({ commit },{ scriptId, input }) {
             commit('setInvoking');
-            const data = await window.InvokeWithPipeline(scriptId, input);
+            const data = await window.invokeWithPipeline(scriptId, input);
             commit('clearInvoking');
             commit('setDetailResult', parsePSDataCollection(data));
         },
         async invokeAction({ commit, dispatch }, { scriptId, input }) {
             commit('setInvoking', scriptId);
-            await window.InvokeWithPipelines(scriptId, input);
+            await window.invokeWithPipelines(scriptId, input);
             commit('clearInvoking');
             dispatch('toast/toast', {
                 text: `${scriptId} is succeeded`,
