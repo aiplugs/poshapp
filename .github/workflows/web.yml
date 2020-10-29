@@ -8,6 +8,24 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      
+      - name: Get plain tag name
+        id: gettagname
+        shell: pwsh
+        run: |
+          $tag = "${{ github.event.release.tag_name }}"
+          $idx = $tag.IndexOf("-")
+          if ($idx -ge 0) {
+            $tag = $tag.Substring($idx+1)
+            $idx = $tag.IndexOf(".")
+            if ($idx -ge 0) {
+              $tag = $tag.Substring(0, $idx)
+            }
+          }
+          else {
+            $tag = "latest"
+          }
+          echo "::set-output name=tag_name::$tag"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -26,5 +44,5 @@ jobs:
           file: ./src/Aiplugs.PoshApp.Web/Dockerfile
           push: true
           tags: |
-            ghcr.io/aiplugs/poshapp/web:latest
+            ghcr.io/aiplugs/poshapp/web:${{ steps.gettagname.outputs.tag_name }}
             ghcr.io/aiplugs/poshapp/web:${{ github.event.release.tag_name }}
