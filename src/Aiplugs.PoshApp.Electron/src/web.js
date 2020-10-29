@@ -125,6 +125,8 @@ export default async function () {
     window.invokeWithParameters = (scriptId, input) => powershell.invoke('InvokeWithParameters', [scriptId, input])
 
     window.invokeWithPipeline = (scriptId, input) => powershell.invoke('InvokeWithPipeline', [scriptId, input])
+    
+    window.invokeWithPipelines = (scriptId, input) => powershell.invoke('InvokeWithPipelines', [scriptId, input])
 
     function setRespondFunc(method, id) {
         if (method == 'Prompt')

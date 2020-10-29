@@ -68,6 +68,8 @@ window.invokeWithParameters = (scriptId, input) => ipcRenderer.invoke('InvokeWit
 
 window.invokeWithPipeline = (scriptId, input) =>  ipcRenderer.invoke('InvokeWithPipeline', scriptId, input)
 
+window.invokeWithPipelines = (scriptId, input) =>  ipcRenderer.invoke('InvokeWithPipelines', scriptId, input)
+
 window.sendPrompt = input => ipcRenderer.send('Prompt', input)
 
 window.sendPromptForChoice = index => ipcRenderer.send('PromptForChoice', index)
