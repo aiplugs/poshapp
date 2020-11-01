@@ -47,7 +47,7 @@ namespace Aiplugs.PoshApp.Deamon.PowerShell
         public string DefaultParameterSetName { get; set; }
         
         [JsonProperty("defaultValue")]
-        public string DefaultValue { get; set; }
+        public object DefaultValue { get; set; }
         
         [JsonProperty("validateSet")]
         public string[] ValidateSet { get; set; }

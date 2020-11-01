@@ -95,6 +95,11 @@ export default {
         },
         script() {
             this.invokeGetParameters({ scriptId: this.script });
+        },
+        parameters(parameters) {
+            for (let p of parameters) {
+                this.value[p.name] = p.defaultValue;
+            }
         }
     },
     methods: {

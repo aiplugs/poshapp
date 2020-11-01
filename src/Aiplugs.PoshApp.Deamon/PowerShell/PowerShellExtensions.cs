@@ -51,6 +51,8 @@ namespace Aiplugs.PoshApp.Deamon.PowerShell
                 info.Name = paramAst.Name.VariablePath.UserPath;
                 info.ClrType = paramAst.StaticType;
 
+                info.DefaultValue = paramAst.DefaultValue?.SafeGetValue();
+
                 var paramAttr = (AttributeAst)paramAst.Attributes.FirstOrDefault(attr => attr.TypeName.Name == "Parameter");
 
                 if (paramAttr != null)
@@ -65,8 +67,13 @@ namespace Aiplugs.PoshApp.Deamon.PowerShell
                     info.ValueFromPipeline = ExtractBoolean(paramAttr, "ValueFromPipeline");
                     info.ValueFromPipelineByPropertyName = ExtractBoolean(paramAttr, "ValueFromPipelineByPropertyName");
                     info.ValueFromRemainingArguments = ExtractBoolean(paramAttr, "ValueFromRemainingArguments");
-                    info.DefaultValue = ExtractString(paramAttr, "DefaultValue");
+                    var defaultValue = ExtractString(paramAttr, "DefaultValue");
+                    if (defaultValue != null)
+                    {
+                        info.DefaultValue = defaultValue;
+                    }
                 }
+
 
                 var validateSetAttr = (AttributeAst)paramAst.Attributes.FirstOrDefault(attr => attr.TypeName.Name == "ValidateSet");
                 if (validateSetAttr != null)
