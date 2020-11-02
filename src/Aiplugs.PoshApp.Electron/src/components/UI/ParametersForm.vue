@@ -98,7 +98,7 @@ export default {
         },
         parameters(parameters) {
             for (let p of parameters) {
-                this.value[p.name] = p.defaultValue;
+                this.value[p.name] = p.defaultValue || this.value[p.name];
             }
         }
     },

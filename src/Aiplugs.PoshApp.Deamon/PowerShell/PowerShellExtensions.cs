@@ -51,7 +51,14 @@ namespace Aiplugs.PoshApp.Deamon.PowerShell
                 info.Name = paramAst.Name.VariablePath.UserPath;
                 info.ClrType = paramAst.StaticType;
 
-                info.DefaultValue = paramAst.DefaultValue?.SafeGetValue();
+                if (paramAst.DefaultValue != null)
+                {
+                    info.DefaultValue = paramAst.DefaultValue switch
+                    {
+                        ParenExpressionAst expr => ps.AddScript(expr.Pipeline.Extent.Text).Invoke().FirstOrDefault()?.ImmediateBaseObject,
+                        _ => paramAst.DefaultValue.SafeGetValue()
+                    };
+                }
 
                 var paramAttr = (AttributeAst)paramAst.Attributes.FirstOrDefault(attr => attr.TypeName.Name == "Parameter");
 
@@ -118,7 +125,7 @@ namespace Aiplugs.PoshApp.Deamon.PowerShell
                 }
 
                 return info;
-            });
+            }).ToList();
         }
         private static string ExtractString(AttributeAst attr, string paramName)
         {
