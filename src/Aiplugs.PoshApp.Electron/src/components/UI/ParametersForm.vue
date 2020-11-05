@@ -69,7 +69,7 @@ export default {
     data() {
         return {
             valid: true,
-            value: { Page: this.page - 1, PageSize: this.pageSize }
+            value: { Page: (this.page || 1) - 1, PageSize: this.pageSize || 10 }
         }
     },
     computed: {
@@ -98,7 +98,7 @@ export default {
         },
         parameters(parameters) {
             for (let p of parameters) {
-                this.value[p.name] = p.defaultValue || this.value[p.name];
+                this.$set(this.value, p.name, p.defaultValue || this.value[p.name])
             }
         }
     },
