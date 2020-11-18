@@ -22,7 +22,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.101
+        dotnet-version: 5.0.100
         node-version: 14.x
     - name: Build deamon
       working-directory: ./src/Aiplugs.PoshApp.Deamon/
@@ -32,7 +32,7 @@ jobs:
       working-directory: ./src
       run: |
         mkdir Aiplugs.PoshApp.Electron/bin/
-        cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/win10-x64/publish/* Aiplugs.PoshApp.Electron/bin/
+        cp -r Aiplugs.PoshApp.Deamon/bin/Release/net5/win10-x64/publish/* Aiplugs.PoshApp.Electron/bin/
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install
@@ -50,7 +50,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.101
+        dotnet-version: 5.0.100
         node-version: 14.x
     - name: Build deamon
       working-directory: ./src/Aiplugs.PoshApp.Deamon/
@@ -60,7 +60,7 @@ jobs:
       working-directory: ./src
       run: |
         mkdir Aiplugs.PoshApp.Electron/bin/
-        cp -r Aiplugs.PoshApp.Deamon/bin/Release/netcoreapp3.1/osx-x64/publish/* Aiplugs.PoshApp.Electron/bin/
+        cp -r Aiplugs.PoshApp.Deamon/bin/Release/net5/osx-x64/publish/* Aiplugs.PoshApp.Electron/bin/
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install
