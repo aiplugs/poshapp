@@ -21,6 +21,7 @@ POSH App is a PowerShell GUI tool.
 
 * [Wiki](https://github.com/aiplugs/poshapp/wiki)
 * [How to Install](https://github.com/aiplugs/poshapp/wiki#how-to-install)
+* [Hello, Wold!](https://github.com/aiplugs/poshapp/wiki/Hello,-World!)
 
 ## LICENSE
 
