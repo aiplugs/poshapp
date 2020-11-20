@@ -224,6 +224,9 @@ namespace Aiplugs.PoshApp.Services
                     using var sha = SHA256.Create();
                     var result = rsaDeformatter.VerifySignature(sha.ComputeHash(Encoding.UTF8.GetBytes($"{splited[0]}.{splited[1]}")), signature);
 
+                    if (!result)
+                        continue;
+
                     return (result, payload);
                 }
 
