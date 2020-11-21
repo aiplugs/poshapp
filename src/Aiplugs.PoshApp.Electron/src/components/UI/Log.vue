@@ -1,5 +1,5 @@
 <template>
-    <v-menu v-model="dialog" ref="main"
+    <v-menu :value="dialog || readLine != null" ref="main"
             :nudge-top="600"
             :close-on-click="false"
             :close-on-content-click="false"
@@ -14,6 +14,14 @@
             <pre v-for="(message, index) in logMessages" :key="index"
                  v-text="message.text"
                  :class="resolveColor(message)" class="pl-4 pr-4" style="white-space:pre-wrap;"></pre>
+            <div v-if="readLine!=null" class="pl-4 pr-4">
+                <v-text-field v-model="input"
+                            :type="readLine.secure ? 'password':'text'"
+                            append-outer-icon="mdi-keyboard-return"
+                            placeholder="Input here"
+                            dark
+                            @click:append-outer="handlePrompt"></v-text-field>
+            </div>
             <div class="black text-right" ref="bottom" style="position:sticky;bottom:0;width:100%;">
                 <v-btn dark text icon v-on:click="dialog=false">
                     <v-icon>mdi-chevron-down</v-icon>
@@ -24,15 +32,16 @@
 </template>
 <script>
 import Vue from 'vue'
-import { mapState} from 'vuex'
+import { mapState, mapActions } from 'vuex'
 export default {
     data() {
         return {
             dialog: false,
+            input: null,
         }
     },
     computed: {
-        ...mapState('ipc', ['logMessages'])
+        ...mapState('ipc', ['logMessages', 'readLine'])
     },
     watch: {
         logMessages() {
@@ -44,6 +53,7 @@ export default {
         }
     },
     methods: {
+        ...mapActions('ipc', ['invokeReadLine']),
         resolveColor(message) {
             const { color, bgColor } = message.color == 0 && message.bgColor == 0 ? { color: 15, bgColor: 0 } : message;
             const foregroundColors = [
@@ -84,6 +94,10 @@ export default {
         },
         scrollDown() {
             this.$refs.bottom.parentElement.scrollTo(0, this.$refs.bottom.parentElement.scrollHeight)
+        },
+        handlePrompt() {
+            this.invokeReadLine({ input: this.input, secure: this.readLine.secure });
+            this.input = null;
         }
     }
 }

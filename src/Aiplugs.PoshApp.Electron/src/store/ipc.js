@@ -13,6 +13,7 @@ export default {
         logMessages: [],
         logErrors: null,
         progresses: {},
+        readLine: null,
         prompt: null,
         promptForChoice: null,
         promptForCredential: null,
@@ -105,6 +106,12 @@ export default {
                 Vue.delete(state.progresses, progress.activity);
             }
         },
+        setReadLine(state, { secure}) {
+            state.readLine = { secure };
+        },
+        clearReadLine(state) {
+            state.readLine = null;
+        },
         setPrompt(state, { caption, message, descriptions }) {
             state.prompt = { caption, message, descriptions };
         },
@@ -191,6 +198,13 @@ export default {
             commit('clearLoadingParams');
             commit('setParameters', parameters);
         },
+        async invokeReadLine({ commit }, { input, secure }) {
+            commit('clearReadLine');
+            if (secure)
+                await window.sendReadLineAsSecureString(input);
+            else
+                await window.sendReadLine(input);
+        },
         async invokePrompt({ commit }, { input }) {
             commit('clearPrompt');
             await window.sendPrompt(input);
@@ -254,6 +268,12 @@ export function ipcPlugin(store) {
     window.ipcOn('UpdateAvailable', sender => {
         store.commit('ipc/setUpdateAvailable');
     });
+    window.ipcOn('ReadLine', (event) => {
+        store.commit('ipc/setReadLine', { secure: false });
+    })
+    window.ipcOn('ReadLineAsSecureString', (event) => {
+        store.commit('ipc/setReadLine', { secure: true });
+    })
     window.ipcOn('WriteWithColor', (event, color, bgColor, text) => {
         store.commit('ipc/writeHost', { color, bgColor, text });
     });

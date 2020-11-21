@@ -70,6 +70,10 @@ window.invokeWithPipeline = (scriptId, input) =>  ipcRenderer.invoke('InvokeWith
 
 window.invokeWithPipelines = (scriptId, input) =>  ipcRenderer.invoke('InvokeWithPipelines', scriptId, input)
 
+window.sendReadLine = input => ipcRenderer.send('ReadLine', input)
+
+window.sendReadLineAsSecureString = input => ipcRenderer.send('ReadLineAsSecureString', input)
+
 window.sendPrompt = input => ipcRenderer.send('Prompt', input)
 
 window.sendPromptForChoice = index => ipcRenderer.send('PromptForChoice', index)

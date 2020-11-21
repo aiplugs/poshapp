@@ -61,7 +61,13 @@ export default async function () {
     }
     
     const powershell = new jsonrpc('powershell', callbacks, (method, id) => {
-        if (method == 'Prompt')
+        if (method == 'ReadLine')
+            window.sendReadLine = input => powershell.respond(id, input)
+
+        else if (method == 'ReadLineAsSecureString')
+            window.sendReadLineAsSecureString = input => powershell.respond(id, input)
+
+        else if (method == 'Prompt')
             window.sendPrompt = input => powershell.respond(id, input)
 
         else if (method == 'PromptForChoice')
@@ -127,21 +133,6 @@ export default async function () {
     window.invokeWithPipeline = (scriptId, input) => powershell.invoke('InvokeWithPipeline', [scriptId, input])
     
     window.invokeWithPipelines = (scriptId, input) => powershell.invoke('InvokeWithPipelines', [scriptId, input])
-
-    function setRespondFunc(method, id) {
-        if (method == 'Prompt')
-            window.sendPrompt = input => powershell.respond(id, input)
-
-        else if (method == 'PromptForChoice')
-            window.sendPromptForChoice = index => powershell.respond(id, index)
-
-        else if (method == 'PromptForCredential')
-            window.sendPromptForCredential = (username, password) => powershell.respond(id, {username, password})
-
-        else if (method == 'PromptForGitCredential')
-            window.sendPromptForGitCredential = (username, password) => git.respond(id, {username, password})
-    }
-
     
     window.getGitLog = (path, name) => git.invoke('GetLog', [name])
 
