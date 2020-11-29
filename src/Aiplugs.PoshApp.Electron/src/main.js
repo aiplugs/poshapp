@@ -44,7 +44,7 @@ init().then(function(){
   new Vue({
     store: createStore(),
     router,
-    vuetify: new Vuetify(),
+    vuetify: new Vuetify({theme: { dark: window.matchMedia('(prefers-color-scheme: dark)').matches }}),
     render: h => h(App),
   }).$mount('#app')
 });

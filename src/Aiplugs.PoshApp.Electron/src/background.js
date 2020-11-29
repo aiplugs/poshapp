@@ -2,7 +2,7 @@
 
 import path from 'path'
 import cp  from 'child_process'
-import { app, protocol, BrowserWindow, ipcMain, Menu, dialog, clipboard, shell } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, Menu, dialog, clipboard, shell, nativeTheme } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const {autoUpdater} = require("electron-updater");
@@ -119,6 +119,9 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 function createWindow() {
+  if (nativeTheme.shouldUseDarkColors) {
+    nativeTheme.themeSource = 'dark'
+  }
   // Create the browser window.
   win = new BrowserWindow({
     width: 800,

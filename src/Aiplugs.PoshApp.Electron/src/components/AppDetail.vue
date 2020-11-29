@@ -1,5 +1,5 @@
 <template>
-    <section v-if="detailResult" class="d-flex flex-column white" style="position: absolute; top:0; width:calc(100vw - 56px - 256px); height: calc(100vh - 24px); overflow:hidden;">
+    <section v-if="detailResult" class="d-flex flex-column bg" style="position: absolute; top:0; width:calc(100vw - 56px - 256px); height: calc(100vh - 24px); overflow:hidden;">
         <header>
             <v-btn text v-on:click="$emit('close')">
                 <v-icon>mdi-arrow-right</v-icon>

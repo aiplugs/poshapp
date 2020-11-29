@@ -176,4 +176,22 @@ html, body {
 .v-data-table__wrapper::-webkit-scrollbar {
     display: none ;
 }
+
+.bg {
+    background: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-global-nav,
+  .app-local-nav {
+      background: rgb(30, 30, 30);
+  }
+  .separator-horizontal,
+  .separator-vertical {
+      border-color: rgb(20, 20, 20);
+  }
+  .bg {
+      background: rgb(30, 30, 30);
+  }
+}
 </style>

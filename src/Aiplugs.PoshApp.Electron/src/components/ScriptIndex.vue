@@ -44,6 +44,7 @@ export default {
                 value: this.content,
                 language: 'powershell',
                 fontSize: 16,
+                theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'vs-dark' : 'vs-light'
             });
             this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
                 const value = this.editor.getModel().getValue();
