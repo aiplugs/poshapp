@@ -25,14 +25,9 @@ jobs:
         dotnet-version: 5.0.100
         node-version: 14.x
     - name: Build deamon
-      working-directory: ./src/Aiplugs.PoshApp.Deamon/
-      run: dotnet publish -c Release -r win10-x64 
-    - name: Copy artifacts
-      shell: bash
-      working-directory: ./src
-      run: |
-        mkdir Aiplugs.PoshApp.Electron/bin/
-        cp -r Aiplugs.PoshApp.Deamon/bin/Release/net5/win10-x64/publish/* Aiplugs.PoshApp.Electron/bin/
+      shell: pwsh
+      working-directory: ./src/Aiplugs.PoshApp.Electron/
+      run: ./prebuild.ps1
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install
@@ -53,14 +48,9 @@ jobs:
         dotnet-version: 5.0.100
         node-version: 14.x
     - name: Build deamon
-      working-directory: ./src/Aiplugs.PoshApp.Deamon/
-      run: dotnet publish -c Release -r osx-x64
-    - name: Copy artifacts
-      shell: bash
-      working-directory: ./src
-      run: |
-        mkdir Aiplugs.PoshApp.Electron/bin/
-        cp -r Aiplugs.PoshApp.Deamon/bin/Release/net5/osx-x64/publish/* Aiplugs.PoshApp.Electron/bin/
+      shell: pwsh
+      working-directory: ./src/Aiplugs.PoshApp.Electron/
+      run: ./prebuild.ps1
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm install

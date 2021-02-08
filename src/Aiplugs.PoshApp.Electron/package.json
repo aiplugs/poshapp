@@ -38,6 +38,7 @@
     "node-abi": "^2.19.3",
     "node-loader": "^1.0.1",
     "vscode-jsonrpc": "^5.0.1",
+    "vscode-languageserver-protocol": "^3.16.0",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.4",
     "vue-router": "^3.4.3",
     "vue-template-compiler": "^2.6.11",

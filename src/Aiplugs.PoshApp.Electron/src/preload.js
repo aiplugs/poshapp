@@ -56,10 +56,14 @@ window.createRepository = (repositoryName, path) => ipcRenderer.invoke('CreateRe
 
 window.deleteRepository = repositoryName => ipcRenderer.invoke('DeleteRepository', repositoryName, false);
 
-window.repositoryConfigFilePath = function(respositoryPath) {
-    const suffix = process.platform == 'win32' ? '\\' : '/'
-    if (respositoryPath.endsWith(suffix) == false) respositoryPath += suffix
-    return respositoryPath + 'config.json'
+window.combinePath = function(a, b) {
+    const sep = process.platform == 'win32' ? '\\' : '/'
+    if (a.endsWith(sep) == false) a += sep;
+    return a + b;
+}
+
+window.repositoryConfigFilePath = function(repositoryPath) {
+    return combinePath(repositoryPath, 'config.json');
 }
 
 window.invokeGetParameters = scriptId => ipcRenderer.invoke('InvokeGetParameters', scriptId)
@@ -93,5 +97,37 @@ window.resetGit = (path, name) => ipcRenderer.invoke('GitReset', path);
 window.cloneGit = (origin, path, name) =>ipcRenderer.invoke('GitClone', origin, path);
 
 window.quitAndInstall = () => ipcRenderer.send('QuitAndInstall')
+
+window.textDocumentDidOpen = (uri, languageId, version, text) => ipcRenderer.invoke('textDocumentDidOpen', uri, languageId, version, text);
+
+window.textDocumentDidChange = (uri, version, changes) => ipcRenderer.invoke('textDocumentDidChange', uri, version, changes);
+
+window.textDocumentDidSave = (uri, text) => ipcRenderer.invoke('textDocumentDidSave', uri, text);
+
+window.textDocumentDidClose = (uri) => ipcRenderer.invoke('textDocumentDidClose', uri);
+
+window.textDocumentCompletion = (uri, position, context) => ipcRenderer.invoke('textDocumentCompletion', uri, position, context);
+
+window.textDocumentHover = (uri, position) => ipcRenderer.invoke('textDocumentHover', uri, position);
+
+window.textDocumentSignatureHelp = (uri, position, context) => ipcRenderer.invoke('textDocumentSignatureHelp', uri, position, context);
+
+window.textDocumentDefinition = (uri, position) => ipcRenderer.invoke('textDocumentDefinition', uri, position);
+
+window.textDocumentReferences = (uri, position, context) => ipcRenderer.invoke('textDocumentReferences', uri, position, context);
+
+window.textDocumentHighlight = (uri, position) => ipcRenderer.invoke('textDocumentHighlight', uri, position);
+
+window.textDocumentSymbol = (uri) => ipcRenderer.invoke('textDocumentSymbol', uri);
+
+window.textDocumentCodeAction = (uri, range, context) => ipcRenderer.invoke('textDocumentCodeAction', uri, range, context);
+
+window.textDocumentCodeLens = (uri) => ipcRenderer.invoke('textDocumentCodeLens', uri);
+
+window.textDocumentFormatting = (uri) => ipcRenderer.invoke('textDocumentFormatting', uri);
+
+window.textDocumentRangeFormatting = (uri, range) => ipcRenderer.invoke('textDocumentRangeFormatting', uri, range);
+
+window.textDocumentFoldingRange = (uri) => ipcRenderer.invoke('textDocumentFoldingRange', uri);
 
 ipcRenderer.invoke('GetVersions').then(versions => window.versions = versions)

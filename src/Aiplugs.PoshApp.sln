@@ -5,7 +5,11 @@ VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aiplugs.PoshApp.Deamon", "Aiplugs.PoshApp.Deamon\Aiplugs.PoshApp.Deamon.csproj", "{9A2C774A-6359-4D3A-A3AF-50550C33A90A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aiplugs.PoshApp.Web", "Aiplugs.PoshApp.Web\Aiplugs.PoshApp.Web.csproj", "{7460D089-B6F5-4B85-A039-CB3067DC6035}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aiplugs.PoshApp.Web", "Aiplugs.PoshApp.Web\Aiplugs.PoshApp.Web.csproj", "{7460D089-B6F5-4B85-A039-CB3067DC6035}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aiplugs.PoshApp.Pses", "Aiplugs.PoshApp.Pses\Aiplugs.PoshApp.Pses.csproj", "{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerShellEditorServices", "..\lib\PowerShellEditorServices\src\PowerShellEditorServices\PowerShellEditorServices.csproj", "{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +45,30 @@ Global
 		{7460D089-B6F5-4B85-A039-CB3067DC6035}.Release|x64.Build.0 = Release|Any CPU
 		{7460D089-B6F5-4B85-A039-CB3067DC6035}.Release|x86.ActiveCfg = Release|Any CPU
 		{7460D089-B6F5-4B85-A039-CB3067DC6035}.Release|x86.Build.0 = Release|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Debug|x64.Build.0 = Debug|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Debug|x86.Build.0 = Debug|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Release|x64.ActiveCfg = Release|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Release|x64.Build.0 = Release|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Release|x86.ActiveCfg = Release|Any CPU
+		{0B08D4AB-B461-4EC2-A55A-0BFE3AD010EB}.Release|x86.Build.0 = Release|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Debug|x64.Build.0 = Debug|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Debug|x86.Build.0 = Debug|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Release|x64.ActiveCfg = Release|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Release|x64.Build.0 = Release|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Release|x86.ActiveCfg = Release|Any CPU
+		{C46B6DD7-4E5B-47C0-AD70-3844B5F4BFF6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

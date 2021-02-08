@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aiplugs.PoshApp.Deamon\Aiplugs.PoshApp.Deamon.csproj" />
+    <ProjectReference Include="..\Aiplugs.PoshApp.Pses\Aiplugs.PoshApp.Pses.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Aiplugs.PoshApp.Deamon;
-using Aiplugs.PoshApp.Services;
+using Aiplugs.PoshApp.Pses;
 using Aiplugs.PoshApp.Web.Models;
-using LibGit2Sharp;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -67,7 +64,7 @@ namespace Aiplugs.PoshApp.Web
                         return;
                     }
 
-                    var socket = await context.WebSockets.AcceptWebSocketAsync();
+                    using var socket = await context.WebSockets.AcceptWebSocketAsync();
                     var handler = new WebSocketMessageHandler(socket);
                     var service = new PoshAppService(handler, poshappDir);
 
@@ -82,9 +79,24 @@ namespace Aiplugs.PoshApp.Web
                         return;
                     }
 
-                    var socket = await context.WebSockets.AcceptWebSocketAsync();
+                    using var socket = await context.WebSockets.AcceptWebSocketAsync();
                     var handler = new WebSocketMessageHandler(socket);
                     var service = new GitService(handler, credentialManager, poshappDir);
+
+                    await service.StartAsync();
+                });
+
+                endpoints.MapGet("/pses", async context =>
+                {
+                    if (!context.WebSockets.IsWebSocketRequest)
+                    {
+                        context.Response.StatusCode = 400;
+                        return;
+                    }
+                    
+                    using var socket = await context.WebSockets.AcceptWebSocketAsync();
+                    using var stream = new WebSocketStream(socket);
+                    var service = new PSESService(stream, stream);
 
                     await service.StartAsync();
                 });

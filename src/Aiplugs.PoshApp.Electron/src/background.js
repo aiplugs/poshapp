@@ -5,6 +5,7 @@ import cp  from 'child_process'
 import { app, protocol, BrowserWindow, ipcMain, Menu, dialog, clipboard, shell, nativeTheme } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import { startPSES } from './pses.js'
 const {autoUpdater} = require("electron-updater");
 const Git = require("nodegit")
 const keytar = require('keytar')
@@ -201,6 +202,7 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+  startPSES();
   startPowerShellDeamon();
   const settingsChannel = await connection.sendRequest(new rpc.RequestType('GetChannel'));
   const currentChannel = app.getVersion().indexOf('beta') != -1 ? 'beta' : null;
@@ -228,7 +230,7 @@ if (isDevelopment) {
 let connection;
 async function startPowerShellDeamon () {
   const binary = process.platform == 'win32' ? 'Aiplugs.PoshApp.Deamon.exe' : 'Aiplugs.PoshApp.Deamon'
-  const deamon = isDevelopment ? `bin/${binary}` : path.join(__dirname, '../bin', binary)
+  const deamon = isDevelopment ? `bin/deamon/${binary}` : path.join(__dirname, '../bin/deamon/', binary)
   const childProcess = cp.spawn(deamon);
 
   // Use stdin and stdout for communication:

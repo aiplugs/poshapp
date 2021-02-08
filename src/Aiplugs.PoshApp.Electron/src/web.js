@@ -82,9 +82,6 @@ export default async function () {
             window.sendPromptForGitCredential = (username, password) => git.respond(id, {username, password})
     })
 
-    await powershell.start();
-    await git.start();
-
     window.selectFile = () => alert('Not imepelemented on Web version.')
     window.selectFiles = () => alert('Not imepelemented on Web version.')
     window.selectDirectory = () => alert('Not imepelemented on Web version.')
@@ -92,6 +89,7 @@ export default async function () {
     window.copyToClipboard = text => window.navigator.clipboard.writeText(text)
     window.openExternal =  url => window.open(url, '_blank')
     window.openDirectory = path => alert('Not imepelemented on Web version.\n' + path)
+    window.combinePath = (a, b) => a + '/' + b;
     window.repositoryConfigFilePath = (respositoryPath) => respositoryPath + '/config.json'
     window.getActivation = () => powershell.invoke('GetActivation')
     window.refleshActivation = powershell.invoke('RefleshActivation')
