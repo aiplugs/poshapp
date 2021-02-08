@@ -13,3 +13,4 @@ wwwroot
 /src/Aiplugs.PoshApp.Web/Properties/PublishProfiles/iwatest - Web Deploy.pubxml
 /src/Aiplugs.PoshApp.Web/Properties/ServiceDependencies/iwatest - Web Deploy/profile.arm.json
 /src/Aiplugs.PoshApp.Web/Properties/launchSettings.json
+/src/PSScriptAnalyzer.zip
