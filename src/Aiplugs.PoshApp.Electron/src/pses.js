@@ -1,4 +1,5 @@
 import { ipcMain } from 'electron'
+import path from 'path'
 import cp  from 'child_process'
 const lsp = require('vscode-languageserver-protocol')
 const isDevelopment = process.env.NODE_ENV !== 'production'
