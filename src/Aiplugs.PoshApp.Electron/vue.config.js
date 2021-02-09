@@ -3,7 +3,7 @@ module.exports = {
     pluginOptions: {
       electronBuilder: {
         preload: 'src/preload.js',
-        externals:['nodegit','keytar'],
+        externals:['nodegit','keytar','vscode-jsonrpc-protocol'],
         builderOptions: {
           "appId": "com.aiplugs.poshapp",
           "productName": "POSH App",

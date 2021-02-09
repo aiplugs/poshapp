@@ -18,7 +18,8 @@
     "core-js": "^3.6.5",
     "keytar": "^6.0.1",
     "nodegit": "^0.27.0",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vscode-languageserver-protocol": "^3.16.0"
   },
   "devDependencies": {
     "@mdi/font": "^5.5.55",
@@ -36,7 +37,6 @@
     "monaco-editor-webpack-plugin": "^1.9.0",
     "node-loader": "^1.0.1",
     "vscode-jsonrpc": "^5.0.1",
-    "vscode-languageserver-protocol": "^3.16.0",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.4",
     "vue-router": "^3.4.3",
     "vue-template-compiler": "^2.6.11",
