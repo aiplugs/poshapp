@@ -62,6 +62,8 @@ function fromLSPDocumentSymbols(lspDocSymbols) {
     }));
 }
 function fromLSPCommand(lspCommand) {
+    if (!lspCommand)
+        return null;
     return { id: lspCommand.command, title: lspCommand.title, arguments: lspCommand.arguments }
 }
 if (window.textDocumentCompletion) {
