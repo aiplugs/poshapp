@@ -8,7 +8,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
-      
+          with:
+          submodules: 'recursive'
       - name: Get plain tag name
         id: gettagname
         shell: pwsh
@@ -26,7 +27,13 @@ jobs:
             $tag = "ghcr.io/aiplugs/poshapp/web:latest,ghcr.io/aiplugs/poshapp/web:beta,ghcr.io/aiplugs/poshapp/web:${{ github.event.release.tag_name }}"
           }
           echo "::set-output name=tag_name::$tag"
-
+      
+      - name: Patch lib
+        shell: pwsh
+        run: |
+          $lib = "./lib/PowerShellEditorServices/src/PowerShellEditorServices/PowerShellEditorServices.csproj"
+          (Get-Content -Path $lib).Replace("<AssemblyTitle>PowerShell Editor Services</AssemblyTitle>","<AssemblyTitle>PowerShell Editor Services</AssemblyTitle>`n<NoWarn>NU1605</NoWarn>") | Out-File -Path $lib
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
