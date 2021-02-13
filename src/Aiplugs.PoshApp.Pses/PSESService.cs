@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.PowerShell.EditorServices.Hosting;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation;
 using System.Reflection;
@@ -20,10 +21,17 @@ namespace Aiplugs.PoshApp.Pses
 
         public async Task StartAsync()
         {
-            var modulesPath = Path.Combine(Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName, "Modules");
-            var psModulePath = Environment.GetEnvironmentVariable("PSModulePath").TrimEnd(Path.PathSeparator);
-            psModulePath = $"{psModulePath}{Path.PathSeparator}{modulesPath}";
-            Environment.SetEnvironmentVariable("PSModulePath", psModulePath);
+            var binPath = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
+            var modulesPath = Path.Combine(binPath, "Modules");
+            var psModulePathes = new List<string>();
+            var psModulePath = Environment.GetEnvironmentVariable("PSModulePath")?.TrimEnd(Path.PathSeparator);
+            if (!string.IsNullOrEmpty(psModulePath)) 
+            {
+                psModulePathes.Add(psModulePath);
+            }
+            psModulePathes.Add(binPath);
+            psModulePathes.Add(modulesPath);
+            Environment.SetEnvironmentVariable("PSModulePath", string.Join(Path.PathSeparator, psModulePathes));
             Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", "Unrestricted");
 
             var loggerFactory = new LoggerFactory();
