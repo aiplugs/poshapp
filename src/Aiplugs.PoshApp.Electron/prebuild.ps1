@@ -1,11 +1,9 @@
-$rid = "win10-x64"
+param(
+    $rid = "win10-x64"
+)
 
 if ($IsMacOS) {
     $rid = "osx-x64"
-}
-
-if ($IsLinux) {
-    $rid = "linux-x64"
 }
 
 $lib = "../../lib/PowerShellEditorServices/src/PowerShellEditorServices/PowerShellEditorServices.csproj"
