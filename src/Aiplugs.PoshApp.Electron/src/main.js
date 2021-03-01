@@ -55,6 +55,3 @@ Vue.config.errorHandler = (err, vm, info) => {
 window.addEventListener("error", event => {
   alert('window.addEventListener("error")', event.error)
 });
-window.addEventListener("unhandledrejection", event => {
-  alert('window.addEventListener("unhandledrejection")', event.reason)
-});
