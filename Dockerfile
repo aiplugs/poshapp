@@ -21,7 +21,7 @@ RUN dotnet build "Aiplugs.PoshApp.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "Aiplugs.PoshApp.Web.csproj" -c Release -r ubuntu.18.04-x64 -o /app/publish
-RUN unzip ../PSScriptAnalyzer.zip & mkdir /app/publish/Modules & cp -r ../PSScriptAnalyzer /app/publish/Modules/
+RUN mkdir /app/publish/Modules/PSScriptAnalyzer & unzip -d /app/publish/Modules/PSScriptAnalyzer /src/PSScriptAnalyzer.zip
 
 FROM base AS final
 WORKDIR /app
