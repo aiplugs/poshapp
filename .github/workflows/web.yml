@@ -28,6 +28,11 @@ jobs:
           }
           echo "::set-output name=tag_name::$tag"
       
+      - name: Prebuild
+        shell: pwsh
+        working-directory: ./src/Aiplugs.PoshApp.Electron/
+        run: ./prebuild.ps1
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
