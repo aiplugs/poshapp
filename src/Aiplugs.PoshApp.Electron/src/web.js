@@ -82,6 +82,9 @@ export default async function () {
             window.sendPromptForGitCredential = (username, password) => git.respond(id, {username, password})
     })
 
+    await powershell.start();
+    await git.start();
+
     window.selectFile = () => alert('Not imepelemented on Web version.')
     window.selectFiles = () => alert('Not imepelemented on Web version.')
     window.selectDirectory = () => alert('Not imepelemented on Web version.')
