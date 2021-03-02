@@ -103,10 +103,10 @@ Menu.setApplicationMenu(Menu.buildFromTemplate([
         }
       },
       {
-        label: 'Search Issues',
+        label: 'Community',
         click: async () => {
           const { shell } = require('electron')
-          await shell.openExternal('https://github.com/aiplugs/poshapp/issues')
+          await shell.openExternal('https://github.com/aiplugs/poshapp/discussions')
         }
       },
     ]

@@ -15,9 +15,9 @@
             <a v-on:click="openExternal('https://github.com/aiplugs/poshapp/releases')">https://github.com/aiplugs/poshapp/releases</a>
         </p>
 
-        <h4>Search Issues</h4>
+        <h4>Community</h4>
         <p class="mb-10">
-            <a v-on:click="openExternal('https://github.com/aiplugs/poshapp/issues')">https://github.com/aiplugs/poshapp/issues</a>
+            <a v-on:click="openExternal('https://github.com/aiplugs/poshapp/discussions')">https://github.com/aiplugs/poshapp/discussions</a>
         </p>
     </div>
 </template>
