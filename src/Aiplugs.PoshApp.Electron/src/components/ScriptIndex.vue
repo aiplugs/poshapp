@@ -326,9 +326,11 @@ export default {
                             text: c.text,
                             range: toLSPRange(c.range)
                         }))
-                        window.textDocumentDidChange(uri.toString(), evt.versionId, changes);
+                        if (window.textDocumentDidChange)
+                            window.textDocumentDidChange(uri.toString(), evt.versionId, changes);
                     })
-                    window.textDocumentDidOpen(uri.toString(), 'powershell', this.version, content);
+                    if (window.textDocumentDidOpen)
+                        window.textDocumentDidOpen(uri.toString(), 'powershell', this.version, content);
                 }
                 this.editor.setModel(model);
                 this.content = model.getValue();
