@@ -9,17 +9,24 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aiplugs.PoshApp.Deamon\Aiplugs.PoshApp.Deamon.csproj" />
-    <ProjectReference Include="..\Aiplugs.PoshApp.Pses\Aiplugs.PoshApp.Pses.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <FrontFiles Include="..\Aiplugs.PoshApp.Electron\dist\**\*.*" />
+    <PsesFiles Include="..\Aiplugs.PoshApp.Electron\bin\pses\**\*.*" />
+    <None Include="pses/**/*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp" Version="0.26.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
   </ItemGroup>
+
+  <Target Name="CopyPsesFiles" AfterTargets="BeforeBuild">
+    <Copy SourceFiles="@(PsesFiles)" DestinationFiles="@(PsesFiles->'pses\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
 
   <Target Name="CopyFrontFiles" AfterTargets="AfterBuild">
     <Copy SourceFiles="@(FrontFiles)" DestinationFiles="@(FrontFiles->'wwwroot\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />

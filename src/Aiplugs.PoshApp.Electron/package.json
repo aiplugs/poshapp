@@ -18,9 +18,7 @@
     "core-js": "^3.6.5",
     "keytar": "^6.0.1",
     "nodegit": "^0.27.0",
-    "vue": "^2.6.11",
-    "vscode-jsonrpc": "^5.0.1",
-    "vscode-languageserver-protocol": "^3.16.0"
+    "vue": "^2.6.11"
   },
   "devDependencies": {
     "@mdi/font": "^5.5.55",
@@ -41,7 +39,9 @@
     "vue-router": "^3.4.3",
     "vue-template-compiler": "^2.6.11",
     "vuetify": "^2.3.8",
-    "vuex": "^3.5.1"
+    "vuex": "^3.5.1",
+    "vscode-jsonrpc": "^5.0.1",
+    "vscode-languageserver-protocol": "^3.16.0"
   },
   "eslintConfig": {
     "root": true,

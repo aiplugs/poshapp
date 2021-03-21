@@ -1,7 +1,8 @@
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
 using Aiplugs.PoshApp.Deamon;
-using Aiplugs.PoshApp.Pses;
 using Aiplugs.PoshApp.Web.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -93,12 +94,25 @@ namespace Aiplugs.PoshApp.Web
                         context.Response.StatusCode = 400;
                         return;
                     }
-                    
-                    using var socket = await context.WebSockets.AcceptWebSocketAsync();
-                    using var stream = new WebSocketStream(socket);
-                    var service = new PSESService(stream, stream);
 
-                    await service.StartAsync();
+                    var ext = Environment.OSVersion.Platform == PlatformID.Win32NT ? ".exe" : string.Empty;
+                    using var socket = await context.WebSockets.AcceptWebSocketAsync();
+                    using var process = Process.Start(new ProcessStartInfo
+                    {
+                        FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"pses\bin\Common\Aiplugs.PoshApp.Pses" + ext),
+                        UseShellExecute = false,
+                        RedirectStandardInput = true,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true,
+                    });
+
+                    var connector = new WebSocketStreamConnecter(socket, process.StandardOutput, process.StandardInput);
+
+                    await connector.StartAsync();
+
+                    await process.StandardInput.DisposeAsync();
+                    process.StandardOutput.Dispose();
+                    process.Kill();
                 });
             });
         }

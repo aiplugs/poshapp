@@ -7,11 +7,9 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
 RUN curl -sL https://deb.nodesource.com/setup_14.x |  bash -
-RUN apt-get install -y nodejs unzip
+RUN apt-get install -y nodejs
 WORKDIR /src
 COPY ./src/ .
-WORKDIR /lib
-COPY ./lib/ .
 WORKDIR /src/Aiplugs.PoshApp.Electron
 RUN npm uninstall nodegit keytar
 RUN npm install
@@ -21,7 +19,6 @@ RUN dotnet build "Aiplugs.PoshApp.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "Aiplugs.PoshApp.Web.csproj" -c Release -r ubuntu.18.04-x64 -o /app/publish
-RUN mkdir /app/publish/Modules/PSScriptAnalyzer & unzip -d /app/publish/Modules/PSScriptAnalyzer /src/PSScriptAnalyzer.zip
 
 FROM base AS final
 WORKDIR /app
