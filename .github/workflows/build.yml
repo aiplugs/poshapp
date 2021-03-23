@@ -59,7 +59,7 @@ jobs:
       run: ./prebuild.ps1
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
-      run: npm install
+      run: npm cache verify & npm install
     - name: Build electron
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}
