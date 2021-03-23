@@ -26,7 +26,7 @@
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
-    "electron": "^10.1.1",
+    "electron": "^10.4.1",
     "electron-devtools-installer": "^3.1.0",
     "electron-notarize": "^1.0.0",
     "electron-updater": "^4.3.4",
@@ -35,13 +35,13 @@
     "monaco-editor": "^0.20.0",
     "monaco-editor-webpack-plugin": "^1.9.0",
     "node-loader": "^1.0.1",
+    "vscode-jsonrpc": "^5.0.1",
+    "vscode-languageserver-protocol": "^3.16.0",
     "vue-cli-plugin-electron-builder": "~2.0.0-rc.4",
     "vue-router": "^3.4.3",
     "vue-template-compiler": "^2.6.11",
     "vuetify": "^2.3.8",
-    "vuex": "^3.5.1",
-    "vscode-jsonrpc": "^5.0.1",
-    "vscode-languageserver-protocol": "^3.16.0"
+    "vuex": "^3.5.1"
   },
   "eslintConfig": {
     "root": true,
