@@ -19,6 +19,7 @@ RUN dotnet build "Aiplugs.PoshApp.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "Aiplugs.PoshApp.Web.csproj" -c Release -r ubuntu.18.04-x64 -o /app/publish
+RUN cp -r /app/publish/pses/bin/Common/runtimes/unix/lib/net5.0/Modules/* /app/publish/pses/bin/Common/Modules/
 
 FROM base AS final
 WORKDIR /app

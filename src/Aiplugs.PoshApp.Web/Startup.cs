@@ -94,12 +94,12 @@ namespace Aiplugs.PoshApp.Web
                         context.Response.StatusCode = 400;
                         return;
                     }
-
                     var ext = Environment.OSVersion.Platform == PlatformID.Win32NT ? ".exe" : string.Empty;
+                    var bin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"pses/bin/Common/Aiplugs.PoshApp.Pses" + ext);
                     using var socket = await context.WebSockets.AcceptWebSocketAsync();
                     using var process = Process.Start(new ProcessStartInfo
                     {
-                        FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"pses\bin\Common\Aiplugs.PoshApp.Pses" + ext),
+                        FileName = bin,
                         UseShellExecute = false,
                         RedirectStandardInput = true,
                         RedirectStandardOutput = true,
