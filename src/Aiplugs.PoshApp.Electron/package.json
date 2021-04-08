@@ -26,7 +26,11 @@
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
+<<<<<<< HEAD
     "electron": "^12.0.2",
+=======
+    "electron": "^10.4.1",
+>>>>>>> 9fe6d0fcc7e917a6fca83518afa6caed0cec5b0e
     "electron-devtools-installer": "^3.1.0",
     "electron-notarize": "^1.0.0",
     "electron-updater": "^4.3.4",
