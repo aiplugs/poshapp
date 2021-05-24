@@ -50,8 +50,8 @@ init().then(function(){
 });
 
 Vue.config.errorHandler = (err, vm, info) => {
-  alert('Vue.config.errorHandler', err)
+  console.error(err, vm, info);
 };
 window.addEventListener("error", event => {
-  alert('window.addEventListener("error")', event.error)
+  console.error(event.error);
 });
