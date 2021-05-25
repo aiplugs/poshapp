@@ -37,8 +37,8 @@ jobs:
       run: npm install
     - name: Build electron
       env:
-        CSC_LINK: ${{ secrets.CSC_LINK_WIN }}
-        CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_WIN }}
+        # CSC_LINK: ${{ secrets.CSC_LINK_WIN }}
+        # CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_WIN }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm run electron:build
