@@ -6,8 +6,11 @@ import { app, protocol, BrowserWindow, ipcMain, Menu, dialog, clipboard, shell, 
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import { startPSES } from './pses.js'
+import { parseGitConfig } from './gitconfig.js'
 const {autoUpdater} = require("electron-updater");
-const Git = require("nodegit")
+const fs = require("fs")
+const http = require("isomorphic-git/http/node")
+const git = require("isomorphic-git")
 const keytar = require('keytar')
 const rpc = require('vscode-jsonrpc')
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -435,174 +438,196 @@ async function startPowerShellDeamon () {
     win.webContents.send('ParseError', message);
   });
 
+  function createAuthFactory (event) {
+    return async (url, faildAuth) => {
+      if (faildAuth) {
+        await keytar.deletePassword(url, faildAuth.username);
+      }
+      const credentials = await keytar.findCredentials(url);
+      if (credentials.length > 0) {
+        return {
+          username: credentials[0].account, 
+          password: credentials[0].password,
+        }
+      }
+      return await (new Promise(function(resolve){
+        ipcMain.once('PromptForGitCredential', function(event, username, password) {
+          resolve({
+            username,
+            password,
+          })
+        })
+        event.sender.send('PromptForGitCredential', url, username);
+      }))
+    };
+  };
+
   ipcMain.handle("GitLog", async (event, path) => {
-    let repository = null;
-    try {
-      repository = await Git.Repository.open(path);
-    } catch {
-      return null;
-    }
-    let localHead = null;
-    try {
-      localHead = await repository.getHeadCommit();
-    } catch{}
-    let originHead = null;
-    try {
-      originHead = await repository.getBranchCommit('origin/master'); 
-    } catch{}
+    const branch = await git.currentBranch({
+      fs,
+      dir: path,
+      fullname: false
+    })
 
-    if (!localHead)
-      return  { logs:[], origin: null, local: null };
+    const mapping = result => ({
+      commit: result.oid,
+      name: result.commit.author.name,
+      email: result.commit.author.email,
+      when: result.commit.author.timestamp * 1000,
+      message: result.commit.message,
+      messageShort:result.commit.message.split('\n')[0], 
+    });
 
-    let count = 0;
-    const walker = repository.createRevWalk();
-    walker.sorting(Git.Revwalk.SORT.TOPOLOGICAL)
-    if (!!originHead) {
-      walker.push(originHead.sha());
+    const localLogs = (await git.log({
+      fs,
+      dir: path,
+      depth: 100,
+      ref: branch,
+    })).map(mapping);
+    
+    const remoteLogs = (await git.log({
+      fs,
+      dir: path,
+      depth: 100,
+      ref: 'origin/' + branch,
+    })).map(mapping);
+
+    let logs = localLogs;
+
+    if (remoteLogs.length > 0) {
+      if (!localLogs.some(log => log.commit === remoteLogs[0].commit)) {
+        logs = remoteLogs;
+      }
     }
-    walker.push(localHead.sha());
-    const commits = await walker.getCommits(100);
-    const logs = commits.map(commit => ({
-      commit: commit.sha(),
-      name: commit.author().name(),
-      email: commit.author().email(),
-      when: commit.date(),
-      message: commit.messageRaw(),
-      messageShort:commit.message(), 
-    }));
-    return  { logs, origin: !!originHead ? originHead.sha() : null, local: localHead.sha() };
+
+    let local = null, origin = null;
+    try {
+      local = await git.resolveRef({
+        fs,
+        dir: path,
+        depth: 1,
+        ref: branch
+      });
+      origin = await git.resolveRef({
+        fs,
+        dir: path,
+        depth: 1,
+        ref: 'origin/' + branch
+      });
+    }
+    catch{}
+
+    return  { logs, origin, local };
   })
 
   ipcMain.handle("GitStatus", async (event, path) => {
-    let repository = null;
-    try {
-      repository = await Git.Repository.open(path);
-    } catch {
-      return null;
-    }
-
-    const statuses = await repository.getStatus()
+    
+    const statuses = await git.statusMatrix({
+      fs,
+      dir: path,
+    })
     function labels(status) {
       const items = [];
-      if (status.isNew()) { items.push("NEW"); }
-      if (status.isModified()) { items.push("MODIFIED"); }
-      if (status.isTypechange()) { items.push("TYPECHANGE"); }
-      if (status.isRenamed()) { items.push("RENAMED"); }
-      if (status.isIgnored()) { items.push("IGNORED"); }
+      if (status[1] === 1 && status[2] === 1 && status[1] === 1) {
+        return items;
+      }
+      if (status[2] === 2) { items.push("NEW"); }
+      if (status[1] === 1 && status[2] !== 0) { items.push("MODIFIED"); }
+      if (status[1] === 1 && status[2] === 0) { items.push("DELETE"); }
       return items;
     }
     return statuses.map(status => ({
-      file: status.path(),
+      file: status[0],
       labels: labels(status)
-    }));
+    })).filter(status => status.labels.length > 0);
   })
+
   ipcMain.handle("GitFetch", async (event, path) => {
-    let repository = null;
-    try {
-      repository = await Git.Repository.open(path);
-    } catch {
-      return null;
-    }
-    let saveService;
-    let saveUserName;
-    let savePassword;
-    let challenge = 0;
-    try {
-      await repository.fetch('origin', {
-        callbacks: {
-          credentials: async function (url, userName) {
-            const credentials = await keytar.findCredentials(url)
-            if (credentials.length > 0) { 
-              if (challenge < credentials.length) {
-                const index = challenge++;
-                return Git.Cred.userpassPlaintextNew(credentials[index].account, credentials[index].password)
-              } else {
-                await Promise.all(credentials.map(c => keytar.deletePassword(url, c.account)))
-              }
-            }
-            return await (new Promise(function(resolve){
-              ipcMain.once('PromptForGitCredential', function(event, userName, password) {
-                saveService = url;
-                saveUserName = userName;
-                savePassword = password;
-                resolve(Git.Cred.userpassPlaintextNew(userName, password))
-              })
-              event.sender.send('PromptForGitCredential', url, userName);
-            }))
-          },
-          certificateCheck: function() {
-            // github will fail cert check on some OSX machines
-            // this overrides that check
-            return 0;
-          },
-          transferProgress: function(stats) {
-            const progress = (stats.receivedObjects() + stats.indexedObjects()) / (stats.totalObjects() * 2)
-            event.sender.send('GitProgress', progress);
-          }
+    const branch = await git.currentBranch({
+      fs,
+      dir: path,
+      fullname: false
+    })
+    const url = await git.getConfig({
+      fs,
+      dir: path,
+      path: 'remote.origin.url'
+    })
+    const tryAuth = createAuthFactory(event);
+    await git.fetch({
+      fs,
+      http,
+      url,
+      dir: path,
+      ref: branch,
+      depth: 1,
+      singleBranch: true,
+      onAuth: tryAuth,
+      onAuthFailure: tryAuth,
+      onAuthSuccess: async (url, auth) => {
+        await keytar.setPassword(url, auth.username, auth.password);
+      },
+      onProgress: progress => {
+        if (progress.total) {
+          const percent = (progress.loaded / progress.total * 100).toFixed(1) + '%';
+          event.sender.send('GitProgress', percent);
         }
-      })
-    } catch {
-      return null
-    }
-    if (saveService && saveUserName && savePassword) {
-      await keytar.setPassword(saveService, saveUserName, savePassword);
-    }
+      }
+    })
     return true;
   })
 
   ipcMain.handle("GitClone", async (event, origin, path) => {
-    let saveService;
-    let saveUserName;
-    let savePassword;
-    let challenge = 0;
-    Git.Clone(origin, path, { fetchOpts: {
-      callbacks: {
-        credentials: async function (url, userName) {
-          const credentials = await keytar.findCredentials(url)
-          if (credentials.length > 0) { 
-            if (challenge < credentials.length) {
-              const index = challenge++;
-              return Git.Cred.userpassPlaintextNew(credentials[index].account, credentials[index].password)
-            } else {
-              await Promise.all(credentials.map(c => keytar.deletePassword(url, c.account)))
-            }
-          }
-          return await (new Promise(function(resolve){
-            ipcMain.once('PromptForGitCredential', function(event, userName, password) {
-              saveService = url;
-              saveUserName = userName;
-              savePassword = password;
-              resolve(Git.Cred.userpassPlaintextNew(userName, password))
-            })
-            event.sender.send('PromptForGitCredential', url, userName);
-          }))
-        },
-        certificateCheck: function() {
-          // github will fail cert check on some OSX machines
-          // this overrides that check
-          return 0;
-        },
-        transferProgress: function(stats) {
-          const progress = (stats.receivedObjects() + stats.indexedObjects()) / (stats.totalObjects() * 2)
-          event.sender.send('GitProgress', progress);
+    const tryAuth = createAuthFactory(event);
+    await git.clone({
+      fs,
+      http,
+      url: origin,
+      dir: path,
+      singleBranch: true,
+      depth: 1,
+      onAuth: tryAuth,
+      onAuthFailure: tryAuth,
+      onAuthSuccess: async (url, auth) => {
+        await keytar.setPassword(url, auth.username, auth.password);
+      },
+      onProgress: progress => {
+        if (progress.total) {
+          const percent = (progress.loaded / progress.total * 100).toFixed(1) + '%';
+          event.sender.send('GitProgress', percent);
         }
       }
-     }
     })
-    if (saveService && saveUserName && savePassword) {
-      await keytar.setPassword(saveService, saveUserName, savePassword);
-    }
+    
     return true;
   })
+
   ipcMain.handle("GitReset", async (event, path) => {
-    let repository = null;
-    try {
-      repository = await Git.Repository.open(path);
-    } catch {
-      return null;
-    }
-    const originHead = await repository.getBranchCommit('origin/master');
-    await Git.Reset.reset(repository, originHead, Git.Reset.TYPE.HARD);
+    const name = await git.getConfig({ fs, dir: path, path: 'user.name' });
+    const email = await git.getConfig({ fs, dir: path, path: 'user.email' });
+    const config = await parseGitConfig();
+    const branch = await git.currentBranch({
+      fs,
+      dir: path,
+      fullname: false
+    })
+    await git.checkout({
+      fs,
+      dir: path,
+      ref: branch,
+      force: true,
+    })
+    await git.pull({
+      fs,
+      http,
+      dir: path,
+      ref: branch,
+      singleBranch: true,
+      author: {
+        name: name || config['user.name'],
+        email: email || config['user.email'],
+      }
+    })
     return true;
   })
 
