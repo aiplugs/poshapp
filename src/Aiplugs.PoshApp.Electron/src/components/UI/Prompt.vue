@@ -65,7 +65,7 @@ export default {
         ...mapState('ipc', ['prompt', 'selectedDirectory', 'selectedFile'])
     },
     methods: {
-        ...mapActions('ipc', ['invokePrompt', 'clearSelected']),
+        ...mapActions('ipc', ['invokePrompt']),
         supportFileManager(desc) {
             return desc.ParameterTypeFullName === 'System.String' && desc.Name.toLowerCase().endsWith('path');
         },
@@ -104,7 +104,6 @@ export default {
                 input[desc.Name] = createCliXml(desc.ParameterTypeFullName, value);
             }
             this.invokePrompt({ input });
-            this.clearSelected();
             this.$refs.form.reset();
             this.dialog = false;
         },
