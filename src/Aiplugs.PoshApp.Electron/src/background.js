@@ -441,7 +441,9 @@ async function startPowerShellDeamon () {
   function createAuthFactory (event) {
     return async (url, faildAuth) => {
       if (faildAuth) {
+        try {
         await keytar.deletePassword(url, faildAuth.username);
+        } catch {}
       }
       const credentials = await keytar.findCredentials(url);
       if (credentials.length > 0) {
@@ -457,17 +459,23 @@ async function startPowerShellDeamon () {
             password,
           })
         })
-        event.sender.send('PromptForGitCredential', url, username);
+        event.sender.send('PromptForGitCredential', url, faildAuth.username);
       }))
     };
   };
 
   ipcMain.handle("GitLog", async (event, path) => {
-    const branch = await git.currentBranch({
-      fs,
-      dir: path,
-      fullname: false
-    })
+    let branch = null;
+    try {
+      branch = await git.currentBranch({
+        fs,
+        dir: path,
+        fullname: false
+      })
+    }
+    catch {
+      return null;
+    }
 
     const mapping = result => ({
       commit: result.oid,
@@ -485,12 +493,16 @@ async function startPowerShellDeamon () {
       ref: branch,
     })).map(mapping);
     
-    const remoteLogs = (await git.log({
-      fs,
-      dir: path,
-      depth: 100,
-      ref: 'origin/' + branch,
-    })).map(mapping);
+    let remoteLogs = [];
+    
+    try {
+      remoteLogs = (await git.log({
+        fs,
+        dir: path,
+        depth: 100,
+        ref: 'origin/' + branch,
+      })).map(mapping);
+    } catch {}
 
     let logs = localLogs;
 
@@ -543,38 +555,43 @@ async function startPowerShellDeamon () {
   })
 
   ipcMain.handle("GitFetch", async (event, path) => {
-    const branch = await git.currentBranch({
-      fs,
-      dir: path,
-      fullname: false
-    })
-    const url = await git.getConfig({
-      fs,
-      dir: path,
-      path: 'remote.origin.url'
-    })
-    const tryAuth = createAuthFactory(event);
-    await git.fetch({
-      fs,
-      http,
-      url,
-      dir: path,
-      ref: branch,
-      depth: 1,
-      singleBranch: true,
-      onAuth: tryAuth,
-      onAuthFailure: tryAuth,
-      onAuthSuccess: async (url, auth) => {
-        await keytar.setPassword(url, auth.username, auth.password);
-      },
-      onProgress: progress => {
-        if (progress.total) {
-          const percent = (progress.loaded / progress.total * 100).toFixed(1) + '%';
-          event.sender.send('GitProgress', percent);
+    try {
+      const branch = await git.currentBranch({
+        fs,
+        dir: path,
+        fullname: false
+      })
+      const url = await git.getConfig({
+        fs,
+        dir: path,
+        path: 'remote.origin.url'
+      })
+      const tryAuth = createAuthFactory(event);
+      await git.fetch({
+        fs,
+        http,
+        url,
+        dir: path,
+        ref: branch,
+        depth: 1,
+        singleBranch: true,
+        onAuth: tryAuth,
+        onAuthFailure: tryAuth,
+        onAuthSuccess: async (url, auth) => {
+          await keytar.setPassword(url, auth.username, auth.password);
+        },
+        onProgress: progress => {
+          if (progress.total) {
+            const percent = (progress.loaded / progress.total * 100).toFixed(1) + '%';
+            event.sender.send('GitProgress', percent);
+          }
         }
-      }
-    })
-    return true;
+      })
+      return true;
+    }
+    catch {
+      return false;
+    }
   })
 
   ipcMain.handle("GitClone", async (event, origin, path) => {
