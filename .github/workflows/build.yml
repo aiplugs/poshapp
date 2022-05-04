@@ -8,13 +8,6 @@ on:
       - 'src/Aiplugs.PoshApp.Electron/**'
       - 'src/Aiplugs.PoshApp.Pses/**'
       - '.github/workflows/build.yml'
-  pull_request:
-    types: [assigned, opened, synchronize, reopened]
-    paths:
-      - 'src/Aiplugs.PoshApp.Deamon/**'
-      - 'src/Aiplugs.PoshApp.Electron/**'
-      - 'src/Aiplugs.PoshApp.Pses/**'
-      - '.github/workflows/build.yml'
 
 jobs:
   windows:
@@ -27,7 +20,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
-        node-version: 14.x
+        node-version: 16.x
     - name: Build deamon
       shell: pwsh
       working-directory: ./src/Aiplugs.PoshApp.Electron/
@@ -52,7 +45,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
-        node-version: 14.x
+        node-version: 16.x
     - name: Build deamon
       shell: pwsh
       working-directory: ./src/Aiplugs.PoshApp.Electron/
