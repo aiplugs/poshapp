@@ -7,7 +7,7 @@ module.exports = {
         builderOptions: {
           "appId": "com.aiplugs.poshapp",
           "productName": "POSH App",
-          "copyright": "Copyright © 2019",
+          "copyright": "Copyright © 2022",
           "compression": "maximum",
           "generateUpdatesFilesForAllChannels": true,
           "directories": {
