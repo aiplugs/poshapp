@@ -6,9 +6,9 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // let connection;
 export async function startPSES () {
-  const binary = process.platform == 'win32' ? 'Aiplugs.PoshApp.Pses.exe' : 'Aiplugs.PoshApp.Pses'
-  const deamon = isDevelopment ? `bin/pses/bin/Common/${binary}` : path.join(__dirname, '../bin/pses/bin/Common/', binary)
-  const childProcess = cp.spawn(deamon);
+  const binary = process.platform == 'win32' ? 'Aiplugs.PoshApp.Deamon.exe' : 'Aiplugs.PoshApp.Deamon'
+  const deamon = isDevelopment ? `bin/deamon/bin/Common/${binary}` : path.join(__dirname, '../bin/deamon/bin/Common/', binary)
+  const childProcess = cp.spawn(deamon, ['pses']);
   const connection = lsp.createProtocolConnection(
       new lsp.StreamMessageReader(childProcess.stdout),
       new lsp.StreamMessageWriter(childProcess.stdin));

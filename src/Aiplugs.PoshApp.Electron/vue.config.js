@@ -3,11 +3,11 @@ module.exports = {
     pluginOptions: {
       electronBuilder: {
         preload: 'src/preload.js',
-        externals:['nodegit','keytar'],
+        externals:['keytar'],
         builderOptions: {
           "appId": "com.aiplugs.poshapp",
           "productName": "POSH App",
-          "copyright": "Copyright © 2019",
+          "copyright": "Copyright © 2022",
           "compression": "maximum",
           "generateUpdatesFilesForAllChannels": true,
           "directories": {
@@ -34,8 +34,7 @@ module.exports = {
             "entitlements": "entitlements.mac.plist",
             "entitlementsInherit": "entitlements.mac.plist",
             "binaries": [
-              "build/mac/POSH App.app/Contents/Resources/bin/deamon/Aiplugs.PoshApp.Deamon",
-              "build/mac/POSH App.app/Contents/Resources/bin/pses/bin/Common/Aiplugs.PoshApp.Pses",
+              "build/mac/POSH App.app/Contents/Resources/bin/deamon/bin/Common/Aiplugs.PoshApp.Deamon",
             ]
           },
           "linux": {

@@ -14,4 +14,6 @@ wwwroot
 /src/Aiplugs.PoshApp.Web/Properties/ServiceDependencies/iwatest - Web Deploy/profile.arm.json
 /src/Aiplugs.PoshApp.Web/Properties/launchSettings.json
 /src/PSScriptAnalyzer.zip
+/src/PowerShellGet.zip
+/src/PackageManagement.zip
 /src/Aiplugs.PoshApp.Web/pses

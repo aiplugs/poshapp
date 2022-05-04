@@ -1,42 +1,63 @@
 param(
-    $rid = "win10-x64"
+    $rid = "win10-x64",
+    $conf = "Release"
 )
 
-if ($IsMacOS) {
-    $rid = "osx-x64"
+function Modify-Lib() {
+    $lib = "../../lib/PowerShellEditorServices/src/PowerShellEditorServices/PowerShellEditorServices.csproj"
+    $csproj = (Get-Content -Path $lib)
+    if (-not ($csproj | ?{$_ -eq "<NoWarn>NU1605</NoWarn>"})) {
+        $csproj.Replace("<AssemblyTitle>PowerShell Editor Services</AssemblyTitle>","<AssemblyTitle>PowerShell Editor Services</AssemblyTitle>`n<NoWarn>NU1605</NoWarn>") | Out-File -Path $lib
+    }
 }
 
-$lib = "../../lib/PowerShellEditorServices/src/PowerShellEditorServices/PowerShellEditorServices.csproj"
-$csproj = (Get-Content -Path $lib)
-if (-not ($csproj | ?{$_ -eq "<NoWarn>NU1605</NoWarn>"})) {
-    $csproj.Replace("<AssemblyTitle>PowerShell Editor Services</AssemblyTitle>","<AssemblyTitle>PowerShell Editor Services</AssemblyTitle>`n<NoWarn>NU1605</NoWarn>") | Out-File -Path $lib
-}
-dotnet publish ../Aiplugs.PoshApp.Deamon -c Release -r $rid
-if ($rid -eq "win10-x64") {
-    dotnet publish ../Aiplugs.PoshApp.Pses -c Release 
-} else {
-    dotnet publish ../Aiplugs.PoshApp.Pses -c Release -r $rid
+function Build-Deamon() {
+    dotnet publish ../Aiplugs.PoshApp.Deamon -c $conf -r $rid
 }
 
-if (-not (Test-Path -Path ./bin)) {
-    mkdir ./bin
-} else {
-    Remove-Item -Recurse -Force ./bin/*
-}
-mkdir ./bin/deamon/
-mkdir ./bin/pses/
-mkdir ./bin/pses/bin/
-mkdir ./bin/pses/bin/Common/
-Copy-Item -Recurse -Force -Path ../Aiplugs.PoshApp.Deamon/bin/Release/net5.0/$rid/publish/* -Destination ./bin/deamon/
-if ($rid -eq "win10-x64") {
-    Copy-Item -Recurse -Force -Path ../Aiplugs.PoshApp.Pses/bin/Release/net5.0/publish/* -Destination ./bin/pses/bin/Common/
-} else {
-    Copy-Item -Recurse -Force -Path ../Aiplugs.PoshApp.Pses/bin/Release/net5.0/$rid/publish/* -Destination ./bin/pses/bin/Common/
-}
-if (-not (Test-Path -Path ../PSScriptAnalyzer.zip)) {
-    Invoke-RestMethod https://github.com/PowerShell/PSScriptAnalyzer/releases/download/1.19.1/PSScriptAnalyzer.zip -OutFile ../PSScriptAnalyzer.zip
-}
-mkdir ./bin/pses/bin/Common/Modules
-Expand-Archive -Path ../PSScriptAnalyzer.zip -DestinationPath ./bin/pses/bin/Common/Modules/PSScriptAnalyzer
+function Clear-Bin() {
+    if (-not (Test-Path -Path ./bin)) {
+        mkdir ./bin
+    } else {
+        Remove-Item -Recurse -Force ./bin/*
+    }
 
-Copy-Item -Recurse  -Path ../../lib/PowerShellEditorServices/module/PowerShellEditorServices/Commands  -Destination ./bin/pses/
+    mkdir ./bin/deamon/
+    mkdir ./bin/deamon/bin/
+    mkdir ./bin/deamon/bin/Common/
+}
+
+function Copy-Artifacts() {
+    Copy-Item -Recurse -Force -Path ../Aiplugs.PoshApp.Deamon/bin/$conf/net6.0/$rid/publish/* -Destination ./bin/deamon/bin/Common/
+}
+
+function Copy-Modules() {
+    if (-not (Test-Path -Path ../PSScriptAnalyzer.zip)) {
+        Invoke-RestMethod https://github.com/PowerShell/PSScriptAnalyzer/releases/download/1.20.0/PSScriptAnalyzer.1.20.0.nupkg -OutFile ../PSScriptAnalyzer.zip
+    }
+    if (-not (Test-Path -Path ../PackageManagement.zip)) {
+        Invoke-RestMethod https://psg-prod-eastus.azureedge.net/packages/packagemanagement.1.4.7.nupkg -OutFile ../PackageManagement.zip
+    }
+    if (-not (Test-Path -Path ../PowerShellGet.zip)) {
+        Invoke-RestMethod https://psg-prod-eastus.azureedge.net/packages/powershellget.2.2.5.nupkg -OutFile ../PowerShellGet.zip
+    }
+    Expand-Archive -Path ../PSScriptAnalyzer.zip -DestinationPath ./bin/deamon/bin/Common/Modules/PSScriptAnalyzer
+    Expand-Archive -Path ../PackageManagement.zip -DestinationPath ./bin/deamon/bin/Common/Modules/PackageManagement
+    Expand-Archive -Path ../PowerShellGet.zip -DestinationPath ./bin/deamon/bin/Common/Modules/PowerShellGet
+    Copy-Item -Recurse  -Path ../../lib/PowerShellEditorServices/module/PowerShellEditorServices  -Destination ./bin/deamon/bin/Common/Modules/PowerShellEditorServices
+}
+
+
+Modify-Lib
+Build-Deamon
+Clear-Bin
+Copy-Artifacts
+Copy-Modules
+
+
+
+
+
+
+
+

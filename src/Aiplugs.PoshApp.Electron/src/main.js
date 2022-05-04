@@ -1,6 +1,5 @@
 import "vuetify/dist/vuetify.min.css";
 import '@mdi/font/css/materialdesignicons.css'
-import init from './web.js'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import VueRouter from 'vue-router'
@@ -17,8 +16,6 @@ import SettingsNav from './components/SettingsNav.vue'
 import SettingsActivation from './components/SettingsActivation.vue'
 import SettingsVersion from './components/SettingsVersion.vue'
 import createStore from './store'
-
-
 
 Vue.use(Vuetify)
 Vue.use(VueRouter)
@@ -40,14 +37,12 @@ const router = new VueRouter({
   ]
 })
 
-init().then(function(){
-  new Vue({
-    store: createStore(),
-    router,
-    vuetify: new Vuetify({theme: { dark: window.matchMedia('(prefers-color-scheme: dark)').matches }}),
-    render: h => h(App),
-  }).$mount('#app')
-});
+new Vue({
+  store: createStore(),
+  router,
+  vuetify: new Vuetify({theme: { dark: window.matchMedia('(prefers-color-scheme: dark)').matches }}),
+  render: h => h(App),
+}).$mount('#app')
 
 Vue.config.errorHandler = (err, vm, info) => {
   console.error(err, vm, info);
