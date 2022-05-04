@@ -25,16 +25,6 @@ namespace Aiplugs.PoshApp.Pses
         {
             var binPath = Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
             var modulesPath = Path.Combine(binPath, "Modules");
-            var psModulePathes = new List<string>();
-            var psModulePath = Environment.GetEnvironmentVariable("PSModulePath")?.TrimEnd(Path.PathSeparator);
-            if (!string.IsNullOrEmpty(psModulePath)) 
-            {
-                psModulePathes.Add(psModulePath);
-            }
-            psModulePathes.Add(binPath);
-            psModulePathes.Add(modulesPath);
-            Environment.SetEnvironmentVariable("PSModulePath", string.Join(Path.PathSeparator, psModulePathes));
-            Environment.SetEnvironmentVariable("PSExecutionPolicyPreference", "Unrestricted");
 
             var loggerFactory = new LoggerFactory();
 
@@ -43,7 +33,7 @@ namespace Aiplugs.PoshApp.Pses
                 currentUserCurrentHost: GetFullProfileFileName(null, true, false),
                 allUsersAllHosts: GetFullProfileFileName(null, false, false),
                 allUsersCurrentHost: GetFullProfileFileName(null, false, false));
-            /*
+            
             var initialSessionState = InitialSessionState.CreateDefault2();
 
             if (OperatingSystem.IsWindows())
@@ -64,21 +54,7 @@ namespace Aiplugs.PoshApp.Pses
                 logLevel: (int)LogLevel.Error,
                 consoleReplEnabled: false,
                 usesLegacyReadLine: false,
-                bundledModulePath: Path.Combine(binPath, "Modules"));
-            */
-            var hostStartupInfo = new HostStartupInfo(
-                name: "POSH App",
-                profileId: "Aiplugs.PoshApp.Pses",
-                version: new Version(0, 0, 0),
-                psHost: new PSESHost(),
-                profilePaths,
-                featureFlags: new string[0],
-                additionalModules: new string[0],
-                languageMode: PSLanguageMode.FullLanguage,
-                logPath: Path.GetTempFileName(),
-                logLevel: (int)LogLevel.Error,
-                consoleReplEnabled: false,
-                usesLegacyReadLine: false);
+                bundledModulePath: modulesPath);
 
             var lspServerType = Assembly.GetAssembly(typeof(HostStartupInfo)).GetType("Microsoft.PowerShell.EditorServices.Server.PsesLanguageServer");
             var lspServer = Activator.CreateInstance(lspServerType, new object[] { loggerFactory, _receivingStream, _sendingStream, hostStartupInfo });

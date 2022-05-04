@@ -44,7 +44,6 @@ export async function startPSES () {
 
   const textDocumentDidChange = new lsp.RequestType('textDocument/didChange');
   ipcMain.handle('textDocumentDidChange', async (event, uri, version, changes) => {
-    console.log("textDocument/didChange", uri, version, changes)
     return await connection.sendRequest(textDocumentDidChange, {
       textDocument: {
         uri,
