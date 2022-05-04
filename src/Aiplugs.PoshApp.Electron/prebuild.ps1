@@ -1,5 +1,6 @@
 param(
-    $rid = "win10-x64"
+    $rid = "win10-x64",
+    $conf = "Release"
 )
 
 function Modify-Lib() {
@@ -11,7 +12,7 @@ function Modify-Lib() {
 }
 
 function Build-Deamon() {
-    dotnet publish ../Aiplugs.PoshApp.Deamon -c Release -r $rid
+    dotnet publish ../Aiplugs.PoshApp.Deamon -c $conf -r $rid
 }
 
 function Clear-Bin() {
@@ -27,8 +28,7 @@ function Clear-Bin() {
 }
 
 function Copy-Artifacts() {
-    Copy-Item -Recurse -Force -Path ../Aiplugs.PoshApp.Deamon/bin/Release/net6.0/$rid/publish/* -Destination ./bin/deamon/bin/Common/
-    Copy-Item -Recurse  -Path ../../lib/PowerShellEditorServices/module/PowerShellEditorServices/Commands  -Destination ./bin/deamon/
+    Copy-Item -Recurse -Force -Path ../Aiplugs.PoshApp.Deamon/bin/$conf/net6.0/$rid/publish/* -Destination ./bin/deamon/bin/Common/
 }
 
 function Copy-Modules() {
@@ -44,6 +44,7 @@ function Copy-Modules() {
     Expand-Archive -Path ../PSScriptAnalyzer.zip -DestinationPath ./bin/deamon/bin/Common/Modules/PSScriptAnalyzer
     Expand-Archive -Path ../PackageManagement.zip -DestinationPath ./bin/deamon/bin/Common/Modules/PackageManagement
     Expand-Archive -Path ../PowerShellGet.zip -DestinationPath ./bin/deamon/bin/Common/Modules/PowerShellGet
+    Copy-Item -Recurse  -Path ../../lib/PowerShellEditorServices/module/PowerShellEditorServices  -Destination ./bin/deamon/bin/Common/Modules/PowerShellEditorServices
 }
 
 
