@@ -26,7 +26,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.100
+        dotnet-version: 6.0.x
         node-version: 14.x
     - name: Build deamon
       shell: pwsh
@@ -51,12 +51,12 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.100
+        dotnet-version: 6.0.x
         node-version: 14.x
     - name: Build deamon
       shell: pwsh
       working-directory: ./src/Aiplugs.PoshApp.Electron/
-      run: ./prebuild.ps1
+      run: ./prebuild.ps1 osx-x64
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm cache verify & npm install

@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.PowerShell;
 using Microsoft.PowerShell.EditorServices.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -41,6 +43,29 @@ namespace Aiplugs.PoshApp.Pses
                 currentUserCurrentHost: GetFullProfileFileName(null, true, false),
                 allUsersAllHosts: GetFullProfileFileName(null, false, false),
                 allUsersCurrentHost: GetFullProfileFileName(null, false, false));
+            /*
+            var initialSessionState = InitialSessionState.CreateDefault2();
+
+            if (OperatingSystem.IsWindows())
+            {
+                initialSessionState.ExecutionPolicy = ExecutionPolicy.Bypass;
+            }
+
+            var hostStartupInfo = new HostStartupInfo(
+                name: "POSH App",
+                profileId: "Aiplugs.PoshApp.Pses",
+                version: new Version(0, 0, 0),
+                psHost: new PSESHost(),
+                profilePaths,
+                featureFlags: new string[0],
+                additionalModules: new string[0],
+                initialSessionState:initialSessionState,
+                logPath: Path.GetTempFileName(),
+                logLevel: (int)LogLevel.Error,
+                consoleReplEnabled: false,
+                usesLegacyReadLine: false,
+                bundledModulePath: Path.Combine(binPath, "Modules"));
+            */
             var hostStartupInfo = new HostStartupInfo(
                 name: "POSH App",
                 profileId: "Aiplugs.PoshApp.Pses",

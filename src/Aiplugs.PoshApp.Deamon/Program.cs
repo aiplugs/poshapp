@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Aiplugs.PoshApp.Pses;
+using System;
 using System.Threading.Tasks;
 
 namespace Aiplugs.PoshApp.Deamon
@@ -9,7 +10,15 @@ namespace Aiplugs.PoshApp.Deamon
         {
             var sendingStream = Console.OpenStandardOutput();
             var receivingStream = Console.OpenStandardInput();
-            await new PoshAppService(sendingStream, receivingStream).StartAsync();
+
+            if (args.Length > 0 && args[0] == "pses")
+            {
+                await new PSESService(sendingStream, receivingStream).StartAsync();
+            }
+            else
+            {
+                await new PoshAppService(sendingStream, receivingStream).StartAsync();
+            }
         }
     }
 }

@@ -233,7 +233,7 @@ if (isDevelopment) {
 let connection;
 async function startPowerShellDeamon () {
   const binary = process.platform == 'win32' ? 'Aiplugs.PoshApp.Deamon.exe' : 'Aiplugs.PoshApp.Deamon'
-  const deamon = isDevelopment ? `bin/deamon/${binary}` : path.join(__dirname, '../bin/deamon/', binary)
+  const deamon = isDevelopment ? `bin/deamon/bin/Common/${binary}` : path.join(__dirname, '../bin/deamon/bin/Common/', binary)
   const childProcess = cp.spawn(deamon);
 
   // Use stdin and stdout for communication:
