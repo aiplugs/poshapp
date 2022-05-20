@@ -1,7 +1,7 @@
 <template>
     <div class="main-content d-flex flex-column">
-        <header>
-            <v-row class="pl-4 pr-4" style="width: 100%;">
+        <v-container fluid>
+            <v-row class="pl-4 pr-4 mt-1" style="width: 100%;">
                 <v-col cols="12" class="pt-0 pb-0">
                     <ParametersForm ref="form"
                                      :script="scriptId"
@@ -21,7 +21,7 @@
                        v-on:click="invokeAction({ scriptId:action.id, input: selected.map(item => item.$clixml) })"
                        retain-focus-on-click>{{action.displayName || action.id}}</v-btn>
             </v-row>
-        </header>
+        </v-container>
         <v-divider></v-divider>
         <div class="flex" ref="content" v-resize="handleResize" style="overflow: hidden;">
             <v-data-table v-model="selected"
