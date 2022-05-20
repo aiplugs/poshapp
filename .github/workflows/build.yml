@@ -34,7 +34,7 @@ jobs:
         # CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_WIN }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       working-directory: ./src/Aiplugs.PoshApp.Electron/
-      run: npm run electron:build
+      run: npm run electron:build -- -p onTagOrDraft
   macos:
     runs-on: macos-latest
     steps:
