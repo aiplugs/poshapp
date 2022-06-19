@@ -55,9 +55,6 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "exclude": [
-      "node_modules/**"
-    ],
     "parserOptions": {
       "parser": "@babel/eslint-parser"
     },
