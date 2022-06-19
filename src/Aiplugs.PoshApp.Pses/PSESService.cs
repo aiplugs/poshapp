@@ -34,7 +34,7 @@ namespace Aiplugs.PoshApp.Pses
                 allUsersAllHosts: GetFullProfileFileName(null, false, false),
                 allUsersCurrentHost: GetFullProfileFileName(null, false, false));
             
-            var initialSessionState = InitialSessionState.CreateDefault2();
+            var initialSessionState = InitialSessionState.CreateDefault();
 
             if (OperatingSystem.IsWindows())
             {
