@@ -207,7 +207,7 @@ app.on('ready', async () => {
   createWindow()
   startPSES();
   startPowerShellDeamon();
-  const settingsChannel = await connection.sendRequest(new rpc.RequestType('GetChannel'));
+  const settingsChannel = await connection.sendRequest(new rpc.RequestType0('GetChannel'));
   const currentChannel = app.getVersion().indexOf('beta') != -1 ? 'beta' : null;
   autoUpdater.channel = settingsChannel || currentChannel;
   autoUpdater.autoDownload = true;
@@ -241,122 +241,122 @@ async function startPowerShellDeamon () {
       new rpc.StreamMessageReader(childProcess.stdout),
       new rpc.StreamMessageWriter(childProcess.stdin));
 
-  const getRepositories = new rpc.RequestType('GetRepositories');
+  const getRepositories = new rpc.RequestType0('GetRepositories');
   ipcMain.handle("GetRepositories", async (event) => {
     return await connection.sendRequest(getRepositories);
   });
 
-  const createRepository = new rpc.RequestType('CreateRepository');
+  const createRepository = new rpc.RequestType2('CreateRepository');
   ipcMain.handle("CreateRepository", async (event, name, path) => {
-    return await connection.sendRequest(createRepository, [name, path]);
+    return await connection.sendRequest(createRepository, name, path);
   });
 
-  const deleteRepository = new rpc.RequestType('DeleteRepository');
+  const deleteRepository = new rpc.RequestType2('DeleteRepository');
   ipcMain.handle("DeleteRepository", async (event, repositoryName) => {
-    return await connection.sendRequest(deleteRepository, [repositoryName, false]);
+    return await connection.sendRequest(deleteRepository, repositoryName, false);
   });
 
-  const getScripts = new rpc.RequestType('GetScripts');
+  const getScripts = new rpc.RequestType0('GetScripts');
   ipcMain.handle("GetScripts", async (event) => {
     return await connection.sendRequest(getScripts);
   });
 
-  const getScript = new rpc.RequestType('GetScript');
+  const getScript = new rpc.RequestType2('GetScript');
   ipcMain.handle("GetScript", async (event, repositoryName, scriptId) => {
-    return await connection.sendRequest(getScript, [repositoryName, scriptId]);
+    return await connection.sendRequest(getScript, repositoryName, scriptId);
   });
 
-  const deleteScript = new rpc.RequestType('DeleteScript');
+  const deleteScript = new rpc.RequestType2('DeleteScript');
   ipcMain.handle("DeleteScript", async (event, repositoryName, scriptId) => {
-    return await connection.sendRequest(deleteScript, [repositoryName, scriptId]);
+    return await connection.sendRequest(deleteScript, repositoryName, scriptId);
   });
 
-  const createListScript = new rpc.RequestType('CreateListScript');
+  const createListScript = new rpc.RequestType2('CreateListScript');
   ipcMain.handle("CreateListScript", async (event, respositoryName, data) => {
-    return await connection.sendRequest(createListScript, [respositoryName, data]);
+    return await connection.sendRequest(createListScript, respositoryName, data);
   });
 
-  const createDetailScript = new rpc.RequestType('CreateDetailScript');
+  const createDetailScript = new rpc.RequestType2('CreateDetailScript');
   ipcMain.handle("CreateDetailScript", async (event, respositoryName, data) => {
-    return await connection.sendRequest(createDetailScript, [respositoryName, data]);
+    return await connection.sendRequest(createDetailScript, respositoryName, data);
   });
 
-  const createSingletonScript = new rpc.RequestType('CreateSingletonScript');
+  const createSingletonScript = new rpc.RequestType2('CreateSingletonScript');
   ipcMain.handle("CreateSingletonScript", async (event, respositoryName, data) => {
-    return await connection.sendRequest(createSingletonScript, [respositoryName, data]);
+    return await connection.sendRequest(createSingletonScript, respositoryName, data);
   });
 
-  const createActionScript = new rpc.RequestType('CreateActionScript');
+  const createActionScript = new rpc.RequestType2('CreateActionScript');
   ipcMain.handle("CreateActionScript", async (event, respositoryName, data) => {
-    return await connection.sendRequest(createActionScript, [respositoryName, data]);
+    return await connection.sendRequest(createActionScript, respositoryName, data);
   });
 
-  const updateListScript = new rpc.RequestType('UpdateListScript');
+  const updateListScript = new rpc.RequestType3('UpdateListScript');
   ipcMain.handle("UpdateListScript", async (event, respositoryName, scriptId, data) => {
-    return await connection.sendRequest(updateListScript, [respositoryName, scriptId, data]);
+    return await connection.sendRequest(updateListScript, respositoryName, scriptId, data);
   });
 
-  const updateDetailScript = new rpc.RequestType('UpdateDetailScript');
+  const updateDetailScript = new rpc.RequestType3('UpdateDetailScript');
   ipcMain.handle("UpdateDetailScript", async (event, respositoryName, scriptId, data) => {
-    return await connection.sendRequest(updateDetailScript, [respositoryName, scriptId, data]);
+    return await connection.sendRequest(updateDetailScript, respositoryName, scriptId, data);
   });
 
-  const updateSingletonScript = new rpc.RequestType('UpdateSingletonScript');
+  const updateSingletonScript = new rpc.RequestType3('UpdateSingletonScript');
   ipcMain.handle("UpdateSingletonScript", async (event, respositoryName, scriptId, data) => {
-    return await connection.sendRequest(updateSingletonScript, [respositoryName, scriptId, data]);
+    return await connection.sendRequest(updateSingletonScript, respositoryName, scriptId, data);
   });
 
-  const updateActionScript = new rpc.RequestType('UpdateActionScript');
+  const updateActionScript = new rpc.RequestType3('UpdateActionScript');
   ipcMain.handle("UpdateActionScript", async (event, respositoryName, scriptId, data) => {
-    return await connection.sendRequest(updateActionScript, [respositoryName, scriptId, data]);
+    return await connection.sendRequest(updateActionScript, respositoryName, scriptId, data);
   });
 
-  const getScriptContent = new rpc.RequestType('GetScriptContent');
+  const getScriptContent = new rpc.RequestType2('GetScriptContent');
   ipcMain.handle("GetScriptContent", async (event, respositoryName, scriptId) => {
-    return await connection.sendRequest(getScriptContent, [respositoryName, scriptId]);
+    return await connection.sendRequest(getScriptContent, respositoryName, scriptId);
   });
 
-  const putScriptContent = new rpc.RequestType('PutScriptContent');
+  const putScriptContent = new rpc.RequestType3('PutScriptContent');
   ipcMain.handle("PutScriptContent", async (event, respositoryName, scriptId, content) => {
-    return await connection.sendRequest(putScriptContent, [respositoryName, scriptId, content]);
+    return await connection.sendRequest(putScriptContent, respositoryName, scriptId, content);
   });
 
-  const getActivation = new rpc.RequestType('GetActivation');
+  const getActivation = new rpc.RequestType0('GetActivation');
   ipcMain.handle("GetActivation", async (event) => {
     return await connection.sendRequest(getActivation);
   });
 
-  const postActivation = new rpc.RequestType('PostActivation');
+  const postActivation = new rpc.RequestType1('PostActivation');
   ipcMain.handle("PostActivation", async (event, activationCode) => {
-    return await connection.sendRequest(postActivation, [activationCode]);
+    return await connection.sendRequest(postActivation, activationCode);
   });
 
-  const refleshActivation = new rpc.RequestType('RefleshActivation');
+  const refleshActivation = new rpc.RequestType0('RefleshActivation');
   ipcMain.handle("RefleshActivation", async (event) => {
     return await connection.sendRequest(refleshActivation);
   });
 
-  const invokeWithParameters = new rpc.RequestType('InvokeWithParameters');
+  const invokeWithParameters = new rpc.RequestType2('InvokeWithParameters');
   ipcMain.handle("InvokeWithParameters", async (event, scriptId, input) => {
-    return await connection.sendRequest(invokeWithParameters, [scriptId, input]);
+    return await connection.sendRequest(invokeWithParameters, scriptId, input);
   });
 
-  const invokeWithPipeline = new rpc.RequestType('InvokeWithPipeline');
+  const invokeWithPipeline = new rpc.RequestType2('InvokeWithPipeline');
   ipcMain.handle("InvokeWithPipeline", async (event, scriptId, input) => {
-    return await connection.sendRequest(invokeWithPipeline, [scriptId, input]);
+    return await connection.sendRequest(invokeWithPipeline, scriptId, input);
   });
 
-  const invokeWithPipelines = new rpc.RequestType('InvokeWithPipelines');
+  const invokeWithPipelines = new rpc.RequestType2('InvokeWithPipelines');
   ipcMain.handle("InvokeWithPipelines", async (event, scriptId, input) => {
-    return await connection.sendRequest(invokeWithPipelines, [scriptId, input]);
+    return await connection.sendRequest(invokeWithPipelines, scriptId, input);
   });
 
-  const invokeGetParameters = new rpc.RequestType('InvokeGetParameters');
+  const invokeGetParameters = new rpc.RequestType1('InvokeGetParameters');
   ipcMain.handle("InvokeGetParameters", async (event, scriptId) => {
-    return await connection.sendRequest(invokeGetParameters, [scriptId]);
+    return await connection.sendRequest(invokeGetParameters, scriptId);
   });
 
-  connection.onRequest(new rpc.RequestType('Prompt'), ([caption, message, descriptions]) => {
+  connection.onRequest(new rpc.RequestType3('Prompt'), (caption, message, descriptions) => {
     return new Promise(function(resolve) {
       ipcMain.once('Prompt', function(event, input) {
         resolve(input);
@@ -365,7 +365,7 @@ async function startPowerShellDeamon () {
     })
   })
 
-  connection.onRequest(new rpc.RequestType('PromptForChoice'), ([caption, message, choices]) => {
+  connection.onRequest(new rpc.RequestType3('PromptForChoice'), (caption, message, choices) => {
     return new Promise(function(resolve) {
       ipcMain.once('PromptForChoice', function(event, index) {
         resolve(index);
@@ -374,7 +374,7 @@ async function startPowerShellDeamon () {
     })
   })
 
-  connection.onRequest(new rpc.RequestType('PromptForCredential'), ([caption, message, userName, targetName]) => {
+  connection.onRequest(new rpc.RequestType4('PromptForCredential'), (caption, message, userName, targetName) => {
     return new Promise(function(resolve) {
       ipcMain.once('PromptForCredential', function(event, username, password) {
         resolve({username, password});
@@ -383,7 +383,7 @@ async function startPowerShellDeamon () {
     })
   })
 
-  connection.onRequest(new rpc.RequestType('ReadLine'), () => {
+  connection.onRequest(new rpc.RequestType0('ReadLine'), () => {
     return new Promise(function(resolve) {
       ipcMain.once('ReadLine', function(event, input) {
         resolve(input);
@@ -392,7 +392,7 @@ async function startPowerShellDeamon () {
     })
   })
 
-  connection.onRequest(new rpc.RequestType('ReadLineAsSecureString'), () => {
+  connection.onRequest(new rpc.RequestType0('ReadLineAsSecureString'), () => {
     return new Promise(function(resolve) {
       ipcMain.once('ReadLineAsSecureString', function(event, input) {
         resolve(input);
@@ -401,40 +401,40 @@ async function startPowerShellDeamon () {
     })
   })
 
-  connection.onNotification(new rpc.NotificationType('WriteWithColor'), ([foregroundColor, backgroundColor, value]) => {
+  connection.onNotification(new rpc.NotificationType3('WriteWithColor'), (foregroundColor, backgroundColor, value) => {
     win.webContents.send('WriteWithColor', foregroundColor, backgroundColor, value);
   });
 
-  connection.onNotification(new rpc.NotificationType('Write'), ([value]) => {
+  connection.onNotification(new rpc.NotificationType1('Write'), (value) => {
     console.log(value)
     win.webContents.send('WriteWithColor', 15, 0, value);
   });
 
-  connection.onNotification(new rpc.NotificationType('WriteDebugLine'), ([message]) => {
+  connection.onNotification(new rpc.NotificationType1('WriteDebugLine'), (message) => {
     win.webContents.send('WriteDebugLine', message);
   });
 
-  connection.onNotification(new rpc.NotificationType('WriteErrorLine'), ([value]) => {
+  connection.onNotification(new rpc.NotificationType1('WriteErrorLine'), (value) => {
     win.webContents.send('WriteErrorLine', value);
   });
 
-  connection.onNotification(new rpc.NotificationType('WriteLine'), ([value]) => {
+  connection.onNotification(new rpc.NotificationType('WriteLine'), (value) => {
     win.webContents.send('WriteWithColor', 15, 0, value);
   });
 
-  connection.onNotification(new rpc.NotificationType('WriteProgress'), ([sourceId, record]) => {
+  connection.onNotification(new rpc.NotificationType1('WriteProgress'), (sourceId, record) => {
     win.webContents.send('WriteProgress', sourceId, record);
   });
 
-  connection.onNotification(new rpc.NotificationType('WriteVerboseLine'), ([message]) => {
+  connection.onNotification(new rpc.NotificationType1('WriteVerboseLine'), (message) => {
     win.webContents.send('WriteVerboseLine', message);
   });
 
-  connection.onNotification(new rpc.NotificationType('WriteWarningLine'), ([message]) => {
+  connection.onNotification(new rpc.NotificationType1('WriteWarningLine'), (message) => {
     win.webContents.send('WriteWarningLine', message);
   });
 
-  connection.onNotification(new rpc.NotificationType('ParseError'), ([message]) => {
+  connection.onNotification(new rpc.NotificationType1('ParseError'), (message) => {
     win.webContents.send('ParseError', message);
   });
 

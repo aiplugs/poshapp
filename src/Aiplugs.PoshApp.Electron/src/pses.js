@@ -30,7 +30,7 @@ export async function startPSES () {
     console.log('publishDiagnostic',params)
   })
 
-  const textDocumentDidOpen = new lsp.RequestType('textDocument/didOpen');
+  const textDocumentDidOpen = new lsp.RequestType1('textDocument/didOpen');
   ipcMain.handle('textDocumentDidOpen', async (event, uri, languageId, version, text) => {
     return await connection.sendRequest(textDocumentDidOpen, {
       textDocument: {
@@ -42,7 +42,7 @@ export async function startPSES () {
     })
   })
 
-  const textDocumentDidChange = new lsp.RequestType('textDocument/didChange');
+  const textDocumentDidChange = new lsp.RequestType1('textDocument/didChange');
   ipcMain.handle('textDocumentDidChange', async (event, uri, version, changes) => {
     return await connection.sendRequest(textDocumentDidChange, {
       textDocument: {
@@ -53,7 +53,7 @@ export async function startPSES () {
     })
   })
 
-  const textDocumentDidSave = new lsp.RequestType('textDocument/didSave');
+  const textDocumentDidSave = new lsp.RequestType1('textDocument/didSave');
   ipcMain.handle('textDocumentDidSave', async (event, uri, text) => {
     return await connection.sendRequest(textDocumentDidSave, {
       textDocument: {
@@ -63,7 +63,7 @@ export async function startPSES () {
     })
   })
 
-  const textDocumentDidClose = new lsp.RequestType('textDocument/didClose');
+  const textDocumentDidClose = new lsp.RequestType1('textDocument/didClose');
   ipcMain.handle('textDocumentDidClose', async (event, uri) => {
     return await connection.sendRequest(textDocumentDidClose, {
       textDocument: {
@@ -72,7 +72,7 @@ export async function startPSES () {
     })
   })
 
-  const textDocumentCompletion = new lsp.RequestType('textDocument/completion');
+  const textDocumentCompletion = new lsp.RequestType1('textDocument/completion');
   ipcMain.handle("textDocumentCompletion", async (event, uri, position, context) => {
     console.log("textDocumentCompletion", uri)
     return await connection.sendRequest(textDocumentCompletion, {
@@ -84,7 +84,7 @@ export async function startPSES () {
     });
   });
 
-  const textDocumentHover = new lsp.RequestType('textDocument/hover');
+  const textDocumentHover = new lsp.RequestType1('textDocument/hover');
   ipcMain.handle("textDocumentHover", async (event, uri, position) => {
     return await connection.sendRequest(textDocumentHover, {
         textDocument: {
@@ -94,7 +94,7 @@ export async function startPSES () {
     });
   });
 
-  const textDocumentSignatureHelp = new lsp.RequestType('textDocument/signatureHelp');
+  const textDocumentSignatureHelp = new lsp.RequestType1('textDocument/signatureHelp');
   ipcMain.handle("textDocumentSignatureHelp", async (event, uri, position, context) => {
     return await connection.sendRequest(textDocumentSignatureHelp, {
         textDocument: {
@@ -105,7 +105,7 @@ export async function startPSES () {
     });
   });
 
-  const textDocumentDefinition = new lsp.RequestType('textDocument/definition');
+  const textDocumentDefinition = new lsp.RequestType1('textDocument/definition');
   ipcMain.handle("textDocumentDefinition", async (event, uri, position) => {
     return await connection.sendRequest(textDocumentDefinition, {
         textDocument: {
@@ -115,7 +115,7 @@ export async function startPSES () {
     });
   });
 
-  const textDocumentReferences = new lsp.RequestType('textDocument/references');
+  const textDocumentReferences = new lsp.RequestType1('textDocument/references');
   ipcMain.handle("textDocumentReferences", async (event, uri, position, context) => {
     return await connection.sendRequest(textDocumentReferences, {
         textDocument: {
@@ -126,7 +126,7 @@ export async function startPSES () {
     });
   });
 
-  const textDocumentHighlight = new lsp.RequestType('textDocument/documentHighlight');
+  const textDocumentHighlight = new lsp.RequestType1('textDocument/documentHighlight');
   ipcMain.handle("textDocumentHighlight", async (event, uri, position) => {
     return await connection.sendRequest(textDocumentHighlight, {
         textDocument: {
@@ -136,7 +136,7 @@ export async function startPSES () {
     });
   });
 
-  const textDocumentSymbol = new lsp.RequestType('textDocument/documentSymbol');
+  const textDocumentSymbol = new lsp.RequestType1('textDocument/documentSymbol');
   ipcMain.handle("textDocumentSymbol", async (event, uri) => {
     return await connection.sendRequest(textDocumentSymbol, {
         textDocument: {
@@ -145,7 +145,7 @@ export async function startPSES () {
     });
   });
 
-  const textDocumentCodeAction = new lsp.RequestType('textDocument/codeAction');
+  const textDocumentCodeAction = new lsp.RequestType1('textDocument/codeAction');
   ipcMain.handle("textDocumentCodeAction", async (event, uri, range, context) => {
     try {
       return await connection.sendRequest(textDocumentCodeAction, {
@@ -163,7 +163,7 @@ export async function startPSES () {
     }
   });
 
-  const textDocumentCodeLens = new lsp.RequestType('textDocument/codeLens');
+  const textDocumentCodeLens = new lsp.RequestType1('textDocument/codeLens');
   ipcMain.handle("textDocumentCodeLens", async (event, uri) => {
     return await connection.sendRequest(textDocumentCodeLens, {
         textDocument: {
@@ -172,7 +172,7 @@ export async function startPSES () {
     });
   });
 
-  const textDocumentFormatting = new lsp.RequestType('textDocument/formatting');
+  const textDocumentFormatting = new lsp.RequestType1('textDocument/formatting');
   ipcMain.handle("textDocumentFormatting", async (event, uri) => {
     return await connection.sendRequest(textDocumentFormatting, {
         textDocument: {
@@ -188,7 +188,7 @@ export async function startPSES () {
     });
   });
 
-  const textDocumentRangeFormatting = new lsp.RequestType('textDocument/rangeFormatting');
+  const textDocumentRangeFormatting = new lsp.RequestType1('textDocument/rangeFormatting');
   ipcMain.handle("textDocumentRangeFormatting", async (event, uri, range) => {
     return await connection.sendRequest(textDocumentRangeFormatting, {
         textDocument: {
@@ -205,7 +205,7 @@ export async function startPSES () {
     });
   });
 
-  const textDocumentFoldingRange = new lsp.RequestType('textDocument/foldingRange');
+  const textDocumentFoldingRange = new lsp.RequestType1('textDocument/foldingRange');
   ipcMain.handle("textDocumentFoldingRange", async (event, uri) => {
     return await connection.sendRequest(textDocumentFoldingRange, {
         textDocument: {
