@@ -15,7 +15,7 @@
                     </v-list-item-content>
                     <template v-slot:activator v-if="item.type=='group'">
                         <v-list-item-content>
-                            <v-list-item-title v-text="item.name"></v-list-item-title>
+                            <v-list-item-title>{{item.name}}</v-list-item-title>
                         </v-list-item-content>
                     </template>
                     <template v-if="item.type=='group'">
@@ -23,7 +23,7 @@
                                 v-for="child in item.children" :key="child.name"
                                >
                         <v-list-item-content>
-                            <v-list-item-title class="pl-4" v-text="child.displayName||child.name"></v-list-item-title>
+                            <v-list-item-title class="pl-4">{{child.displayName||child.name}}</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                     </template>

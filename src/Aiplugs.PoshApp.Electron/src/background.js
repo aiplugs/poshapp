@@ -7,14 +7,14 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import { startPSES } from './pses.js'
 import { parseGitConfig } from './gitconfig.js'
-const {autoUpdater} = require("electron-updater");
-const fs = require("fs")
-const http = require("isomorphic-git/http/node")
-const git = require("isomorphic-git")
-const keytar = require('keytar')
-const rpc = require('vscode-jsonrpc')
-const isDevelopment = process.env.NODE_ENV !== 'production'
+import {autoUpdater} from 'electron-updater'
+import * as fs from 'fs'
+import * as http from 'isomorphic-git/http/node'
+import * as git from 'isomorphic-git'
+import * as keytar from 'keytar'
+import * as rpc from 'vscode-jsonrpc'
 
+const isDevelopment = process.env.NODE_ENV !== 'production'
 const isMac = process.platform === 'darwin'
 Menu.setApplicationMenu(Menu.buildFromTemplate([
   // { role: 'appMenu' }
