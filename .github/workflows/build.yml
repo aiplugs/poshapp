@@ -20,14 +20,14 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
-        node-version: 16.x
+        node-version: 16.14.2
     - name: Build deamon
       shell: pwsh
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: ./prebuild.ps1
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
-      run: npm install
+      run: npm ci
     - name: Build electron
       env:
         # CSC_LINK: ${{ secrets.CSC_LINK_WIN }}
@@ -45,7 +45,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
-        node-version: 16.x
+        node-version: 16.14.2
     - name: Build deamon
       shell: pwsh
       working-directory: ./src/Aiplugs.PoshApp.Electron/
