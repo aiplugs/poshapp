@@ -53,7 +53,7 @@ export default {
                 fontSize: 16,
                 theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'vs-dark' : 'vs-light'
             });
-            this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S, () => {
+            this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
                 const value = this.editor.getModel().getValue();
                 this.saveScriptContent(this.$route.params.repo, this.$route.params.id, value).then(_ => {
                     this.content = value;
