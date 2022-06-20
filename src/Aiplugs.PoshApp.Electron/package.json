@@ -1,6 +1,6 @@
 {
   "name": "poshapp",
-  "version": "v0.10.8",
+  "version": "v0.10.9",
   "author": "aiplugs",
   "description": "PowerShell GUI application",
   "private": true,
