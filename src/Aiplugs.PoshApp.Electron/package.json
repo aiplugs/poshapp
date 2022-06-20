@@ -11,7 +11,8 @@
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "preinstall": "npx npm-force-resolutions"
   },
   "main": "background.js",
   "dependencies": {
@@ -45,6 +46,9 @@
     "vue-template-compiler": "^2.6.14",
     "vuetify": "^2.6.6",
     "vuex": "^3.5.1"
+  },
+  "resolutions": {
+    "glob-parent": "^5.1.2"
   },
   "eslintConfig": {
     "root": true,
