@@ -4,6 +4,7 @@ module.exports = {
       electronBuilder: {
         preload: 'src/preload.js',
         externals:['keytar'],
+        customFileProtocol: './',
         builderOptions: {
           "appId": "com.aiplugs.poshapp",
           "productName": "POSH App",
