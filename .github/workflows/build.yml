@@ -54,6 +54,9 @@ jobs:
       shell: pwsh
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: ./prebuild.ps1 osx-x64
+    - name: Remove lock file
+      working-directory: ./src/Aiplugs.PoshApp.Electron/
+      run: rm package-lock.json
     - name: Install modules
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm cache verify & npm install
