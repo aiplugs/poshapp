@@ -602,7 +602,6 @@ async function startPowerShellDeamon () {
       url: origin,
       dir: path,
       singleBranch: true,
-      depth: 1,
       onAuth: tryAuth,
       onAuthFailure: tryAuth,
       onAuthSuccess: async (url, auth) => {
