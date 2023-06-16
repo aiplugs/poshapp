@@ -14,7 +14,6 @@ module.exports = {
           "directories": {
             "output": "build"
           },
-          "afterSign": "notarize.js",
           "win": {
             "publisherName": [
               "Yoshiyuki Taniguchi"
@@ -27,19 +26,6 @@ module.exports = {
             "perMachine": false,
             "allowToChangeInstallationDirectory": false,
             "license": "./eula.txt"
-          },
-          "mac": {
-            "icon": "./src/assets/icon/poshapp-icon-512x512.icns",
-            "hardenedRuntime": true,
-            "gatekeeperAssess": false,
-            "entitlements": "entitlements.mac.plist",
-            "entitlementsInherit": "entitlements.mac.plist",
-            "binaries": [
-              "build/mac/POSH App.app/Contents/Resources/bin/deamon/bin/Common/Aiplugs.PoshApp.Deamon",
-            ]
-          },
-          "linux": {
-            "icon": "./src/assets/icon/"
           },
           "publish": [
             {
