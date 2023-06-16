@@ -321,21 +321,6 @@ async function startPowerShellDeamon () {
     return await connection.sendRequest(putScriptContent, respositoryName, scriptId, content);
   });
 
-  const getActivation = new rpc.RequestType0('GetActivation');
-  ipcMain.handle("GetActivation", async (event) => {
-    return await connection.sendRequest(getActivation);
-  });
-
-  const postActivation = new rpc.RequestType1('PostActivation');
-  ipcMain.handle("PostActivation", async (event, activationCode) => {
-    return await connection.sendRequest(postActivation, activationCode);
-  });
-
-  const refleshActivation = new rpc.RequestType0('RefleshActivation');
-  ipcMain.handle("RefleshActivation", async (event) => {
-    return await connection.sendRequest(refleshActivation);
-  });
-
   const invokeWithParameters = new rpc.RequestType2('InvokeWithParameters');
   ipcMain.handle("InvokeWithParameters", async (event, scriptId, input) => {
     return await connection.sendRequest(invokeWithParameters, scriptId, input);
@@ -490,7 +475,7 @@ async function startPowerShellDeamon () {
       fs,
       dir: path,
       depth: 100,
-      ref: branch,
+      ref: 'refs/heads/' + branch
     })).map(mapping);
     
     let remoteLogs = [];
@@ -504,11 +489,31 @@ async function startPowerShellDeamon () {
       })).map(mapping);
     } catch {}
 
-    let logs = localLogs;
-
-    if (remoteLogs.length > 0) {
-      if (!localLogs.some(log => log.commit === remoteLogs[0].commit)) {
-        logs = remoteLogs;
+    let logs = [];
+    let i = 0, j = 0, d = new Date().getTime();
+    while(i < localLogs.length && j < remoteLogs.length) {
+      if (localLogs[i].commit == remoteLogs[j].commit && localLogs[i].when < d ) {
+        logs.push(localLogs[i]);
+        d = localLogs[i].when;
+        i++;
+        j++;
+      }
+      else if (localLogs[i].when > remoteLogs[i].when) {
+        logs.push(localLogs[i]);
+        d = localLogs[i].when;
+        i++;
+      }
+      else if (localLogs[i].when < remoteLogs[i].when) {
+        logs.push(remoteLogs[j]);
+        d = localLogs[j].when;
+        j++;
+      }
+      else {
+        logs.push(localLogs[i]);
+        logs.push(remoteLogs[j]);
+        d = localLogs[i].when;
+        i++;
+        j++;
       }
     }
 
@@ -518,7 +523,7 @@ async function startPowerShellDeamon () {
         fs,
         dir: path,
         depth: 1,
-        ref: branch
+        ref: 'refs/heads/' + branch
       });
       origin = await git.resolveRef({
         fs,
@@ -528,7 +533,7 @@ async function startPowerShellDeamon () {
       });
     }
     catch{}
-
+    
     return  { logs, origin, local };
   })
 

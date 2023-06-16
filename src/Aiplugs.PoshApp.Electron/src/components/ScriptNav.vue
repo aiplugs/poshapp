@@ -153,14 +153,12 @@ export default {
     },
     computed: {
         ...mapGetters('scripts', ['repositories', 'scripts', 'detailNames', 'actionNames']),
-        ...mapGetters('activation', ['exceededFreePlanForScripts']),
         repositoryScripts() {
             return repositoryName => this.scripts.filter(script => script.repository === repositoryName);
         }
     },
     methods: {
-        ...mapActions('scripts', ['loadScripts','createScript','updateScript', 'deleteScript']),   
-        ...mapMutations('activation', ['showActivationNotice']),
+        ...mapActions('scripts', ['loadScripts','createScript','updateScript', 'deleteScript']),
         async handleDelete() {
             if (this.deleteTarget) {
                 await this.deleteScript(this.deleteTarget);
@@ -223,14 +221,9 @@ export default {
             } 
         },
         openCreate() {
-            if (this.exceededFreePlanForScripts(this.scripts.length)) {
-                this.showActivationNotice();
-            }
-            else {
-                this.clearDialogModel();
-                this.isCreate = true;
-                this.openDialog = true;
-            }
+            this.clearDialogModel();
+            this.isCreate = true;
+            this.openDialog = true;
         },
         openEdit(repository, scriptName) {
             this.clearDialogModel();

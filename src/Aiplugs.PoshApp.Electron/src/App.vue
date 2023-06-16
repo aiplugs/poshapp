@@ -54,14 +54,12 @@
 
             <Toast></Toast>
         </div>
-        <ActivationNotice></ActivationNotice>
         <UpdateNotice></UpdateNotice>
     </v-app>
 </template>
 
 <script>
 import Toast from './components/UI/Toast'
-import ActivationNotice from './components/UI/ActivationNotice'
 import UpdateNotice from './components/UI/UpdateNotice'
 import Prompt from './components/UI/Prompt'
 import PromptForChoice from './components/UI/PromptForChoice'
@@ -76,7 +74,6 @@ export default {
   name: 'App',
   components: {
     Toast,
-    ActivationNotice,
     UpdateNotice,
     Prompt,
     PromptForChoice,

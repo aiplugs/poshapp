@@ -33,7 +33,7 @@ function Copy-Artifacts() {
 
 function Copy-Modules() {
     if (-not (Test-Path -Path ../PSScriptAnalyzer.zip)) {
-        Invoke-RestMethod https://github.com/PowerShell/PSScriptAnalyzer/releases/download/1.20.0/PSScriptAnalyzer.1.20.0.nupkg -OutFile ../PSScriptAnalyzer.zip
+        Invoke-RestMethod https://github.com/PowerShell/PSScriptAnalyzer/releases/download/1.21.0/PSScriptAnalyzer.1.21.0.nupkg -OutFile ../PSScriptAnalyzer.zip
     }
     if (-not (Test-Path -Path ../PackageManagement.zip)) {
         Invoke-RestMethod https://psg-prod-eastus.azureedge.net/packages/packagemanagement.1.4.7.nupkg -OutFile ../PackageManagement.zip

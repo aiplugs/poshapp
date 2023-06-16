@@ -13,7 +13,6 @@ import ScriptIndex from './components/ScriptIndex.vue'
 import RepositoryNav from './components/RepositoryNav.vue'
 import RepositoryIndex from './components/RepositoryIndex.vue'
 import SettingsNav from './components/SettingsNav.vue'
-import SettingsActivation from './components/SettingsActivation.vue'
 import SettingsVersion from './components/SettingsVersion.vue'
 import createStore from './store'
 
@@ -32,7 +31,6 @@ const router = new VueRouter({
     { path: '/repositories/', components: { nav: RepositoryNav } },
     { path: '/repositories/:id', components: { default: RepositoryIndex, nav: RepositoryNav } },
     { path: '/settings/', components: { nav: SettingsNav } },
-    { path: '/settings/activation', components: { default: SettingsActivation, nav: SettingsNav } },
     { path: '/settings/version', components: { default: SettingsVersion, nav: SettingsNav } },
   ]
 })

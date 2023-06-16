@@ -20,14 +20,12 @@ namespace Aiplugs.PoshApp.Deamon
         private readonly Runspace _runspace;
         private readonly JsonRpc _rpc;
         private readonly ConfigAccessor _config;
-        private readonly LicenseService _license;
         private readonly ScriptsService _scripts;
 
         private PoshAppService(string configDir)
         {
             _config = new ConfigAccessor(configDir);
-            _license = new LicenseService(_config);
-            _scripts = new ScriptsService(_config, _license);
+            _scripts = new ScriptsService(_config);
         }
         public PoshAppService(Stream sendingStream, Stream receivingStream, string configDir = null) : this(configDir)
         {
@@ -108,31 +106,6 @@ namespace Aiplugs.PoshApp.Deamon
             });
         }
 
-        public async Task<object> GetActivation()
-        {
-            var status = (await _license.GetActivationStatusAsync()).ToString();
-            var requestCode = _license.GetActivationRequestCode();
-
-            return new { status, requestCode };
-        }
-
-        public async Task<object> PostActivation(string activationCode)
-        {
-            var status = (await _license.RegisterActivationCodeAsync(activationCode)).ToString();
-            var requestCode = _license.GetActivationRequestCode();
-
-            return new { status, requestCode };
-        }
-
-        public async Task<object> RefleshActivation()
-        {
-            await _license.RefleshAsync();
-            var status = (await _license.GetActivationStatusAsync()).ToString();
-            var requestCode = _license.GetActivationRequestCode();
-
-            return new { status, requestCode };
-        }
-
         public async Task<IEnumerable<Repository>> GetRepositories()
         {
             var repositories = await _scripts.GetRepositoriesAsync();
@@ -149,14 +122,6 @@ namespace Aiplugs.PoshApp.Deamon
                 path = Path.Combine(_config.AppPath, name);
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
-            }
-
-            var status = await _license.GetActivationStatusAsync();
-            if (status == ActivationStatus.None)
-            {
-                var repositories = await _scripts.GetRepositoriesAsync();
-                if (repositories.Count() > Limitation.FREE_PLAN_MAX_REPOSITORIES)
-                    return HttpStatusCode.PaymentRequired;
             }
 
             await _scripts.AddRepositoryAsync(new Repository { Name = name, Path = path });
@@ -268,14 +233,6 @@ namespace Aiplugs.PoshApp.Deamon
             if (await _scripts.ExistScriptAsync(repository, model.Id))
                 return HttpStatusCode.Conflict;
 
-            var status = await _license.GetActivationStatusAsync();
-            if (status == ActivationStatus.None)
-            {
-                var scripts = await _scripts.GetScriptListAsync();
-                if (scripts[repository.Name].Count() > Limitation.FREE_PLAN_MAX_SCRIPTS)
-                    return HttpStatusCode.PaymentRequired;
-            }
-
             await _scripts.AddScriptAsync(repository, model);
 
             return HttpStatusCode.Created;
@@ -308,14 +265,6 @@ namespace Aiplugs.PoshApp.Deamon
 
             if (await _scripts.ExistScriptAsync(repository, model.Id))
                 return HttpStatusCode.Conflict;
-
-            var status = await _license.GetActivationStatusAsync();
-            if (status == ActivationStatus.None)
-            {
-                var scripts = await _scripts.GetScriptListAsync();
-                if (scripts[repository.Name].Count() > Limitation.FREE_PLAN_MAX_SCRIPTS)
-                    return HttpStatusCode.PaymentRequired;
-            }
 
             await _scripts.AddScriptAsync(repository, model);
 
@@ -350,14 +299,6 @@ namespace Aiplugs.PoshApp.Deamon
             if (await _scripts.ExistScriptAsync(repository, model.Id))
                 return HttpStatusCode.Conflict;
 
-            var status = await _license.GetActivationStatusAsync();
-            if (status == ActivationStatus.None)
-            {
-                var scripts = await _scripts.GetScriptListAsync();
-                if (scripts[repository.Name].Count() > Limitation.FREE_PLAN_MAX_SCRIPTS)
-                    return HttpStatusCode.PaymentRequired;
-            }
-
             await _scripts.AddScriptAsync(repository, model);
 
             return HttpStatusCode.Created;
@@ -390,14 +331,6 @@ namespace Aiplugs.PoshApp.Deamon
 
             if (await _scripts.ExistScriptAsync(repository, model.Id))
                 return HttpStatusCode.Conflict;
-
-            var status = await _license.GetActivationStatusAsync();
-            if (status == ActivationStatus.None)
-            {
-                var scripts = await _scripts.GetScriptListAsync();
-                if (scripts[repository.Name].Count() > Limitation.FREE_PLAN_MAX_SCRIPTS)
-                    return HttpStatusCode.PaymentRequired;
-            }
 
             await _scripts.AddScriptAsync(repository, model);
 

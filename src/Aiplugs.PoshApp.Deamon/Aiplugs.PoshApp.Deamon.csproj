@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.2.3" />
-    <PackageReference Include="StreamJsonRpc" Version="2.11.35" />
+    <PackageReference Include="StreamJsonRpc" Version="2.15.29" />
     <ProjectReference Include="../Aiplugs.PoshApp.Pses/Aiplugs.PoshApp.Pses.csproj" />
   </ItemGroup>
 

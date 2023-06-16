@@ -79,7 +79,7 @@ export default {
                 && this.gitLog.logs.findIndex(item => item.commit == this.gitLog.origin) < this.gitLog.logs.findIndex(item => item.commit == this.gitLog.local)
         },
         modified() {
-            return this.gitStatus.length > 0;
+            return this.gitStatus.length > 0 && this.gitLog?.origin;
         }
     },
     methods: {

@@ -129,15 +129,13 @@ export default {
     computed: {
         ...mapState('ipc', ['selectedDirectory', 'selecting']),
         ...mapState('repositories', ['repositories']),
-        ...mapGetters('activation', ['exceededFreePlanForRepositories']),
         deleteDialog() {
             return this.deleteTarget != null;
         }
     },
     methods: {
         ...mapActions('ipc', ['selectDirectory']), 
-        ...mapActions('repositories', ['loadRepositories', 'createRepository', 'updateRepository', 'deleteRepository']),   
-        ...mapMutations('activation', ['showActivationNotice']),
+        ...mapActions('repositories', ['loadRepositories', 'createRepository', 'updateRepository', 'deleteRepository']),
         async handleDelete() {
             if (this.deleteTarget) {
                 await this.deleteRepository(this.deleteTarget);
@@ -187,14 +185,9 @@ export default {
             }
         },
         openCreate() {
-            if (this.exceededFreePlanForRepositories(this.repositories.length)) {
-                this.showActivationNotice();
-            }
-            else {
-                this.clearDialogModel();
-                this.isCreate = true;
-                this.openNewDialog = true;
-            }
+            this.clearDialogModel();
+            this.isCreate = true;
+            this.openNewDialog = true;
         },
         openEdit(repository) {
             this.clearDialogModel();

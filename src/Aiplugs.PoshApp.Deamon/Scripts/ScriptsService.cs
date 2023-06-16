@@ -19,38 +19,28 @@ namespace Aiplugs.PoshApp
             [ScriptType.Action] = "param(\n\t[Parameter(ValueFromPipeline=$true)]\n\t[PSObject[]]\n\t$InputObject\n)\n"
         };
         private readonly ConfigAccessor _configAccessor;
-        private readonly LicenseService _license;
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
-        public ScriptsService(ConfigAccessor configAccessor, LicenseService licenseService)
+        public ScriptsService(ConfigAccessor configAccessor)
         {
             _configAccessor = configAccessor;
-            _license = licenseService;
         }
         public async Task<IEnumerable<Repository>> GetRepositoriesAsync()
         {
-            var status = await _license.GetActivationStatusAsync();
             var rootConfig = await _configAccessor.LoadRootConfigAsync();
-            var repositories = status == ActivationStatus.Valid
-                                        ? rootConfig.Repositories
-                                        : rootConfig.Repositories.Take(Limitation.FREE_PLAN_MAX_REPOSITORIES);
+            var repositories = rootConfig.Repositories;
 
             return repositories;
         }
         public async Task<IReadOnlyDictionary<string, IEnumerable<Script>>> GetScriptListAsync()
         {
             var result = new Dictionary<string, IEnumerable<Script>>();
-            var status = await _license.GetActivationStatusAsync();
             var rootConfig = await _configAccessor.LoadRootConfigAsync();
-            var respositories = status == ActivationStatus.Valid
-                                        ? rootConfig.Repositories
-                                        : rootConfig.Repositories.Take(Limitation.FREE_PLAN_MAX_REPOSITORIES);
+            var respositories = rootConfig.Repositories;
             var remain = Limitation.FREE_PLAN_MAX_SCRIPTS;
             foreach (var repo in respositories)
             {
                 var config = await _configAccessor.LoadRepositoryConfigAsync(repo);
-                var scripts = status == ActivationStatus.Valid 
-                                        ? config.Scripts 
-                                        : config.Scripts.Take(remain);
+                var scripts = config.Scripts;
                 remain -= scripts.Count();
                 result.Add(repo.Name, scripts);
             }

@@ -20,12 +20,6 @@ window.openExternal =  url => ipcRenderer.invoke('OpenExternal', url)
 
 window.openDirectory = path => ipcRenderer.invoke('OpenDirectory', path)
 
-window.getActivation = () => ipcRenderer.invoke("GetActivation")
-
-window.refleshActivation = () => ipcRenderer.invoke('RefleshActivation')
-
-window.activate = activationCode => ipcRenderer.invoke('PostActivation', activationCode)
-
 window.getScripts = () => ipcRenderer.invoke('GetScripts');
 
 const updateMethods = {
