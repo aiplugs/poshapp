@@ -37,32 +37,3 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       working-directory: ./src/Aiplugs.PoshApp.Electron/
       run: npm run electron:build -- -p always
-  macos:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: 'recursive'
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 6.0.x
-        node-version: 16.14.2
-    - name: Update NPM
-      run: npm i -g npm@8.5.0 --registry=https://registry.npmjs.org
-    - name: Build deamon
-      shell: pwsh
-      working-directory: ./src/Aiplugs.PoshApp.Electron/
-      run: ./prebuild.ps1 osx-x64
-    - name: Install modules
-      working-directory: ./src/Aiplugs.PoshApp.Electron/
-      run: npm cache verify & npm install
-    - name: Build electron
-      env:
-        APPLE_ID: ${{ secrets.APPLE_ID }}
-        APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
-        CSC_LINK: ${{ secrets.CSC_LINK_MAC }}
-        CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD_MAC }}
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      working-directory: ./src/Aiplugs.PoshApp.Electron/
-      run: npm run electron:build -- -p always
