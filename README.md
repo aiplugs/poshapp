@@ -1,4 +1,4 @@
-# [POSH App](https://poshapp.aiplugs.com/)
+# POSH App
 
 POSH App is a PowerShell GUI tool.
 
