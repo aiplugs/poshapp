@@ -12,7 +12,8 @@ function Modify-Lib() {
 }
 
 function Build-Deamon() {
-    dotnet publish ../Aiplugs.PoshApp.Deamon -c $conf -r $rid
+    dotnet publish ../Aiplugs.PoshApp.Deamon -c $conf 
+    #-r $rid
 }
 
 function Clear-Bin() {
@@ -28,7 +29,7 @@ function Clear-Bin() {
 }
 
 function Copy-Artifacts() {
-    Copy-Item -Recurse -Force -Path ../Aiplugs.PoshApp.Deamon/bin/$conf/net6.0/$rid/publish/* -Destination ./bin/deamon/bin/Common/
+    Copy-Item -Recurse -Force -Path ../Aiplugs.PoshApp.Deamon/bin/$conf/net6.0/publish/* -Destination ./bin/deamon/bin/Common/
 }
 
 function Copy-Modules() {
